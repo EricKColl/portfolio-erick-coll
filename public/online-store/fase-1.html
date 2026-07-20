@@ -1,0 +1,2873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BugBusters · Producto 1 · Online Store</title>
+</head>
+<body>
+<div style="width:100%;display:flex;justify-content:center;align-items:flex-start;margin:0 auto;padding:0;">
+<div id="bb-codex">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Marcellus&display=swap');
+
+#bb-codex, #bb-codex *{box-sizing:border-box}
+#bb-codex button{font-family:inherit}
+
+#bb-codex{
+  /* OBSIDIAN STONE */
+  --stone-0:#020409;
+  --stone-1:#040813;
+  --stone-2:#070d1c;
+  --stone-3:#0a142a;
+  --stone-vein:#0d1932;
+
+  /* AGED GOLD */
+  --gold-deep:#5a3e10;
+  --gold-aged:#8b6914;
+  --gold:#b8860b;
+  --gold-bright:#d4a017;
+  --gold-pale:#e8c87a;
+  --gold-glow:#ffe19a;
+  --gold-faint:rgba(184,134,11,.10);
+  --gold-line:rgba(212,160,23,.30);
+  --gold-strong:rgba(232,200,122,.55);
+  --patina:#3a5a4a;
+
+  /* AWAKENING CYAN (the AI's electric pulse) */
+  --cyan:#4ed8ff;
+  --cyan-2:#8df0ff;
+  --cyan-3:#c4f7ff;
+  --cyan-deep:#1a5f8a;
+  --cyan-glow:rgba(78,216,255,.5);
+  --cyan-faint:rgba(78,216,255,.10);
+
+  /* EMBER AMBER (warmth of activation) */
+  --amber:#ff9040;
+  --amber-2:#ffb070;
+  --amber-glow:rgba(255,144,64,.42);
+  --ember:#ffa552;
+
+  /* PARCHMENT TEXT */
+  --ivory:#f4ead8;
+  --parchment:#d4c89a;
+  --vellum:#b8a87a;
+  --muted:#8a7a5f;
+  --muted-2:#5e5240;
+
+  position:relative;
+  width:min(1280px, calc(100% - 8px));
+  max-width:1280px;
+  margin:0 auto !important;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:500;
+  color:var(--ivory);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(78,216,255,.10), transparent 65%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(255,144,64,.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(184,134,11,.08), transparent 60%),
+    linear-gradient(180deg, var(--stone-0), var(--stone-1) 40%, var(--stone-2) 75%, var(--stone-3) 100%);
+  border:1px solid rgba(184,134,11,.32);
+  border-radius:6px;
+  overflow:hidden;
+  isolation:isolate;
+  box-shadow:
+    inset 0 0 0 1px rgba(232,200,122,.06),
+    inset 0 0 80px rgba(0,0,0,.5),
+    inset 0 0 140px rgba(78,216,255,.025),
+    0 30px 80px rgba(0,0,0,.7),
+    0 0 0 1px rgba(184,134,11,.12);
+}
+
+/* ============ POLISHED STONE TEXTURE ============ */
+#bb-codex .stone-tex, #bb-codex .stone-vein,
+#bb-codex .stone-glints, #bb-codex .stone-vignette,
+#bb-codex .glyphs-bg, #bb-codex .ember-pool{
+  position:absolute; inset:0; pointer-events:none; z-index:1;
+}
+#bb-codex .stone-tex{
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.02) 0px, transparent 2px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.015) 0px, transparent 1.5px),
+    radial-gradient(circle at 40% 80%, rgba(255,255,255,.02) 0px, transparent 2.5px);
+  background-size:80px 80px, 120px 120px, 100px 100px;
+  opacity:.5;
+  mix-blend-mode:screen;
+}
+#bb-codex .stone-vein{
+  background:
+    linear-gradient(105deg, transparent 48%, rgba(232,200,122,.04) 49%, transparent 50.5%),
+    linear-gradient(-15deg, transparent 35%, rgba(78,216,255,.025) 36%, transparent 37%),
+    linear-gradient(60deg, transparent 70%, rgba(255,144,64,.025) 71%, transparent 72%);
+  background-size:600px 600px, 400px 400px, 500px 500px;
+  opacity:.85;
+  mix-blend-mode:screen;
+}
+#bb-codex .stone-glints{
+  z-index:3;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255,225,154,.4) 0.5px, transparent 1px),
+    radial-gradient(circle at 73% 33%, rgba(141,240,255,.5) 0.5px, transparent 1px),
+    radial-gradient(circle at 38% 71%, rgba(255,225,154,.4) 0.5px, transparent 1px),
+    radial-gradient(circle at 86% 78%, rgba(255,176,112,.5) 0.5px, transparent 1px),
+    radial-gradient(circle at 52% 45%, rgba(255,225,154,.3) 0.5px, transparent 1px),
+    radial-gradient(circle at 12% 88%, rgba(141,240,255,.4) 0.5px, transparent 1px);
+  background-size:340px 340px, 290px 290px, 410px 410px, 270px 270px, 380px 380px, 320px 320px;
+  opacity:.7;
+  animation:bbStarShimmer 8s ease-in-out infinite;
+}
+#bb-codex .stone-vignette{
+  z-index:4;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.5) 100%),
+    radial-gradient(ellipse at center, transparent 65%, rgba(0,3,8,.4) 100%);
+}
+#bb-codex .ember-pool{
+  z-index:2;
+  background:
+    radial-gradient(circle 200px at 8% 92%, rgba(255,144,64,.15), transparent 70%),
+    radial-gradient(circle 240px at 92% 90%, rgba(184,134,11,.10), transparent 70%);
+  animation:bbEmberBreath 7s ease-in-out infinite;
+}
+
+/* ============ HIEROGLYPH CIRCUIT SVG PATTERN ============ */
+#bb-codex .glyphs-bg{
+  z-index:2;
+  opacity:.16;
+  mask-image:radial-gradient(ellipse at center, #000 25%, transparent 80%);
+}
+#bb-codex .glyphs-bg svg{ width:100%; height:100%; display:block }
+
+/* ============ FLOATING SIGILS ============ */
+#bb-codex .sigil-group, #bb-codex .sigil-group *{
+  pointer-events:none;
+}
+#bb-codex .sigil-group{
+  position:absolute; inset:0;
+  z-index:3;
+  pointer-events:none;
+}
+#bb-codex .sigil-group .sigil{
+  position:absolute;
+  width:120px; height:120px;
+  opacity:.18;
+  filter:drop-shadow(0 0 8px rgba(232,200,122,.4));
+}
+#bb-codex .sigil-group .sigil.s1{
+  top:8%; right:6%;
+  animation:bbSpin 80s linear infinite, bbFloatSlow 11s ease-in-out infinite alternate;
+}
+#bb-codex .sigil-group .sigil.s2{
+  bottom:14%; left:4%;
+  width:90px; height:90px;
+  opacity:.14;
+  animation:bbSpin 60s linear infinite reverse, bbFloatSlow 13s ease-in-out 2s infinite alternate;
+}
+#bb-codex .sigil-group .sigil.s3{
+  top:46%; right:3%;
+  width:70px; height:70px;
+  opacity:.12;
+  animation:bbSpin 90s linear infinite;
+}
+
+/* ============ BOOT SCREEN (RELIC AWAKENING) ============ */
+#bb-codex .boot{
+  position:absolute;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at center, rgba(78,216,255,.08), transparent 50%),
+    radial-gradient(circle at center, rgba(255,144,64,.04), transparent 70%),
+    linear-gradient(180deg, #010204, #030610 50%, #04081c 100%);
+  transition:opacity 1s ease, visibility 1s;
+}
+#bb-codex .boot.gone{ opacity:0; visibility:hidden; pointer-events:none }
+#bb-codex .boot-glyph-bg{
+  position:absolute; inset:0;
+  opacity:.1;
+  mask-image:radial-gradient(circle at center, transparent 30%, #000 80%);
+}
+#bb-codex .boot-glyph-bg svg{ width:100%; height:100%; display:block }
+#bb-codex .boot-inner{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:24px;
+  width:min(520px, calc(100% - 40px));
+  padding:0 20px;
+  text-align:center;
+}
+#bb-codex .boot-cartouche{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.4em;
+  color:var(--gold-pale);
+  text-shadow:0 0 12px rgba(232,200,122,.5);
+  text-transform:uppercase;
+  padding-bottom:4px;
+  border-bottom:1px solid var(--gold-line);
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+}
+#bb-codex .boot-cartouche::before,
+#bb-codex .boot-cartouche::after{
+  content:"◆";
+  font-size:8px;
+  color:var(--gold);
+  opacity:.7;
+}
+#bb-codex .boot-relic{
+  position:relative;
+  width:220px;
+  height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#bb-codex .boot-relic svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 0 12px rgba(78,216,255,.32)) drop-shadow(0 0 24px rgba(232,200,122,.18));
+}
+#bb-codex .boot-relic .boot-core{
+  position:absolute;
+  width:30%; height:30%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 35%,
+      #fff 0%,
+      var(--cyan-3) 20%,
+      var(--cyan) 50%,
+      var(--amber) 95%,
+      transparent 100%);
+  box-shadow:
+    0 0 20px var(--cyan),
+    0 0 40px rgba(78,216,255,.4),
+    0 0 60px rgba(255,144,64,.2),
+    inset 0 0 16px rgba(255,255,255,.4);
+  animation:bbCorePulse 2.4s ease-in-out infinite;
+  z-index:2;
+}
+#bb-codex .boot-title{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:clamp(22px, 3.6vw, 30px);
+  letter-spacing:.18em;
+  color:var(--gold-pale);
+  text-shadow:
+    0 0 14px rgba(232,200,122,.5),
+    0 0 28px rgba(232,200,122,.25);
+  text-transform:uppercase;
+  margin:0;
+}
+#bb-codex .boot-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:14px;
+  color:var(--vellum);
+  letter-spacing:.04em;
+  margin-top:-12px;
+}
+#bb-codex .boot-runebar{
+  width:100%;
+  max-width:380px;
+  display:grid;
+  gap:6px;
+}
+#bb-codex .boot-runebar-line{
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.18em;
+  color:var(--vellum);
+  text-transform:uppercase;
+}
+#bb-codex .boot-runebar-line .pct{
+  color:var(--gold-pale);
+  text-shadow:0 0 6px rgba(232,200,122,.4);
+}
+#bb-codex .boot-bar{
+  height:3px;
+  background:rgba(184,134,11,.10);
+  border-top:1px solid var(--gold-faint);
+  border-bottom:1px solid var(--gold-faint);
+  position:relative;
+  overflow:hidden;
+}
+#bb-codex .boot-bar-fill{
+  position:absolute;
+  top:0; left:0; bottom:0;
+  width:0%;
+  background:linear-gradient(90deg, var(--gold-deep), var(--gold), var(--cyan), var(--gold));
+  box-shadow:0 0 12px var(--cyan), 0 0 8px var(--gold);
+  transition:width .15s linear;
+}
+#bb-codex .boot-log{
+  width:100%; max-width:380px;
+  min-height:108px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.06em;
+  text-align:left;
+  color:var(--vellum);
+  padding:10px 14px;
+  border:1px solid var(--gold-line);
+  background:rgba(4,8,18,.7);
+  position:relative;
+}
+#bb-codex .boot-log::before, #bb-codex .boot-log::after{
+  content:""; position:absolute;
+  width:12px; height:12px;
+  border-color:var(--gold);
+  border-style:solid;
+}
+#bb-codex .boot-log::before{
+  top:-1px; left:-1px;
+  border-width:1px 0 0 1px;
+}
+#bb-codex .boot-log::after{
+  bottom:-1px; right:-1px;
+  border-width:0 1px 1px 0;
+}
+#bb-codex .boot-line{
+  margin:0; padding:2px 0;
+  line-height:1.5;
+  opacity:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  animation:bbBootIn .4s ease-out forwards;
+}
+#bb-codex .boot-line::before{
+  content:"❖ ";
+  color:var(--gold-pale);
+  text-shadow:0 0 4px var(--gold);
+}
+#bb-codex .boot-line.cyan{ color:var(--cyan-2) }
+#bb-codex .boot-line.cyan::before{
+  content:"◈ ";
+  color:var(--cyan);
+  text-shadow:0 0 4px var(--cyan);
+}
+
+/* ============ APP CONTAINER ============ */
+#bb-codex .app{
+  position:relative;
+  z-index:5;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 1s ease .3s, transform 1.2s cubic-bezier(.2,.8,.2,1) .3s;
+}
+#bb-codex .app.live{ opacity:1; transform:translateY(0) }
+
+/* ============ STICKY HUD NAV (RELIC CONTROL PANEL) ============ */
+#bb-codex .hud{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 22px;
+  background:
+    linear-gradient(180deg, rgba(2,4,9,.94), rgba(2,4,9,.78));
+  border-bottom:1px solid var(--gold-line);
+  backdrop-filter:blur(10px) saturate(120%);
+  -webkit-backdrop-filter:blur(10px) saturate(120%);
+  box-shadow:
+    0 8px 28px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(232,200,122,.08);
+}
+#bb-codex .hud::before{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:linear-gradient(90deg, transparent 5%, var(--gold-deep) 18%, var(--gold) 50%, var(--gold-deep) 82%, transparent 95%);
+  opacity:.7;
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .hud::after{
+  content:""; position:absolute; left:0; right:0; bottom:-3px; height:1px;
+  background:linear-gradient(90deg, transparent 15%, var(--cyan-deep) 35%, var(--cyan) 50%, var(--cyan-deep) 65%, transparent 85%);
+  opacity:.4;
+}
+#bb-codex .hud-sigil{
+  position:relative;
+  flex-shrink:0;
+  width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+}
+#bb-codex .hud-sigil svg{
+  width:100%; height:100%;
+  filter:drop-shadow(0 0 8px var(--cyan-glow));
+  animation:bbSpin 60s linear infinite;
+}
+#bb-codex .hud-sigil .hud-sigil-core{
+  position:absolute;
+  width:10px; height:10px;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff, var(--cyan) 50%, transparent 90%);
+  box-shadow:0 0 12px var(--cyan);
+  animation:bbCorePulse 2.6s ease-in-out infinite;
+}
+#bb-codex .hud-brand{
+  display:flex; flex-direction:column; line-height:1;
+  flex-shrink:0;
+}
+#bb-codex .hud-brand b{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.34em;
+  color:var(--gold-pale);
+  text-shadow:0 0 10px rgba(232,200,122,.4);
+  text-transform:uppercase;
+}
+#bb-codex .hud-brand small{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:11px;
+  letter-spacing:.16em;
+  color:var(--vellum);
+  margin-top:3px;
+}
+#bb-codex .hud-tabs{
+  display:flex;
+  gap:4px;
+  flex:1;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+#bb-codex .hud-tab{
+  position:relative;
+  appearance:none;
+  border:1px solid transparent;
+  background:transparent;
+  cursor:pointer;
+  padding:8px 14px 7px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  transition:all .35s ease;
+  pointer-events:auto;
+}
+#bb-codex .hud-tab .tab-roman{
+  font-family:'Cinzel',serif;
+  font-weight:600;
+  font-size:9.5px;
+  letter-spacing:.32em;
+  color:var(--muted);
+  transition:color .35s ease;
+}
+#bb-codex .hud-tab .tab-name{
+  font-family:'Cinzel',serif;
+  font-weight:500;
+  font-size:11.5px;
+  letter-spacing:.2em;
+  color:var(--vellum);
+  text-transform:uppercase;
+  transition:color .35s ease, text-shadow .35s ease;
+}
+#bb-codex .hud-tab::before, #bb-codex .hud-tab::after{
+  content:"";
+  position:absolute;
+  width:8px; height:8px;
+  border-color:transparent;
+  border-style:solid;
+  transition:all .35s ease;
+}
+#bb-codex .hud-tab::before{ top:0; left:0; border-width:1px 0 0 1px }
+#bb-codex .hud-tab::after{ bottom:0; right:0; border-width:0 1px 1px 0 }
+#bb-codex .hud-tab:hover .tab-name{
+  color:var(--gold-pale);
+  text-shadow:0 0 8px rgba(232,200,122,.4);
+}
+#bb-codex .hud-tab:hover .tab-roman{ color:var(--gold) }
+#bb-codex .hud-tab:hover::before, #bb-codex .hud-tab:hover::after{
+  border-color:var(--gold-line);
+}
+#bb-codex .hud-tab.active{
+  background:radial-gradient(ellipse at top, rgba(184,134,11,.18), transparent 70%);
+}
+#bb-codex .hud-tab.active .tab-name{
+  color:var(--gold-glow);
+  text-shadow:
+    0 0 10px rgba(232,200,122,.6),
+    0 0 20px rgba(232,200,122,.3);
+}
+#bb-codex .hud-tab.active .tab-roman{
+  color:var(--cyan-2);
+  text-shadow:0 0 6px var(--cyan);
+}
+#bb-codex .hud-tab.active::before, #bb-codex .hud-tab.active::after{
+  border-color:var(--gold);
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .hud-stat{
+  display:flex; align-items:center; gap:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.22em;
+  color:var(--muted);
+  flex-shrink:0;
+  text-transform:uppercase;
+}
+#bb-codex .hud-stat .led{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan), 0 0 12px var(--cyan);
+  animation:bbBlink 2.2s infinite;
+}
+#bb-codex .hud-stat .led.ember{
+  background:var(--amber);
+  box-shadow:0 0 6px var(--amber), 0 0 12px var(--amber);
+}
+
+/* ============ HERO ============ */
+#bb-codex .hero{
+  position:relative;
+  padding:40px 26px 26px;
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(280px, 0.7fr);
+  gap:28px;
+  align-items:center;
+  z-index:5;
+}
+#bb-codex .hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.36em;
+  color:var(--gold-pale);
+  text-shadow:0 0 8px rgba(232,200,122,.4);
+  text-transform:uppercase;
+  margin-bottom:18px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--gold-faint);
+}
+#bb-codex .hero-eyebrow::before{
+  content:"◆";
+  color:var(--gold);
+  font-size:8px;
+  letter-spacing:0;
+}
+#bb-codex .hero-eyebrow::after{
+  content:"◆";
+  color:var(--cyan);
+  font-size:8px;
+  letter-spacing:0;
+  text-shadow:0 0 6px var(--cyan);
+}
+
+#bb-codex .hero-title{
+  margin:0 0 8px;
+  line-height:.94;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+#bb-codex .hero-title .t-roman{
+  font-family:'Cinzel',serif;
+  font-weight:500;
+  font-size:clamp(11px, 1.3vw, 13px);
+  letter-spacing:.5em;
+  color:var(--cyan-2);
+  text-shadow:0 0 8px var(--cyan-glow);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+#bb-codex .hero-title .t-main{
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:clamp(38px, 5.8vw, 78px);
+  letter-spacing:.04em;
+  background:linear-gradient(180deg,
+    var(--gold-glow) 0%,
+    var(--gold-pale) 35%,
+    var(--gold-bright) 60%,
+    var(--gold-aged) 88%,
+    var(--gold-deep) 100%);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+  filter:drop-shadow(0 2px 12px rgba(232,200,122,.22)) drop-shadow(0 0 28px rgba(184,134,11,.12));
+  text-transform:uppercase;
+  line-height:.92;
+}
+#bb-codex .hero-title .t-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:clamp(20px, 2.6vw, 30px);
+  color:var(--ivory);
+  letter-spacing:.02em;
+  margin-top:6px;
+  text-shadow:0 0 22px rgba(78,216,255,.18);
+  line-height:1.1;
+}
+#bb-codex .hero-title .t-sub em{
+  font-style:italic;
+  color:var(--cyan-2);
+  text-shadow:0 0 12px var(--cyan-glow);
+  font-weight:500;
+}
+
+#bb-codex .hero-flourish{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:16px 0;
+  max-width:380px;
+}
+#bb-codex .hero-flourish .line{
+  flex:1; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .hero-flourish .mark{
+  font-family:'Cinzel',serif;
+  font-size:14px;
+  color:var(--gold-pale);
+  letter-spacing:.4em;
+  text-shadow:0 0 8px rgba(232,200,122,.4);
+}
+
+#bb-codex .hero-prose{
+  margin:0;
+  color:var(--parchment);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(15px, 1.4vw, 18px);
+  line-height:1.65;
+  max-width:620px;
+  font-weight:400;
+}
+#bb-codex .hero-prose b{
+  color:var(--gold-pale);
+  font-weight:600;
+  text-shadow:0 0 6px rgba(232,200,122,.3);
+}
+#bb-codex .hero-prose em{
+  color:var(--cyan-2);
+  font-style:italic;
+  text-shadow:0 0 8px var(--cyan-glow);
+}
+
+#bb-codex .hero-text{
+  margin:14px 0 0;
+  color:var(--vellum);
+  font-family:'Cormorant Garamond',serif;
+  font-size:14.5px;
+  line-height:1.7;
+  max-width:600px;
+  font-weight:400;
+}
+
+#bb-codex .hero-stats{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+#bb-codex .stat{
+  position:relative;
+  padding:13px 12px;
+  background:linear-gradient(180deg, rgba(8,14,30,.7), rgba(4,8,18,.4));
+  border:1px solid var(--gold-faint);
+  overflow:hidden;
+}
+#bb-codex .stat::before{
+  content:"";
+  position:absolute;
+  top:-1px; left:-1px; bottom:-1px;
+  width:3px;
+  background:linear-gradient(180deg, transparent, var(--gold), transparent);
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .stat .stat-corner{
+  position:absolute;
+  width:8px; height:8px;
+  border-color:var(--gold);
+  border-style:solid;
+}
+#bb-codex .stat .stat-corner.tl{ top:2px; left:6px; border-width:1px 0 0 1px }
+#bb-codex .stat .stat-corner.tr{ top:2px; right:2px; border-width:1px 1px 0 0 }
+#bb-codex .stat .stat-corner.bl{ bottom:2px; left:6px; border-width:0 0 1px 1px }
+#bb-codex .stat .stat-corner.br{ bottom:2px; right:2px; border-width:0 1px 1px 0 }
+#bb-codex .stat b{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:17px;
+  letter-spacing:.06em;
+  color:var(--gold-glow);
+  text-shadow:0 0 10px rgba(232,200,122,.4);
+  margin-bottom:5px;
+  text-transform:uppercase;
+}
+#bb-codex .stat.cyan b{
+  color:var(--cyan-2);
+  text-shadow:0 0 10px var(--cyan-glow);
+}
+#bb-codex .stat span{
+  display:block;
+  font-family:'Cormorant Garamond',serif;
+  font-size:12.5px;
+  line-height:1.5;
+  color:var(--vellum);
+}
+
+/* ============ HERO RIGHT: CENTRAL RELIC ============ */
+#bb-codex .relic-stage{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  max-width:340px;
+  margin:0 auto;
+}
+#bb-codex .relic-stage::before{
+  content:"";
+  position:absolute;
+  inset:-10%;
+  background:
+    radial-gradient(circle, rgba(78,216,255,.10) 0%, rgba(232,200,122,.06) 30%, transparent 60%);
+  filter:blur(8px);
+  z-index:0;
+}
+#bb-codex .relic{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#bb-codex .relic svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  filter:
+    drop-shadow(0 0 16px rgba(78,216,255,.24))
+    drop-shadow(0 0 22px rgba(232,200,122,.16));
+}
+#bb-codex .relic-core{
+  position:absolute;
+  width:24%;
+  height:24%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 35%,
+      #fff 0%,
+      var(--cyan-3) 18%,
+      var(--cyan) 40%,
+      var(--amber) 88%,
+      transparent 100%);
+  box-shadow:
+    0 0 25px var(--cyan),
+    0 0 50px rgba(78,216,255,.5),
+    0 0 80px rgba(255,144,64,.25),
+    inset 0 0 16px rgba(255,255,255,.4);
+  animation:bbCorePulse 3s ease-in-out infinite;
+  z-index:3;
+}
+#bb-codex .relic-core::before{
+  content:"";
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, var(--cyan-3) 50%, transparent 100%);
+  filter:blur(2px);
+  animation:bbCorePulse 2.2s ease-in-out infinite reverse;
+}
+#bb-codex .relic-rays{
+  position:absolute;
+  inset:0;
+  z-index:2;
+}
+#bb-codex .relic-rays .ray{
+  position:absolute;
+  left:50%; top:50%;
+  width:1px;
+  height:46%;
+  transform-origin:top center;
+  background:linear-gradient(180deg, var(--gold-glow), transparent);
+  box-shadow:0 0 6px var(--gold);
+  opacity:.5;
+  animation:bbRayFade 4s ease-in-out infinite;
+}
+#bb-codex .relic-rays .ray.r1{ transform:translate(-50%, 0) rotate(0deg) }
+#bb-codex .relic-rays .ray.r2{ transform:translate(-50%, 0) rotate(60deg); animation-delay:.6s }
+#bb-codex .relic-rays .ray.r3{ transform:translate(-50%, 0) rotate(120deg); animation-delay:1.2s }
+#bb-codex .relic-rays .ray.r4{ transform:translate(-50%, 0) rotate(180deg); animation-delay:1.8s }
+#bb-codex .relic-rays .ray.r5{ transform:translate(-50%, 0) rotate(240deg); animation-delay:2.4s }
+#bb-codex .relic-rays .ray.r6{ transform:translate(-50%, 0) rotate(300deg); animation-delay:3s }
+#bb-codex .relic-rays .ray.cyan{
+  background:linear-gradient(180deg, var(--cyan-2), transparent);
+  box-shadow:0 0 6px var(--cyan);
+}
+#bb-codex .relic-glyph-chip{
+  position:absolute;
+  padding:4px 9px;
+  font-family:'Cinzel',serif;
+  font-weight:500;
+  font-size:9px;
+  letter-spacing:.32em;
+  color:var(--gold-pale);
+  background:rgba(4,8,18,.86);
+  border:1px solid var(--gold-line);
+  text-shadow:0 0 6px rgba(232,200,122,.4);
+  white-space:nowrap;
+  z-index:4;
+  text-transform:uppercase;
+}
+#bb-codex .relic-glyph-chip.c1{ top:-4px; left:50%; transform:translateX(-50%) }
+#bb-codex .relic-glyph-chip.c2{ right:-12px; top:50%; transform:translateY(-50%); color:var(--cyan-2); border-color:rgba(78,216,255,.32); text-shadow:0 0 6px var(--cyan) }
+#bb-codex .relic-glyph-chip.c3{ bottom:-4px; left:50%; transform:translateX(-50%) }
+#bb-codex .relic-glyph-chip.c4{ left:-12px; top:50%; transform:translateY(-50%); color:var(--cyan-2); border-color:rgba(78,216,255,.32); text-shadow:0 0 6px var(--cyan) }
+
+/* ============ PANELS ============ */
+#bb-codex .panels{
+  padding:6px 22px 22px;
+  position:relative;
+  z-index:5;
+}
+#bb-codex .panel{
+  display:none;
+  opacity:0;
+  transform:translateY(12px);
+}
+#bb-codex .panel.active{
+  display:block;
+  animation:bbPanelAwaken .9s cubic-bezier(.2,.7,.3,1) forwards;
+}
+
+/* ============ CODEX CARDS ============ */
+#bb-codex .codex-card{
+  position:relative;
+  margin-bottom:18px;
+  padding:26px 24px 22px;
+  background:
+    linear-gradient(180deg, rgba(7,13,28,.88), rgba(3,6,16,.78)),
+    radial-gradient(circle at 100% 0%, rgba(78,216,255,.04), transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(255,144,64,.04), transparent 40%);
+  border:1px solid var(--gold-line);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.42),
+    inset 0 0 0 1px rgba(232,200,122,.04),
+    inset 0 0 30px rgba(0,0,0,.3),
+    0 0 24px rgba(184,134,11,.06);
+}
+#bb-codex .codex-card::before{
+  content:""; position:absolute;
+  top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold-deep), var(--gold), var(--gold-deep), transparent);
+  box-shadow:0 0 8px var(--gold);
+}
+#bb-codex .codex-card::after{
+  content:""; position:absolute;
+  bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-aged), var(--gold-deep), var(--gold-aged), transparent);
+  opacity:.6;
+}
+#bb-codex .ornament-corner{
+  position:absolute;
+  width:24px; height:24px;
+  pointer-events:none;
+}
+#bb-codex .ornament-corner svg{ width:100%; height:100%; display:block }
+#bb-codex .ornament-corner.tl{ top:6px; left:6px }
+#bb-codex .ornament-corner.tr{ top:6px; right:6px; transform:rotate(90deg) }
+#bb-codex .ornament-corner.bl{ bottom:6px; left:6px; transform:rotate(-90deg) }
+#bb-codex .ornament-corner.br{ bottom:6px; right:6px; transform:rotate(180deg) }
+
+#bb-codex .panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:16px;
+}
+#bb-codex .panel-head-l{
+  display:flex; gap:16px; align-items:flex-start;
+  min-width:0;
+}
+#bb-codex .panel-glyph{
+  flex-shrink:0;
+  position:relative;
+  width:56px; height:56px;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(232,200,122,.18), transparent 70%),
+    linear-gradient(135deg, rgba(184,134,11,.22), rgba(184,134,11,.06));
+  border:1px solid var(--gold);
+  box-shadow:
+    0 0 16px rgba(184,134,11,.28),
+    inset 0 0 10px rgba(232,200,122,.10);
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:.06em;
+  color:var(--gold-glow);
+  text-shadow:0 0 10px rgba(232,200,122,.5);
+  clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+#bb-codex .panel-glyph::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border:1px solid var(--gold-faint);
+  clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+#bb-codex .panel-head h2,
+#bb-codex .panel-head h3{
+  margin:0;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:clamp(22px, 2.4vw, 28px);
+  letter-spacing:.04em;
+  background:linear-gradient(180deg, var(--gold-glow), var(--gold-pale) 50%, var(--gold-bright));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 18px rgba(232,200,122,.18);
+  line-height:1.12;
+}
+#bb-codex .panel-head h3{ font-size:clamp(19px, 2vw, 23px) }
+#bb-codex .panel-head h2 .cyan, #bb-codex .panel-head h3 .cyan{
+  background:linear-gradient(180deg, var(--cyan-3), var(--cyan));
+  -webkit-background-clip:text; background-clip:text;
+  filter:drop-shadow(0 0 10px var(--cyan-glow));
+  font-style:italic;
+  font-weight:600;
+}
+#bb-codex .panel-head p{
+  margin:8px 0 0;
+  font-family:'Cormorant Garamond',serif;
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--parchment);
+  max-width:760px;
+  font-weight:400;
+}
+#bb-codex .panel-head p b{
+  color:var(--gold-pale);
+  font-weight:600;
+}
+#bb-codex .panel-head p strong{
+  color:var(--cyan-2);
+  font-weight:600;
+  text-shadow:0 0 6px var(--cyan-glow);
+  font-style:italic;
+}
+
+#bb-codex .panel-cartouche{
+  flex-shrink:0;
+  padding:8px 14px 7px;
+  font-family:'Cinzel',serif;
+  font-weight:500;
+  font-size:10px;
+  letter-spacing:.3em;
+  color:var(--gold-pale);
+  border:1px solid var(--gold-line);
+  background:rgba(184,134,11,.06);
+  text-transform:uppercase;
+  white-space:nowrap;
+  position:relative;
+  clip-path:polygon(0 50%, 10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%);
+}
+
+/* ============ FEAT GRID ============ */
+#bb-codex .feat-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+#bb-codex .feat{
+  position:relative;
+  padding:16px 16px 14px;
+  background:linear-gradient(180deg, rgba(8,14,30,.6), rgba(4,8,18,.4));
+  border:1px solid var(--gold-faint);
+  overflow:hidden;
+  transition:all .4s ease;
+}
+#bb-codex .feat::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:.5;
+}
+#bb-codex .feat:hover{
+  border-color:var(--gold-line);
+  background:linear-gradient(180deg, rgba(184,134,11,.06), rgba(4,8,18,.4));
+  transform:translateY(-2px);
+  box-shadow:0 12px 24px rgba(0,0,0,.3), 0 0 20px rgba(184,134,11,.12);
+}
+#bb-codex .feat strong{
+  display:flex; align-items:center; gap:8px;
+  font-family:'Cinzel',serif;
+  font-weight:600;
+  font-size:13px;
+  letter-spacing:.08em;
+  color:var(--gold-pale);
+  margin-bottom:8px;
+  text-transform:uppercase;
+  text-shadow:0 0 6px rgba(232,200,122,.25);
+}
+#bb-codex .feat strong::before{
+  content:"❖";
+  font-size:9px;
+  color:var(--gold);
+}
+#bb-codex .feat.cyan strong::before{
+  content:"◈";
+  color:var(--cyan);
+  text-shadow:0 0 4px var(--cyan);
+}
+#bb-codex .feat.cyan strong{
+  color:var(--cyan-2);
+  text-shadow:0 0 6px var(--cyan-glow);
+}
+#bb-codex .feat span{
+  display:block;
+  font-family:'Cormorant Garamond',serif;
+  font-size:13.5px;
+  line-height:1.6;
+  color:var(--vellum);
+}
+
+/* ============ HOLOGRAPHIC MEDIA ============ */
+#bb-codex .holo-media{
+  position:relative;
+  margin-top:16px;
+  padding:14px;
+  background:
+    linear-gradient(180deg, rgba(7,13,28,.7), rgba(4,8,18,.5));
+  border:1px solid var(--gold-line);
+  overflow:hidden;
+}
+#bb-codex .holo-media::before, #bb-codex .holo-media::after{
+  content:""; position:absolute;
+  width:16px; height:16px;
+  border-color:var(--gold);
+  border-style:solid;
+}
+#bb-codex .holo-media::before{
+  top:-1px; left:-1px;
+  border-width:1px 0 0 1px;
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .holo-media::after{
+  bottom:-1px; right:-1px;
+  border-width:0 1px 1px 0;
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .holo-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  letter-spacing:.3em;
+  color:var(--gold-pale);
+  padding:8px 12px;
+  margin-bottom:10px;
+  background:rgba(184,134,11,.05);
+  border:1px solid var(--gold-faint);
+  text-transform:uppercase;
+}
+#bb-codex .holo-bar .left::before{
+  content:"◆ ";
+  color:var(--gold);
+}
+#bb-codex .holo-bar .right{
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.18em;
+  color:var(--cyan-2);
+  text-shadow:0 0 6px var(--cyan-glow);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+#bb-codex .holo-bar .right .led{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan), 0 0 10px var(--cyan);
+  animation:bbBlink 1.6s infinite;
+}
+#bb-codex .iframe-wrap{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  background:#000;
+  border:1px solid var(--gold-faint);
+  overflow:hidden;
+  box-shadow:0 0 22px rgba(78,216,255,.08), inset 0 0 18px rgba(0,0,0,.4);
+}
+#bb-codex .iframe-wrap iframe{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  border:0;
+}
+#bb-codex .holo-caption{
+  margin-top:12px;
+  padding:10px 14px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:13.5px;
+  line-height:1.6;
+  color:var(--parchment);
+  background:rgba(184,134,11,.04);
+  border-left:2px solid var(--gold);
+  font-style:italic;
+}
+#bb-codex .holo-caption strong{
+  font-style:normal;
+  color:var(--gold-pale);
+  font-weight:600;
+  letter-spacing:.04em;
+}
+#bb-codex .holo-caption b{
+  font-style:normal;
+  color:var(--cyan-2);
+  font-weight:600;
+  text-shadow:0 0 6px var(--cyan-glow);
+}
+
+/* ============ GALLERY ============ */
+#bb-codex .gallery{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:14px;
+}
+#bb-codex .gallery.single{ grid-template-columns:1fr }
+#bb-codex .img-frame{
+  position:relative;
+  padding:12px;
+  background:linear-gradient(180deg, rgba(7,13,28,.78), rgba(4,8,18,.6));
+  border:1px solid var(--gold-line);
+  overflow:hidden;
+}
+#bb-codex .img-frame::before, #bb-codex .img-frame::after{
+  content:""; position:absolute;
+  width:14px; height:14px;
+  border-color:var(--gold);
+  border-style:solid;
+}
+#bb-codex .img-frame::before{ top:-1px; left:-1px; border-width:1px 0 0 1px }
+#bb-codex .img-frame::after{ bottom:-1px; right:-1px; border-width:0 1px 1px 0 }
+#bb-codex .img-frame .img-wrap{
+  position:relative;
+  background:#000;
+  border:1px solid var(--gold-faint);
+  overflow:hidden;
+  box-shadow:0 0 18px rgba(78,216,255,.08), inset 0 0 16px rgba(0,0,0,.4);
+}
+#bb-codex .img-frame .img-wrap img{
+  width:100%; height:auto;
+  display:block;
+  filter:contrast(1.05) saturate(1.08);
+}
+#bb-codex .img-frame .img-wrap::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(to bottom,
+      rgba(78,216,255,.025) 0px, rgba(78,216,255,.025) 1px,
+      transparent 2px, transparent 4px);
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:.6;
+}
+
+/* ============ RESOURCES ============ */
+#bb-codex .resources{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  margin-top:14px;
+}
+#bb-codex .resource{
+  position:relative;
+  padding:18px;
+  background:linear-gradient(180deg, rgba(8,14,30,.62), rgba(4,8,18,.42));
+  border:1px solid var(--gold-line);
+  overflow:hidden;
+}
+#bb-codex .resource::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .resource.cyan::before{
+  background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+  box-shadow:0 0 6px var(--cyan);
+}
+#bb-codex .resource strong{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.1em;
+  color:var(--gold-glow);
+  margin-bottom:8px;
+  text-transform:uppercase;
+  text-shadow:0 0 8px rgba(232,200,122,.32);
+}
+#bb-codex .resource.cyan strong{
+  color:var(--cyan-2);
+  text-shadow:0 0 8px var(--cyan-glow);
+}
+#bb-codex .resource span{
+  display:block;
+  font-family:'Cormorant Garamond',serif;
+  font-size:13.5px;
+  line-height:1.62;
+  color:var(--vellum);
+  margin-bottom:14px;
+}
+
+/* ============ BUTTONS ============ */
+#bb-codex .btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 18px;
+  font-family:'Cinzel',serif;
+  font-weight:600;
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  text-decoration:none;
+  cursor:pointer;
+  border:1px solid transparent;
+  transition:all .35s ease;
+  pointer-events:auto;
+  position:relative;
+}
+#bb-codex .btn::before, #bb-codex .btn::after{
+  content:""; position:absolute;
+  width:6px; height:6px;
+  border-color:currentColor;
+  border-style:solid;
+  opacity:.5;
+}
+#bb-codex .btn::before{ top:-1px; left:-1px; border-width:1px 0 0 1px }
+#bb-codex .btn::after{ bottom:-1px; right:-1px; border-width:0 1px 1px 0 }
+#bb-codex .btn.gold{
+  color:#1a0e02;
+  background:linear-gradient(180deg, var(--gold-glow) 0%, var(--gold-bright) 50%, var(--gold) 100%);
+  border-color:var(--gold);
+  box-shadow:0 0 18px rgba(232,200,122,.4), 0 0 32px rgba(184,134,11,.18);
+  text-shadow:0 1px 0 rgba(255,255,255,.18);
+}
+#bb-codex .btn.gold:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+  box-shadow:0 0 26px rgba(232,200,122,.6), 0 0 48px rgba(184,134,11,.28);
+}
+#bb-codex .btn.cyan{
+  color:#001220;
+  background:linear-gradient(180deg, var(--cyan-3) 0%, var(--cyan-2) 50%, var(--cyan) 100%);
+  border-color:var(--cyan);
+  box-shadow:0 0 18px rgba(78,216,255,.4), 0 0 32px rgba(78,216,255,.18);
+  text-shadow:0 1px 0 rgba(255,255,255,.18);
+}
+#bb-codex .btn.cyan:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+  box-shadow:0 0 26px rgba(78,216,255,.6), 0 0 48px rgba(78,216,255,.28);
+}
+#bb-codex .btn.ghost{
+  color:var(--gold-pale);
+  background:rgba(184,134,11,.05);
+  border-color:var(--gold-line);
+}
+#bb-codex .btn.ghost:hover{
+  color:var(--gold-glow);
+  background:rgba(184,134,11,.12);
+  border-color:var(--gold);
+  text-shadow:0 0 8px rgba(232,200,122,.4);
+}
+
+#bb-codex .actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+/* ============ FOOTER ============ */
+#bb-codex .foot{
+  margin:14px 22px 22px;
+  padding:14px 18px;
+  background:rgba(4,8,18,.7);
+  border:1px solid var(--gold-line);
+  position:relative;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:.36em;
+  color:var(--vellum);
+  text-transform:uppercase;
+}
+#bb-codex .foot::before{
+  content:""; position:absolute;
+  top:-1px; left:50%; transform:translateX(-50%);
+  width:60%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  box-shadow:0 0 6px var(--gold);
+}
+#bb-codex .foot b{
+  color:var(--gold-pale);
+  font-weight:600;
+  text-shadow:0 0 6px rgba(232,200,122,.3);
+}
+#bb-codex .foot .div{ color:var(--gold); margin:0 10px; opacity:.6 }
+#bb-codex .foot .cyan{
+  color:var(--cyan-2);
+  text-shadow:0 0 6px var(--cyan-glow);
+  font-style:italic;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes bbSpin{
+  from{ transform:rotate(0deg) }
+  to{ transform:rotate(360deg) }
+}
+@keyframes bbCorePulse{
+  0%,100%{ transform:scale(1); filter:brightness(1) }
+  50%{ transform:scale(1.07); filter:brightness(1.2) }
+}
+@keyframes bbBlink{
+  0%,100%{ opacity:.4 }
+  50%{ opacity:1 }
+}
+@keyframes bbFloatSlow{
+  from{ transform:translateY(0) }
+  to{ transform:translateY(-12px) }
+}
+@keyframes bbEmberBreath{
+  0%,100%{ opacity:.85 }
+  50%{ opacity:1 }
+}
+@keyframes bbStarShimmer{
+  0%,100%{ opacity:.6 }
+  50%{ opacity:.85 }
+}
+@keyframes bbRayFade{
+  0%,100%{ opacity:.18; transform-origin:top center; }
+  50%{ opacity:.7 }
+}
+@keyframes bbBootIn{
+  from{ opacity:0; transform:translateX(-6px) }
+  to{ opacity:1; transform:translateX(0) }
+}
+@keyframes bbPanelAwaken{
+  0%{ opacity:0; transform:translateY(14px); filter:brightness(.6) saturate(.6) }
+  40%{ opacity:.6; filter:brightness(1.1) saturate(1.2) }
+  100%{ opacity:1; transform:translateY(0); filter:brightness(1) saturate(1) }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1080px){
+  #bb-codex .hero{ grid-template-columns:1fr; gap:20px }
+  #bb-codex .relic-stage{ max-width:280px }
+}
+@media (max-width:880px){
+  #bb-codex .hud{ padding:12px 14px; gap:10px }
+  #bb-codex .hud-stat{ display:none }
+  #bb-codex .hud-brand small{ display:none }
+  #bb-codex .hud-tab{ padding:7px 10px 6px }
+  #bb-codex .hud-tab .tab-name{ font-size:10.5px; letter-spacing:.14em }
+  #bb-codex .hud-tab .tab-roman{ font-size:8.5px; letter-spacing:.22em }
+  #bb-codex .hero{ padding:30px 18px 20px }
+  #bb-codex .hero-stats{ grid-template-columns:repeat(2, minmax(0,1fr)) }
+  #bb-codex .feat-grid{ grid-template-columns:1fr 1fr }
+  #bb-codex .gallery:not(.single){ grid-template-columns:1fr }
+  #bb-codex .resources{ grid-template-columns:1fr }
+  #bb-codex .panel-head{ flex-direction:column; align-items:flex-start }
+  #bb-codex .panels{ padding:6px 14px 18px }
+}
+@media (max-width:560px){
+  #bb-codex .hud-tab{ padding:6px 8px 5px }
+  #bb-codex .hud-tab .tab-name{ font-size:9.5px; letter-spacing:.1em }
+  #bb-codex .feat-grid{ grid-template-columns:1fr }
+  #bb-codex .hero-stats{ grid-template-columns:1fr }
+  #bb-codex .codex-card{ padding:22px 18px 18px }
+}
+
+
+/* ============ AJUSTES DE PROPORCIÓN · LOADER + HERO CENTRADO ============ */
+#bb-codex .boot{
+  align-items:flex-start;
+  padding-top:clamp(34px, 5.5vh, 72px);
+}
+#bb-codex .boot-inner{
+  width:min(720px, calc(100% - 36px));
+  max-width:720px;
+  gap:15px;
+  padding:18px 24px 20px;
+  transform:translateY(-1vh);
+}
+#bb-codex .boot-cartouche{
+  max-width:100%;
+  justify-content:center;
+  white-space:normal;
+  text-align:center;
+  line-height:1.45;
+  font-size:10px;
+  letter-spacing:.26em;
+  gap:10px;
+}
+#bb-codex .boot-relic{
+  width:190px;
+  height:190px;
+}
+#bb-codex .boot-title{
+  font-size:clamp(24px, 3.3vw, 34px);
+  letter-spacing:.16em;
+}
+#bb-codex .boot-sub{
+  margin-top:-8px;
+}
+#bb-codex .boot-runebar,
+#bb-codex .boot-log{
+  max-width:520px;
+}
+#bb-codex .boot-log{
+  min-height:88px;
+  max-height:96px;
+  font-size:10px;
+  padding:9px 14px;
+}
+
+#bb-codex .hero{
+  display:block;
+  padding:38px 38px 28px;
+  text-align:center;
+}
+#bb-codex .hero-left{
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#bb-codex .hero-eyebrow{
+  justify-content:center;
+  text-align:center;
+  max-width:100%;
+  line-height:1.45;
+  letter-spacing:.28em;
+  margin-bottom:16px;
+}
+#bb-codex .hero-title{
+  align-items:center;
+  text-align:center;
+  margin:0 auto 8px;
+  width:100%;
+}
+#bb-codex .hero-title .t-roman{
+  margin-left:.5em;
+}
+#bb-codex .hero-title .t-main{
+  font-size:clamp(42px, 6.2vw, 84px);
+}
+#bb-codex .hero-title .t-sub{
+  font-size:clamp(21px, 2.7vw, 32px);
+}
+#bb-codex .hero-flourish{
+  width:min(540px, 100%);
+  max-width:540px;
+  margin:14px auto 10px;
+}
+#bb-codex .hero-right{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin:4px auto 18px;
+}
+#bb-codex .relic-stage{
+  width:min(310px, 62vw);
+  max-width:310px;
+}
+#bb-codex .hero-prose{
+  max-width:980px;
+  text-align:center;
+  font-size:clamp(16px, 1.55vw, 19px);
+}
+#bb-codex .hero-text{
+  max-width:1040px;
+  text-align:center;
+  font-size:15.5px;
+  line-height:1.72;
+}
+#bb-codex .hero-stats{
+  width:100%;
+  max-width:1040px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+@media (max-width:880px){
+  #bb-codex .boot{
+    padding-top:24px;
+  }
+  #bb-codex .boot-inner{
+    width:min(640px, calc(100% - 28px));
+    gap:13px;
+    padding:16px 18px 18px;
+    transform:none;
+  }
+  #bb-codex .boot-relic{
+    width:160px;
+    height:160px;
+  }
+  #bb-codex .hero{
+    padding:30px 18px 20px;
+  }
+  #bb-codex .hero-eyebrow{
+    letter-spacing:.18em;
+  }
+  #bb-codex .relic-stage{
+    width:min(270px, 72vw);
+    max-width:270px;
+  }
+}
+@media (max-width:560px){
+  #bb-codex .boot-inner{
+    width:calc(100% - 20px);
+    gap:11px;
+    padding:14px 14px 16px;
+  }
+  #bb-codex .boot-cartouche{
+    font-size:8.8px;
+    letter-spacing:.14em;
+  }
+  #bb-codex .boot-relic{
+    width:138px;
+    height:138px;
+  }
+  #bb-codex .boot-log{
+    min-height:78px;
+    max-height:84px;
+  }
+  #bb-codex .hero-title .t-main{
+    font-size:clamp(34px, 12vw, 52px);
+  }
+  #bb-codex .relic-stage{
+    width:min(230px, 78vw);
+    max-width:230px;
+  }
+}
+
+
+/* ============ AJUSTES V2 · NAV FIJA + LOADER SIN DESBORDES ============ */
+#bb-codex{
+  overflow:visible;
+}
+#bb-codex .app{
+  overflow:visible;
+}
+#bb-codex .hud{
+  position:-webkit-sticky !important;
+  position:sticky !important;
+  top:0 !important;
+  z-index:9500 !important;
+}
+#bb-codex .boot{
+  align-items:flex-start;
+  padding-top:clamp(26px, 4.2vh, 56px);
+  overflow:hidden;
+}
+#bb-codex .boot-inner{
+  width:min(760px, calc(100% - 32px));
+  max-width:760px;
+  gap:12px;
+  padding:16px 24px 18px;
+  max-height:calc(100% - 28px);
+  transform:none;
+}
+#bb-codex .boot-cartouche{
+  max-width:100%;
+  justify-content:center;
+  white-space:normal;
+  text-align:center;
+  line-height:1.35;
+  font-size:9.8px;
+  letter-spacing:.24em;
+  gap:9px;
+}
+#bb-codex .boot-relic{
+  width:174px;
+  height:174px;
+  flex:0 0 auto;
+}
+#bb-codex .boot-title{
+  font-size:clamp(22px, 3vw, 31px);
+  letter-spacing:.15em;
+}
+#bb-codex .boot-sub{
+  margin-top:-6px;
+}
+#bb-codex .boot-runebar,
+#bb-codex .boot-log{
+  max-width:560px;
+}
+#bb-codex .boot-log{
+  min-height:116px;
+  max-height:none;
+  overflow:hidden;
+  font-size:10px;
+  line-height:1.42;
+  padding:9px 14px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+#bb-codex .boot-line{
+  line-height:1.42;
+  padding:1px 0;
+  min-height:15px;
+}
+#bb-codex .boot-runebar-line{
+  font-size:9.2px;
+  line-height:1.35;
+}
+
+@media (max-width:880px){
+  #bb-codex .boot{
+    padding-top:22px;
+  }
+  #bb-codex .boot-inner{
+    width:min(660px, calc(100% - 24px));
+    gap:11px;
+    padding:15px 18px 17px;
+    max-height:calc(100% - 22px);
+  }
+  #bb-codex .boot-relic{
+    width:150px;
+    height:150px;
+  }
+  #bb-codex .boot-log{
+    min-height:112px;
+    font-size:9.6px;
+  }
+}
+@media (max-width:560px){
+  #bb-codex .boot{
+    padding-top:16px;
+  }
+  #bb-codex .boot-inner{
+    width:calc(100% - 16px);
+    gap:9px;
+    padding:12px 12px 14px;
+    max-height:calc(100% - 16px);
+  }
+  #bb-codex .boot-cartouche{
+    font-size:8.2px;
+    letter-spacing:.11em;
+    gap:6px;
+  }
+  #bb-codex .boot-relic{
+    width:118px;
+    height:118px;
+  }
+  #bb-codex .boot-title{
+    font-size:clamp(18px, 6.2vw, 24px);
+    letter-spacing:.11em;
+  }
+  #bb-codex .boot-sub{
+    font-size:12.5px;
+    margin-top:-4px;
+  }
+  #bb-codex .boot-log{
+    min-height:104px;
+    max-height:none;
+    font-size:8.8px;
+    padding:8px 10px 10px;
+  }
+  #bb-codex .boot-line{
+    line-height:1.38;
+    min-height:13px;
+  }
+}
+
+
+
+/* ============ AJUSTES V3 · NAV SCROLL + LOG ENCAJADO ============ */
+#bb-codex{
+  overflow:visible !important;
+}
+#bb-codex .app,
+#bb-codex .panels{
+  overflow:visible !important;
+}
+#bb-codex .hud{
+  position:-webkit-sticky !important;
+  position:sticky !important;
+  top:0 !important;
+  z-index:9998 !important;
+  transform:translateZ(0);
+}
+#bb-codex .boot{
+  align-items:flex-start !important;
+  padding-top:clamp(22px, 3.8vh, 48px) !important;
+  overflow:hidden !important;
+}
+#bb-codex .boot-inner{
+  width:min(780px, calc(100% - 32px)) !important;
+  max-width:780px !important;
+  gap:10px !important;
+  padding:14px 24px 18px !important;
+  max-height:calc(100% - 24px) !important;
+}
+#bb-codex .boot-relic{
+  width:168px !important;
+  height:168px !important;
+}
+#bb-codex .boot-title{
+  font-size:clamp(22px, 2.9vw, 31px) !important;
+}
+#bb-codex .boot-sub{
+  margin-top:-5px !important;
+}
+#bb-codex .boot-runebar,
+#bb-codex .boot-log{
+  max-width:580px !important;
+}
+#bb-codex .boot-log{
+  height:132px !important;
+  min-height:132px !important;
+  max-height:132px !important;
+  overflow:hidden !important;
+  padding:10px 14px 12px !important;
+  font-size:9.8px !important;
+  line-height:1.36 !important;
+}
+#bb-codex .boot-line{
+  display:block !important;
+  line-height:1.36 !important;
+  min-height:14px !important;
+  padding:1px 0 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+@media (max-width:880px){
+  #bb-codex .boot-inner{
+    width:min(680px, calc(100% - 24px)) !important;
+    gap:9px !important;
+    padding:13px 18px 16px !important;
+  }
+  #bb-codex .boot-relic{
+    width:142px !important;
+    height:142px !important;
+  }
+  #bb-codex .boot-log{
+    height:126px !important;
+    min-height:126px !important;
+    max-height:126px !important;
+    font-size:9.2px !important;
+  }
+}
+@media (max-width:560px){
+  #bb-codex .boot{
+    padding-top:12px !important;
+  }
+  #bb-codex .boot-inner{
+    width:calc(100% - 14px) !important;
+    gap:8px !important;
+    padding:10px 10px 12px !important;
+  }
+  #bb-codex .boot-relic{
+    width:108px !important;
+    height:108px !important;
+  }
+  #bb-codex .boot-log{
+    height:116px !important;
+    min-height:116px !important;
+    max-height:116px !important;
+    font-size:8.4px !important;
+    padding:8px 9px 10px !important;
+  }
+  #bb-codex .boot-line{
+    line-height:1.32 !important;
+    min-height:12px !important;
+  }
+}
+
+
+/* ============ AJUSTES V4 · LOADER INICIAL MÁS GRANDE ============ */
+#bb-codex .boot{
+  align-items:flex-start !important;
+  padding-top:clamp(34px, 5.2vh, 76px) !important;
+  overflow:hidden !important;
+}
+#bb-codex .boot-inner{
+  width:min(960px, calc(100% - 36px)) !important;
+  max-width:960px !important;
+  gap:18px !important;
+  padding:26px 34px 30px !important;
+  max-height:calc(100% - 36px) !important;
+}
+#bb-codex .boot-cartouche{
+  font-size:12px !important;
+  letter-spacing:.32em !important;
+  line-height:1.5 !important;
+  gap:14px !important;
+  padding-bottom:8px !important;
+}
+#bb-codex .boot-cartouche::before,
+#bb-codex .boot-cartouche::after{
+  font-size:10px !important;
+}
+#bb-codex .boot-relic{
+  width:260px !important;
+  height:260px !important;
+  flex:0 0 auto !important;
+}
+#bb-codex .boot-title{
+  font-size:clamp(34px, 4.5vw, 50px) !important;
+  letter-spacing:.20em !important;
+  line-height:1.08 !important;
+}
+#bb-codex .boot-sub{
+  font-size:18px !important;
+  margin-top:-8px !important;
+}
+#bb-codex .boot-runebar,
+#bb-codex .boot-log{
+  max-width:720px !important;
+}
+#bb-codex .boot-runebar{
+  gap:8px !important;
+}
+#bb-codex .boot-runebar-line{
+  font-size:11.5px !important;
+  line-height:1.45 !important;
+}
+#bb-codex .boot-bar{
+  height:6px !important;
+}
+#bb-codex .boot-log{
+  height:172px !important;
+  min-height:172px !important;
+  max-height:172px !important;
+  overflow:hidden !important;
+  padding:14px 18px 16px !important;
+  font-size:11.5px !important;
+  line-height:1.58 !important;
+}
+#bb-codex .boot-line{
+  display:block !important;
+  line-height:1.58 !important;
+  min-height:18px !important;
+  padding:2px 0 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+@media (max-width:880px){
+  #bb-codex .boot{
+    padding-top:24px !important;
+  }
+  #bb-codex .boot-inner{
+    width:min(760px, calc(100% - 24px)) !important;
+    gap:14px !important;
+    padding:20px 22px 24px !important;
+    max-height:calc(100% - 24px) !important;
+  }
+  #bb-codex .boot-cartouche{
+    font-size:10px !important;
+    letter-spacing:.22em !important;
+  }
+  #bb-codex .boot-relic{
+    width:210px !important;
+    height:210px !important;
+  }
+  #bb-codex .boot-title{
+    font-size:clamp(28px, 5vw, 38px) !important;
+  }
+  #bb-codex .boot-sub{
+    font-size:16px !important;
+  }
+  #bb-codex .boot-log{
+    height:154px !important;
+    min-height:154px !important;
+    max-height:154px !important;
+    font-size:10.5px !important;
+    line-height:1.48 !important;
+  }
+  #bb-codex .boot-line{
+    line-height:1.48 !important;
+    min-height:16px !important;
+  }
+}
+@media (max-width:560px){
+  #bb-codex .boot{
+    padding-top:14px !important;
+  }
+  #bb-codex .boot-inner{
+    width:calc(100% - 14px) !important;
+    gap:10px !important;
+    padding:14px 12px 16px !important;
+    max-height:calc(100% - 14px) !important;
+  }
+  #bb-codex .boot-cartouche{
+    font-size:8.6px !important;
+    letter-spacing:.11em !important;
+    gap:7px !important;
+  }
+  #bb-codex .boot-relic{
+    width:142px !important;
+    height:142px !important;
+  }
+  #bb-codex .boot-title{
+    font-size:clamp(22px, 7vw, 30px) !important;
+    letter-spacing:.12em !important;
+  }
+  #bb-codex .boot-sub{
+    font-size:13.5px !important;
+    margin-top:-4px !important;
+  }
+  #bb-codex .boot-runebar-line{
+    font-size:8.8px !important;
+  }
+  #bb-codex .boot-log{
+    height:126px !important;
+    min-height:126px !important;
+    max-height:126px !important;
+    font-size:8.8px !important;
+    padding:8px 10px 10px !important;
+    line-height:1.35 !important;
+  }
+  #bb-codex .boot-line{
+    line-height:1.35 !important;
+    min-height:12px !important;
+    padding:1px 0 !important;
+  }
+}
+
+
+
+/* ============ AJUSTE FINAL REAL · PANEL III GLIFOS HOMOGÉNEO ============ */
+/*
+   El apartado III usa dos imágenes con proporciones distintas:
+   - diagrama de clases: horizontal
+   - diagrama de casos de uso: vertical
+   Por eso NO se fuerza cover, porque recortaría información del UML.
+   Se crea una misma "ventana de archivo" para ambas vistas y se conserva
+   el contenido completo con object-fit: contain.
+*/
+#bb-codex .panel[data-panel="diagramas"] .gallery{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:18px;
+  align-items:stretch;
+}
+
+#bb-codex .panel[data-panel="diagramas"] .img-frame{
+  min-width:0;
+  height:100%;
+  display:grid;
+  grid-template-rows:auto minmax(500px, auto) minmax(132px, auto);
+  align-items:start;
+}
+
+#bb-codex .panel[data-panel="diagramas"] .img-frame .holo-bar{
+  min-height:42px;
+}
+
+#bb-codex .panel[data-panel="diagramas"] .img-frame .img-wrap{
+  width:100%;
+  height:clamp(500px, 44vw, 570px);
+  min-height:500px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(238,238,232,.98));
+  border:1px solid rgba(232,200,122,.28);
+}
+
+#bb-codex .panel[data-panel="diagramas"] .img-frame .img-wrap img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  object-position:center center;
+  filter:contrast(1.06) saturate(1.02);
+}
+
+#bb-codex .panel[data-panel="diagramas"] .holo-caption{
+  display:block;
+  width:100%;
+  min-height:132px;
+  margin-top:12px;
+  white-space:normal;
+  word-break:normal;
+  overflow-wrap:break-word;
+  text-align:left;
+}
+
+@media (max-width:880px){
+  #bb-codex .panel[data-panel="diagramas"] .gallery{
+    grid-template-columns:1fr;
+  }
+
+  #bb-codex .panel[data-panel="diagramas"] .img-frame .img-wrap{
+    height:clamp(430px, 72vw, 540px);
+    min-height:430px;
+  }
+
+  #bb-codex .panel[data-panel="diagramas"] .holo-caption{
+    min-height:auto;
+  }
+}
+
+@media (max-width:560px){
+  #bb-codex .panel[data-panel="diagramas"] .img-frame .img-wrap{
+    height:360px;
+    min-height:360px;
+    padding:8px;
+  }
+}
+
+</style>
+
+<!-- ==================== BACKDROP LAYERS ==================== -->
+<div class="stone-tex"></div>
+<div class="stone-vein"></div>
+<div class="ember-pool"></div>
+
+<!-- Hieroglyph circuit pattern -->
+<div class="glyphs-bg">
+  <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <pattern id="bbCodexGlyphPattern" width="140" height="140" patternUnits="userSpaceOnUse">
+        <!-- Glyph block 1: eye + circuit -->
+        <g stroke="#b8860b" stroke-width="0.6" fill="none" opacity="0.85">
+          <rect x="12" y="14" width="28" height="14"/>
+          <circle cx="26" cy="21" r="3"/>
+          <circle cx="26" cy="21" r="0.8" fill="#b8860b"/>
+          <line x1="40" y1="21" x2="58" y2="21"/>
+          <line x1="58" y1="21" x2="58" y2="40"/>
+          <circle cx="58" cy="40" r="2"/>
+        </g>
+        <!-- Glyph block 2: ankh-like cross -->
+        <g stroke="#4ed8ff" stroke-width="0.6" fill="none" opacity="0.6">
+          <line x1="80" y1="20" x2="80" y2="46"/>
+          <line x1="70" y1="32" x2="90" y2="32"/>
+          <circle cx="80" cy="20" r="5"/>
+        </g>
+        <!-- Glyph block 3: stepped pattern -->
+        <g stroke="#b8860b" stroke-width="0.6" fill="none" opacity="0.7">
+          <polyline points="12,80 12,72 22,72 22,64 32,64"/>
+          <rect x="32" y="60" width="8" height="8"/>
+        </g>
+        <!-- Glyph block 4: nested squares -->
+        <g stroke="#b8860b" stroke-width="0.55" fill="none" opacity="0.8">
+          <rect x="60" y="78" width="22" height="22"/>
+          <rect x="64" y="82" width="14" height="14"/>
+          <line x1="64" y1="89" x2="78" y2="89"/>
+          <line x1="71" y1="82" x2="71" y2="96"/>
+        </g>
+        <!-- Glyph block 5: diagonal connector -->
+        <g stroke="#4ed8ff" stroke-width="0.5" fill="none" opacity="0.5">
+          <line x1="100" y1="62" x2="120" y2="82"/>
+          <circle cx="100" cy="62" r="2"/>
+          <circle cx="120" cy="82" r="2"/>
+        </g>
+        <!-- Glyph block 6: dots -->
+        <g fill="#d4a017" opacity="0.6">
+          <circle cx="105" cy="20" r="1"/>
+          <circle cx="110" cy="20" r="1"/>
+          <circle cx="115" cy="20" r="1"/>
+          <circle cx="110" cy="25" r="1"/>
+        </g>
+        <!-- Glyph block 7: zigzag -->
+        <g stroke="#b8860b" stroke-width="0.5" fill="none" opacity="0.6">
+          <polyline points="48,108 56,116 64,108 72,116 80,108"/>
+        </g>
+        <!-- Glyph block 8: spiral hint -->
+        <g stroke="#4ed8ff" stroke-width="0.5" fill="none" opacity="0.55">
+          <path d="M 110,114 Q 116,114 116,108 Q 116,100 108,100 Q 96,100 96,114 Q 96,124 110,124"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#bbCodexGlyphPattern)"/>
+  </svg>
+</div>
+
+<!-- Floating sigils -->
+<div class="sigil-group">
+  <svg class="sigil s1" viewBox="0 0 100 100">
+    <g stroke="#b8860b" stroke-width="0.8" fill="none">
+      <circle cx="50" cy="50" r="48"/>
+      <circle cx="50" cy="50" r="38" stroke-dasharray="3 2"/>
+      <circle cx="50" cy="50" r="28"/>
+      <line x1="50" y1="2" x2="50" y2="14"/>
+      <line x1="50" y1="86" x2="50" y2="98"/>
+      <line x1="2" y1="50" x2="14" y2="50"/>
+      <line x1="86" y1="50" x2="98" y2="50"/>
+      <polygon points="50,30 60,50 50,70 40,50" stroke="#4ed8ff" opacity="0.7"/>
+      <circle cx="50" cy="50" r="2" fill="#4ed8ff"/>
+    </g>
+  </svg>
+  <svg class="sigil s2" viewBox="0 0 100 100">
+    <g stroke="#b8860b" stroke-width="0.8" fill="none">
+      <polygon points="50,5 87,28 87,72 50,95 13,72 13,28"/>
+      <polygon points="50,20 75,35 75,65 50,80 25,65 25,35" stroke="#4ed8ff" opacity="0.7"/>
+      <circle cx="50" cy="50" r="6"/>
+      <circle cx="50" cy="50" r="1.5" fill="#b8860b"/>
+    </g>
+  </svg>
+  <svg class="sigil s3" viewBox="0 0 100 100">
+    <g stroke="#b8860b" stroke-width="0.8" fill="none">
+      <circle cx="50" cy="50" r="45"/>
+      <line x1="50" y1="5" x2="50" y2="95"/>
+      <line x1="5" y1="50" x2="95" y2="50"/>
+      <line x1="18" y1="18" x2="82" y2="82"/>
+      <line x1="82" y1="18" x2="18" y2="82"/>
+      <circle cx="50" cy="50" r="8" stroke="#4ed8ff" opacity="0.7"/>
+    </g>
+  </svg>
+</div>
+
+<div class="stone-glints"></div>
+<div class="stone-vignette"></div>
+
+<!-- ==================== BOOT (RELIC AWAKENING) ==================== -->
+<div class="boot" id="bbBoot">
+  <div class="boot-glyph-bg">
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <use href="#bbCodexGlyphPattern"/>
+      <rect width="100%" height="100%" fill="url(#bbCodexGlyphPattern)"/>
+    </svg>
+  </div>
+  <div class="boot-inner">
+    <div class="boot-cartouche">POO+BBDD · Códice I · Reliquia Reactivada</div>
+    <div class="boot-relic">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="bbBootGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffe19a" stop-opacity="0.95"/>
+            <stop offset="50%" stop-color="#d4a017" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#8b6914" stop-opacity="0.7"/>
+          </linearGradient>
+        </defs>
+        <g fill="none" stroke="url(#bbBootGold)" stroke-width="1.2">
+          <circle cx="100" cy="100" r="94"/>
+          <circle cx="100" cy="100" r="78" stroke-dasharray="3 4" opacity="0.7"/>
+          <circle cx="100" cy="100" r="62"/>
+          <circle cx="100" cy="100" r="40" stroke-dasharray="2 3" opacity="0.7"/>
+          <g style="transform-origin:100px 100px; animation:bbSpin 30s linear infinite">
+            <line x1="100" y1="6" x2="100" y2="22"/>
+            <line x1="100" y1="178" x2="100" y2="194"/>
+            <line x1="6" y1="100" x2="22" y2="100"/>
+            <line x1="178" y1="100" x2="194" y2="100"/>
+          </g>
+        </g>
+        <g style="transform-origin:100px 100px; animation:bbSpin 24s linear infinite reverse">
+          <polygon points="100,40 152,76 132,140 68,140 48,76" fill="none" stroke="#4ed8ff" stroke-width="1" opacity="0.65"/>
+        </g>
+        <g style="transform-origin:100px 100px; animation:bbSpin 16s linear infinite">
+          <polygon points="100,60 140,100 100,140 60,100" fill="rgba(78,216,255,0.05)" stroke="#8df0ff" stroke-width="0.8" opacity="0.85"/>
+        </g>
+      </svg>
+      <div class="boot-core"></div>
+    </div>
+    <h1 class="boot-title">BugBusters</h1>
+    <div class="boot-sub">despertando la reliquia ancestral</div>
+    <div class="boot-runebar">
+      <div class="boot-runebar-line">
+        <span>Sincronización del núcleo</span>
+        <span class="pct" id="bbBootPct">000 %</span>
+      </div>
+      <div class="boot-bar"><div class="boot-bar-fill" id="bbBootFill"></div></div>
+    </div>
+    <div class="boot-log" id="bbBootLog"></div>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div class="app" id="bbApp">
+
+  <!-- ===== STICKY HUD ===== -->
+  <nav class="hud">
+    <div class="hud-sigil">
+      <svg viewBox="0 0 100 100">
+        <g fill="none" stroke="#b8860b" stroke-width="1.2">
+          <circle cx="50" cy="50" r="46"/>
+          <circle cx="50" cy="50" r="34" stroke-dasharray="2 2"/>
+          <polygon points="50,24 70,50 50,76 30,50" stroke="#4ed8ff" stroke-width="1"/>
+        </g>
+      </svg>
+      <span class="hud-sigil-core"></span>
+    </div>
+    <div class="hud-brand">
+      <b>POO + BBDD</b>
+      <small>Códice I · Reliquia Activa</small>
+    </div>
+    <div class="hud-tabs">
+      <button class="hud-tab active" data-tab="intro">
+        <span class="tab-roman">I</span>
+        <span class="tab-name">Antesala</span>
+      </button>
+      <button class="hud-tab" data-tab="videos">
+        <span class="tab-roman">II</span>
+        <span class="tab-name">Visiones</span>
+      </button>
+      <button class="hud-tab" data-tab="diagramas">
+        <span class="tab-roman">III</span>
+        <span class="tab-name">Glifos</span>
+      </button>
+      <button class="hud-tab" data-tab="codigo">
+        <span class="tab-roman">IV</span>
+        <span class="tab-name">Tablilla</span>
+      </button>
+      <button class="hud-tab" data-tab="recursos">
+        <span class="tab-roman">V</span>
+        <span class="tab-name">Cripta</span>
+      </button>
+      <button class="hud-tab" data-tab="cierre">
+        <span class="tab-roman">VI</span>
+        <span class="tab-name">Sello</span>
+      </button>
+    </div>
+    <div class="hud-stat">
+      <span class="led"></span>núcleo · activo
+      <span class="led ember"></span>archivo · íntegro
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Bug Busters · Códice I · Reliquia Reactivada · Online Store</div>
+      <h1 class="hero-title">
+        <span class="t-roman">— Tablilla del Origen —</span>
+        <span class="t-main">Inicio ancestral</span>
+        <span class="t-sub">del <em>Diseño UML</em> · Online Store</span>
+      </h1>
+      <div class="hero-flourish">
+        <span class="line"></span>
+        <span class="mark">❖ ❖ ❖</span>
+        <span class="line"></span>
+      </div>
+
+      <!-- Central relic -->
+      <div class="hero-right">
+        <div class="relic-stage">
+          <div class="relic">
+            <svg viewBox="0 0 400 400">
+              <defs>
+                <linearGradient id="bbRelicGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffe19a" stop-opacity="0.95"/>
+                  <stop offset="50%" stop-color="#d4a017" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#8b6914" stop-opacity="0.7"/>
+                </linearGradient>
+                <linearGradient id="bbRelicCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#c4f7ff" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#1a5f8a" stop-opacity="0.5"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Outermost ring with hieroglyph tick marks -->
+              <g style="transform-origin:200px 200px; animation:bbSpin 80s linear infinite">
+                <circle cx="200" cy="200" r="194" fill="none" stroke="url(#bbRelicGold)" stroke-width="1.2"/>
+                <g stroke="#b8860b" stroke-width="1" opacity="0.75">
+                  <line x1="200" y1="6" x2="200" y2="22"/>
+                  <line x1="200" y1="378" x2="200" y2="394"/>
+                  <line x1="6" y1="200" x2="22" y2="200"/>
+                  <line x1="378" y1="200" x2="394" y2="200"/>
+                </g>
+                <g stroke="#b8860b" stroke-width="0.7" opacity="0.55">
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(30 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(60 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(120 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(150 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(210 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(240 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(300 200 200)"/>
+                  <line x1="200" y1="10" x2="200" y2="20" transform="rotate(330 200 200)"/>
+                </g>
+                <!-- Hieroglyph dots in cardinal positions -->
+                <g fill="#d4a017" opacity="0.85">
+                  <circle cx="200" cy="14" r="2.5"/>
+                  <circle cx="200" cy="386" r="2.5"/>
+                  <circle cx="14" cy="200" r="2.5"/>
+                  <circle cx="386" cy="200" r="2.5"/>
+                </g>
+              </g>
+
+              <!-- Second ring: dashed cyan arcs -->
+              <g style="transform-origin:200px 200px; animation:bbSpin 36s linear infinite reverse">
+                <circle cx="200" cy="200" r="168" fill="none" stroke="url(#bbRelicCyan)" stroke-width="1" stroke-dasharray="3 6" opacity="0.7"/>
+                <path d="M 200 32 A 168 168 0 0 1 368 200" fill="none" stroke="url(#bbRelicGold)" stroke-width="2" opacity="0.85"/>
+                <path d="M 200 368 A 168 168 0 0 1 32 200" fill="none" stroke="url(#bbRelicCyan)" stroke-width="2" opacity="0.85"/>
+                <circle cx="200" cy="32" r="4" fill="#ffe19a"/>
+                <circle cx="200" cy="368" r="4" fill="#8df0ff"/>
+              </g>
+
+              <!-- Third ring with cardinal points -->
+              <g style="transform-origin:200px 200px; animation:bbSpin 22s linear infinite">
+                <circle cx="200" cy="200" r="138" fill="none" stroke="#b8860b" stroke-width="1" opacity="0.7"/>
+                <g fill="#ffe19a" opacity="0.95">
+                  <circle cx="200" cy="62" r="3"/>
+                  <circle cx="338" cy="200" r="3"/>
+                  <circle cx="200" cy="338" r="3"/>
+                  <circle cx="62" cy="200" r="3"/>
+                </g>
+              </g>
+
+              <!-- Ankh-inspired inner symbol layer -->
+              <g style="transform-origin:200px 200px; animation:bbSpin 28s linear infinite reverse">
+                <!-- Hexagon -->
+                <polygon points="200,88 296,144 296,256 200,312 104,256 104,144"
+                  fill="none" stroke="url(#bbRelicGold)" stroke-width="1.4" opacity="0.85"/>
+                <polygon points="200,108 280,154 280,246 200,292 120,246 120,154"
+                  fill="rgba(184,134,11,.04)" stroke="#d4a017" stroke-width="1" opacity="0.7"/>
+                <!-- Connector marks -->
+                <line x1="200" y1="88" x2="200" y2="108" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+                <line x1="296" y1="144" x2="280" y2="154" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+                <line x1="296" y1="256" x2="280" y2="246" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+                <line x1="200" y1="312" x2="200" y2="292" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+                <line x1="104" y1="256" x2="120" y2="246" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+                <line x1="104" y1="144" x2="120" y2="154" stroke="#d4a017" stroke-width="0.9" opacity="0.7"/>
+              </g>
+
+              <!-- Triangular "eye" rays -->
+              <g style="transform-origin:200px 200px; animation:bbSpin 18s linear infinite">
+                <g opacity="0.7">
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8" transform="rotate(45 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(78,216,255,.4)" stroke="#4ed8ff" stroke-width="0.8" transform="rotate(90 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8" transform="rotate(135 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8" transform="rotate(180 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8" transform="rotate(225 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(78,216,255,.4)" stroke="#4ed8ff" stroke-width="0.8" transform="rotate(270 200 200)"/>
+                  <polygon points="200,118 214,150 186,150" fill="rgba(184,134,11,.42)" stroke="#d4a017" stroke-width="0.8" transform="rotate(315 200 200)"/>
+                </g>
+              </g>
+
+              <!-- Central eye ring -->
+              <circle cx="200" cy="200" r="78" fill="none" stroke="url(#bbRelicGold)" stroke-width="2" opacity="0.85"/>
+              <circle cx="200" cy="200" r="62" fill="rgba(78,216,255,.06)" stroke="#4ed8ff" stroke-width="0.8" opacity="0.7"/>
+            </svg>
+
+            <!-- Ceremonial rays -->
+            <div class="relic-rays">
+              <span class="ray r1"></span>
+              <span class="ray r2 cyan"></span>
+              <span class="ray r3"></span>
+              <span class="ray r4 cyan"></span>
+              <span class="ray r5"></span>
+              <span class="ray r6 cyan"></span>
+            </div>
+
+            <!-- Central core -->
+            <div class="relic-core"></div>
+
+            <!-- Orbiting glyph chips -->
+            <span class="relic-glyph-chip c1">❖ UML · GÉNESIS</span>
+            <span class="relic-glyph-chip c2">◈ JAVA · CORE</span>
+            <span class="relic-glyph-chip c3">❖ ONLINE · STORE</span>
+            <span class="relic-glyph-chip c4">◈ ADMIN · RUNE</span>
+          </div>
+        </div>
+      </div>
+      <p class="hero-prose">
+        Manuscrito ancestral de la <b>arquitectura</b> de <em>Bug Busters</em>: la fase de diseño donde
+        los <b>diagramas UML</b> dan forma al sistema antes de despertar su código. Una reliquia trazada
+        en tinta dorada y reactivada por un núcleo de IA.
+      </p>
+      <p class="hero-text">
+        Este espacio reúne la base conceptual y la aplicación práctica del diseño UML de Online Store:
+        el vídeo teórico, el vídeo práctico, los glifos de casos de uso y de clases, la estructura real
+        del proyecto en IntelliJ IDEA y el repositorio del equipo — todo dentro de un
+        único entorno visual unificado, académico y ceremonial.
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-corner tl"></span><span class="stat-corner tr"></span>
+          <span class="stat-corner bl"></span><span class="stat-corner br"></span>
+          <b>UML</b>
+          <span>Lenguaje visual del comportamiento y la estructura del sistema</span>
+        </div>
+        <div class="stat cyan">
+          <span class="stat-corner tl"></span><span class="stat-corner tr"></span>
+          <span class="stat-corner bl"></span><span class="stat-corner br"></span>
+          <b>Java</b>
+          <span>Traducción inicial del diseño a clases reales del proyecto</span>
+        </div>
+        <div class="stat">
+          <span class="stat-corner tl"></span><span class="stat-corner tr"></span>
+          <span class="stat-corner bl"></span><span class="stat-corner br"></span>
+          <b>Bug Busters</b>
+          <span>Trabajo grupal, consenso y consolidación del modelo</span>
+        </div>
+        <div class="stat cyan">
+          <span class="stat-corner tl"></span><span class="stat-corner tr"></span>
+          <span class="stat-corner bl"></span><span class="stat-corner br"></span>
+          <b>Online Store</b>
+          <span>Contexto funcional y base del caso práctico trabajado</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===== PANELS ===== -->
+  <section class="panels">
+
+    <!-- ============ I · ANTESALA ============ -->
+    <div class="panel active" data-panel="intro">
+      <div class="codex-card">
+        <span class="ornament-corner tl">
+          <svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg>
+        </span>
+        <span class="ornament-corner tr">
+          <svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg>
+        </span>
+        <span class="ornament-corner bl">
+          <svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg>
+        </span>
+        <span class="ornament-corner br">
+          <svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg>
+        </span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">I</div>
+            <div>
+              <h2>Antesala del <span class="cyan">Códice</span></h2>
+              <p>
+                El Producto 1 representa la <b>fase de diseño</b> del proyecto. En esta etapa se han identificado
+                los requisitos del caso práctico, organizado las funcionalidades del sistema y construido una
+                representación formal mediante <strong>UML</strong>. El objetivo: definir con claridad la
+                estructura y el comportamiento de Online Store antes de ampliar el desarrollo en fases posteriores.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">❖ Tablilla I</span>
+        </div>
+
+        <div class="feat-grid">
+          <div class="feat">
+            <strong>Origen del manuscrito</strong>
+            <span>Punto de partida del proyecto: definición del caso práctico, identificación de actores y delimitación del alcance funcional del sistema.</span>
+          </div>
+          <div class="feat cyan">
+            <strong>Lenguaje del modelo</strong>
+            <span>UML actúa como idioma común: traduce las decisiones del equipo en diagramas legibles y verificables que sirven de plano del sistema.</span>
+          </div>
+          <div class="feat">
+            <strong>Consenso del clan</strong>
+            <span>El trabajo grupal de Bug Busters da forma a una visión compartida: cada decisión queda inscrita en el códice como acuerdo del equipo.</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn ghost" data-goto="videos">Ir a visiones</button>
+          <button class="btn ghost" data-goto="diagramas">Descifrar glifos</button>
+          <button class="btn ghost" data-goto="codigo">Abrir tablilla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ II · VISIONES ============ -->
+    <div class="panel" data-panel="videos">
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">II·a</div>
+            <div>
+              <h3>Visión <span class="cyan">teórica</span></h3>
+              <p>
+                Primera proyección holográfica: presenta el papel del <b>diseño UML</b>, la lógica del análisis previo
+                a la programación y la importancia del diagrama de casos de uso y del diagrama de clases como base
+                metodológica del proyecto.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">◈ Fundamento</span>
+        </div>
+
+        <div class="holo-media">
+          <div class="holo-bar">
+            <span class="left">Proyección Teórica · Ánfora Aural I</span>
+            <span class="right"><span class="led"></span>STREAM · ACTIVE</span>
+          </div>
+          <div class="iframe-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/t_LSkUITQFc"
+              title="Vídeo teórico Producto 1"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">II·b</div>
+            <div>
+              <h3>Visión <span class="cyan">práctica</span></h3>
+              <p>
+                Segunda proyección: muestra la <b>aplicación real</b> del Producto 1. Se explican los diagramas
+                desarrollados, las decisiones de diseño adoptadas por el grupo y la primera traducción del modelo
+                a las clases Java del proyecto.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">◈ Aplicación</span>
+        </div>
+
+        <div class="holo-media">
+          <div class="holo-bar">
+            <span class="left">Proyección Práctica · Ánfora Aural II</span>
+            <span class="right"><span class="led"></span>STREAM · ACTIVE</span>
+          </div>
+          <div class="iframe-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/wXBb1nlkDM0"
+              title="Vídeo práctico Producto 1"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ III · GLIFOS ============ -->
+    <div class="panel" data-panel="diagramas">
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">III</div>
+            <div>
+              <h3>Glifos sagrados del <span class="cyan">códice</span></h3>
+              <p>
+                Aquí descansan los dos glifos clave del trabajo: el <b>diagrama de casos de uso</b>, donde se
+                representa el comportamiento funcional del sistema desde la perspectiva del administrador, y el
+                <b>diagrama de clases</b>, que organiza la estructura interna del modelo con sus clases, atributos,
+                métodos y relaciones principales.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">❖ Inscripciones</span>
+        </div>
+
+        <div class="gallery">
+          <div class="img-frame">
+            <div class="holo-bar">
+              <span class="left">Glifo de Clases · Estructura</span>
+              <span class="right"><span class="led"></span>DECODED</span>
+            </div>
+            <div class="img-wrap">
+              <img src="https://i.imgur.com/O8rGgTd.png" alt="Diagrama de clases Producto 1">
+            </div>
+            <div class="holo-caption">
+              El diagrama de clases estructura entidades como <strong>Articulo</strong>, <strong>Pedido</strong>,
+              <strong>Cliente</strong>, <strong>ClienteEstandar</strong>, <strong>ClientePremium</strong> y
+              <b>OnlineStore</b>, reflejando herencia, asociaciones y la lógica central del sistema.
+            </div>
+          </div>
+
+          <div class="img-frame">
+            <div class="holo-bar">
+              <span class="left">Glifo de Casos de Uso · Comportamiento</span>
+              <span class="right"><span class="led"></span>DECODED</span>
+            </div>
+            <div class="img-wrap">
+              <img src="https://i.imgur.com/aR6TCJx.png" alt="Diagrama de casos de uso Producto 1">
+            </div>
+            <div class="holo-caption">
+              El diagrama de casos de uso presenta al actor <strong>Admin</strong> y organiza las funcionalidades
+              del sistema en tres grandes bloques: <b>gestión de clientes</b>, <b>gestión de artículos</b> y
+              <b>gestión de pedidos</b>, incluyendo verificaciones y restricciones funcionales.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ IV · TABLILLA ============ -->
+    <div class="panel" data-panel="codigo">
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">IV</div>
+            <div>
+              <h3>Tablilla de <span class="cyan">bronce</span> · estructura Java</h3>
+              <p>
+                A partir del modelo UML se ha comenzado la traducción a código Java. En la estructura real del
+                proyecto aparecen las clases <b>Articulo</b>, <b>Cliente</b>, <b>ClienteEstandar</b>,
+                <b>ClientePremium</b>, <b>Main</b>, <b>OnlineStore</b> y <b>Pedido</b>, organizadas dentro del
+                entorno de trabajo de <strong>IntelliJ IDEA</strong>.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">❖ Del modelo al código</span>
+        </div>
+
+        <div class="gallery single">
+          <div class="img-frame">
+            <div class="holo-bar">
+              <span class="left">Tablilla · Workspace en IntelliJ IDEA</span>
+              <span class="right"><span class="led"></span>ARCHIVED</span>
+            </div>
+            <div class="img-wrap">
+              <img src="https://i.imgur.com/wgZW6PW.png" alt="Proyecto Java en IntelliJ IDEA">
+            </div>
+            <div class="holo-caption">
+              La inscripción muestra el árbol del proyecto y una vista del archivo <strong>Main.java</strong>.
+              Esta captura permite visualizar la organización del código y confirmar cómo el <b>diseño UML</b>
+              ha empezado a materializarse en una base real de implementación dentro del entorno Java.
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn gold" href="https://github.com/ErickColl/Online-Store." target="_blank" rel="noopener">Abrir repositorio</a>
+          <button class="btn ghost" data-goto="recursos">Ir a la cripta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ V · CRIPTA ============ -->
+    <div class="panel" data-panel="recursos">
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">V</div>
+            <div>
+              <h3>Cripta del <span class="cyan">producto</span></h3>
+              <p>
+                Como apoyo complementario, se integra el repositorio del proyecto.
+                Así, esta cripta reúne en un entorno visual el material fundamental para estudiar,
+                revisar y defender esta fase del trabajo del grupo <b>Bug Busters</b>.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">❖ Recursos sagrados</span>
+        </div>
+
+        <div class="resources">
+          <div class="resource">
+            <strong>Repositorio · GitHub</strong>
+            <span>
+              Acceso al código fuente, evolución del proyecto y estructura principal del trabajo desarrollado
+              sobre Online Store: la primera huella tangible del códice en la roca digital.
+            </span>
+            <a class="btn gold" href="https://github.com/ErickColl/Online-Store." target="_blank" rel="noopener">Abrir GitHub</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ VI · SELLO ============ -->
+    <div class="panel" data-panel="cierre">
+      <div class="codex-card">
+        <span class="ornament-corner tl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner tr"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner bl"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+        <span class="ornament-corner br"><svg viewBox="0 0 24 24"><g fill="none" stroke="#b8860b" stroke-width="1"><path d="M 1 1 L 23 1 L 23 4 L 4 4 L 4 23 L 1 23 Z"/><line x1="6" y1="6" x2="14" y2="6"/><line x1="6" y1="6" x2="6" y2="14"/></g></svg></span>
+
+        <div class="panel-head">
+          <div class="panel-head-l">
+            <div class="panel-glyph">VI</div>
+            <div>
+              <h3>Sello del <span class="cyan">Producto 1</span></h3>
+              <p>
+                El trabajo realizado en esta fase ha permitido establecer una <b>base sólida</b> para todo el proyecto.
+                Gracias al diseño UML, al consenso del grupo y a la primera organización del código en Java,
+                Online Store dispone ya de una estructura conceptual clara sobre la que evolucionarán las fases
+                posteriores. Este panel integra teoría, práctica, glifos y recursos esenciales dentro de una
+                presentación unificada, técnica y ceremonialmente coherente.
+              </p>
+            </div>
+          </div>
+          <span class="panel-cartouche">❖ Clausura</span>
+        </div>
+
+        <div class="feat-grid">
+          <div class="feat">
+            <strong>Génesis · sellada</strong>
+            <span>Los diagramas UML quedan inscritos como base del sistema: estructura, comportamiento y relaciones del modelo.</span>
+          </div>
+          <div class="feat cyan">
+            <strong>Código · iniciado</strong>
+            <span>Las primeras clases Java materializan el diseño dentro del entorno IntelliJ IDEA, listas para evolucionar.</span>
+          </div>
+          <div class="feat">
+            <strong>Reliquia · viva</strong>
+            <span>El códice queda activo: el equipo Bug Busters dispone ya de la base ceremonial para continuar la saga.</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn ghost" data-goto="intro">Volver al inicio</button>
+          <button class="btn ghost" data-goto="videos">Revisar visiones</button>
+          <button class="btn ghost" data-goto="recursos">Consultar cripta</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="foot">
+    Bug Busters<span class="div">❖</span><b>Códice I</b><span class="div">❖</span><span class="cyan">Diseño UML</span><span class="div">❖</span>Online Store<span class="div">❖</span>Reliquia · Activa
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('bb-codex');
+  if(!root) return;
+
+  /* ============ BOOT (RELIC AWAKENING) ============ */
+  var boot = root.querySelector('#bbBoot');
+  var fill = root.querySelector('#bbBootFill');
+  var pct = root.querySelector('#bbBootPct');
+  var log = root.querySelector('#bbBootLog');
+  var app = root.querySelector('#bbApp');
+
+  var bootLines = [
+    {t:'localizando reliquia ancestral...', k:''},
+    {t:'pulso de núcleo detectado · cian', k:'cyan'},
+    {t:'descifrando glifos del manuscrito', k:''},
+    {t:'restaurando inscripciones doradas', k:''},
+    {t:'sincronización con códice primordial', k:'cyan'},
+    {t:'integridad del archivo: confirmada', k:''},
+    {t:'conexión con la IA reactivada', k:'cyan'},
+    {t:'códice listo · acceso concedido', k:''}
+  ];
+
+  var bootStep = 0;
+  function addBootLine(){
+    if(!log) return;
+    if(bootStep >= bootLines.length) return;
+    var entry = bootLines[bootStep];
+    var d = document.createElement('div');
+    d.className = 'boot-line' + (entry.k ? ' ' + entry.k : '');
+    d.textContent = entry.t;
+    log.appendChild(d);
+    var lines = log.querySelectorAll('.boot-line');
+    if(lines.length > 5) lines[0].remove();
+    bootStep++;
+  }
+
+  var bootStart = performance.now();
+  var BOOT_DURATION = 3600;
+  var lineTimer = setInterval(addBootLine, 380);
+  addBootLine();
+
+  function bootTick(now){
+    var p = Math.min(1, (now - bootStart) / BOOT_DURATION);
+    var eased = p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p+2, 3)/2;
+    var val = Math.floor(eased * 100);
+    if(fill) fill.style.width = (eased * 100) + '%';
+    if(pct) pct.textContent = String(val).padStart(3,'0') + ' %';
+    if(p < 1) requestAnimationFrame(bootTick);
+    else {
+      clearInterval(lineTimer);
+      setTimeout(function(){
+        if(boot) boot.classList.add('gone');
+        if(app) app.classList.add('live');
+      }, 500);
+    }
+  }
+  requestAnimationFrame(bootTick);
+
+  /* ============ TABS ============ */
+  function activate(name){
+    var tabs = root.querySelectorAll('.hud-tab[data-tab]');
+    var panels = root.querySelectorAll('.panel[data-panel]');
+    tabs.forEach(function(t){
+      t.classList.toggle('active', t.getAttribute('data-tab') === name);
+    });
+    panels.forEach(function(p){
+      p.classList.toggle('active', p.getAttribute('data-panel') === name);
+    });
+  }
+
+  root.addEventListener('click', function(e){
+    var t = e.target.closest('.hud-tab[data-tab]');
+    if(t && root.contains(t)){
+      e.preventDefault();
+      activate(t.getAttribute('data-tab'));
+      var nav = root.querySelector('.hud');
+      if(nav && nav.scrollIntoView){
+        try { nav.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch(_){}
+      }
+      return;
+    }
+    var g = e.target.closest('[data-goto]');
+    if(g && root.contains(g)){
+      e.preventDefault();
+      activate(g.getAttribute('data-goto'));
+      var nav2 = root.querySelector('.hud');
+      if(nav2 && nav2.scrollIntoView){
+        try { nav2.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch(_){}
+      }
+    }
+  }, true);
+
+  /* ============ MOUSE PARALLAX ON RELIC ============ */
+  var relic = root.querySelector('.relic');
+  root.addEventListener('mousemove', function(e){
+    if(!relic) return;
+    var rect = root.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width - .5;
+    var y = (e.clientY - rect.top) / rect.height - .5;
+    relic.style.transform = 'translate(' + (x*6) + 'px, ' + (y*6) + 'px)';
+  });
+  root.addEventListener('mouseleave', function(){
+    if(relic) relic.style.transform = '';
+  });
+
+})();
+</script>
+
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BugBusters · Producto 3 · JDBC y MySQL</title>
+</head>
+<body>
+<div style="width:100%;display:flex;justify-content:center;align-items:flex-start;margin:0 auto;padding:0;">
+<div id="bb-mk3">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+#bb-mk3, #bb-mk3 *{box-sizing:border-box}
+#bb-mk3 button{font-family:inherit}
+
+#bb-mk3{
+  --core:#00f0ff;
+  --core-2:#7af2ff;
+  --core-3:#c8fcff;
+  --magenta:#ff2db6;
+  --magenta-2:#d946ef;
+  --violet:#8b5cf6;
+  --blue:#4a9eff;
+  --hot:#ffffff;
+  --bg-0:#00050f;
+  --bg-1:#040a1c;
+  --bg-2:#081230;
+  --bg-3:#0c1a44;
+  --line:rgba(0,240,255,.10);
+  --line-s:rgba(0,240,255,.22);
+  --line-m:rgba(255,45,182,.18);
+  --panel:rgba(6,14,34,.62);
+  --panel-2:rgba(8,18,42,.86);
+  --text:#e8fcff;
+  --muted:#94b6cf;
+  --muted-2:#6e8aa3;
+
+  position:relative;
+  width:min(1280px, calc(100% - 8px));
+  max-width:1280px;
+  margin:0 auto !important;
+  font-family:'Rajdhani',system-ui,sans-serif;
+  font-weight:500;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(0,240,255,.18), transparent 45%),
+    radial-gradient(ellipse at 100% 100%, rgba(255,45,182,.10), transparent 45%),
+    radial-gradient(ellipse at 0% 100%, rgba(74,158,255,.10), transparent 45%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 30%, var(--bg-2) 70%, var(--bg-3) 100%);
+  border:1px solid rgba(0,240,255,.18);
+  border-radius:22px;
+  overflow:hidden;
+  isolation:isolate;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.02),
+    inset 0 0 80px rgba(0,240,255,.04),
+    0 30px 90px rgba(0,0,0,.55);
+}
+
+/* ============ BACKDROP LAYERS ============ */
+#bb-mk3 .bd-grid, #bb-mk3 .bd-scan, #bb-mk3 .bd-vignette,
+#bb-mk3 .bd-stars, #bb-mk3 .bd-rain, #bb-mk3 .bd-aurora,
+#bb-mk3 .bd-rings, #bb-mk3 .bd-noise{
+  position:absolute; inset:0; pointer-events:none; z-index:1;
+}
+#bb-mk3 .bd-grid{
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 30%, rgba(0,0,0,.6) 65%, transparent 100%);
+  opacity:.55;
+  animation:bbGridShift 28s linear infinite;
+}
+#bb-mk3 .bd-scan{
+  background:repeating-linear-gradient(to bottom,
+    rgba(0,240,255,.025) 0px, rgba(0,240,255,.025) 1px,
+    transparent 2px, transparent 5px);
+  mix-blend-mode:screen;
+  opacity:.5;
+}
+#bb-mk3 .bd-aurora{
+  inset:-15%;
+  background:
+    conic-gradient(from 180deg at 50% 50%,
+      transparent 0deg,
+      rgba(0,240,255,.10) 60deg,
+      rgba(139,92,246,.08) 130deg,
+      rgba(255,45,182,.10) 200deg,
+      rgba(74,158,255,.08) 280deg,
+      transparent 360deg);
+  filter:blur(40px);
+  opacity:.7;
+  animation:bbAurora 32s linear infinite;
+}
+#bb-mk3 .bd-vignette{
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,5,15,.4) 100%);
+  z-index:2;
+}
+#bb-mk3 .bd-stars span{
+  position:absolute;
+  width:2px;height:2px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 6px #fff, 0 0 12px var(--core-2);
+  animation:bbTwinkle linear infinite;
+}
+#bb-mk3 .bd-rain{
+  overflow:hidden;
+  opacity:.12;
+}
+#bb-mk3 .bd-rain span{
+  position:absolute; top:-30%;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px; line-height:1.6;
+  letter-spacing:.12em;
+  color:var(--core-2);
+  text-shadow:0 0 8px var(--core);
+  white-space:pre;
+  animation:bbRain linear infinite;
+}
+
+/* ============ BOOT SEQUENCE ============ */
+#bb-mk3 .boot{
+  position:absolute;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:clamp(56px, 8vh, 96px);
+  background:
+    radial-gradient(circle at 50% 22%, rgba(0,240,255,.13), transparent 54%),
+    linear-gradient(180deg, #00050f, #02081c 60%, #04102e);
+  transition:opacity .9s cubic-bezier(.4,0,.2,1), visibility .9s;
+}
+#bb-mk3 .boot.gone{
+  opacity:0; visibility:hidden; pointer-events:none;
+}
+#bb-mk3 .boot-grid{
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(to right, rgba(0,240,255,.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,240,255,.08) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at 50% 22%, #000 30%, transparent 78%);
+  animation:bbGridShift 22s linear infinite;
+}
+#bb-mk3 .boot-vignette{
+  position:absolute; inset:0;
+  background:radial-gradient(circle at 50% 22%, transparent 26%, rgba(0,5,15,.7) 82%);
+  pointer-events:none;
+}
+#bb-mk3 .boot-core{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+  padding:16px 18px 14px;
+  width:min(100%, 460px);
+  max-width:460px;
+  transform:translateY(0);
+}
+#bb-mk3 .boot-id{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.24em;
+  line-height:1.4;
+  text-align:center;
+  color:var(--core-2);
+  text-shadow:0 0 12px var(--core);
+  opacity:.84;
+}
+#bb-mk3 .boot-reactor{
+  position:relative;
+  width:178px;
+  height:178px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#bb-mk3 .boot-reactor .b-ring{
+  position:absolute;
+  border-radius:50%;
+}
+#bb-mk3 .boot-reactor .b-r1{
+  inset:0;
+  border:1px solid rgba(0,240,255,.28);
+  box-shadow:0 0 30px rgba(0,240,255,.18) inset, 0 0 30px rgba(0,240,255,.18);
+  animation:bbSpin 8s linear infinite;
+}
+#bb-mk3 .boot-reactor .b-r1::before{
+  content:""; position:absolute;
+  top:-6px; left:50%; width:10px; height:10px;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff, var(--core) 60%, transparent 80%);
+  box-shadow:0 0 16px var(--core), 0 0 30px var(--core);
+  transform:translateX(-50%);
+}
+#bb-mk3 .boot-reactor .b-r2{
+  inset:16px;
+  border:1px dashed rgba(0,240,255,.4);
+  animation:bbSpin 6s linear infinite reverse;
+}
+#bb-mk3 .boot-reactor .b-r3{
+  inset:32px;
+  border:1px solid rgba(217,70,239,.3);
+  box-shadow:0 0 16px rgba(217,70,239,.18) inset;
+  animation:bbSpin 4s linear infinite;
+}
+#bb-mk3 .boot-reactor .b-r3::after{
+  content:""; position:absolute;
+  bottom:-5px; left:50%; width:8px; height:8px;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff, var(--magenta-2) 60%, transparent 80%);
+  box-shadow:0 0 14px var(--magenta-2);
+  transform:translateX(-50%);
+}
+#bb-mk3 .boot-reactor .b-core{
+  width:72px; height:72px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0%, var(--core-3) 25%, var(--core) 50%, var(--blue) 80%, transparent 100%);
+  box-shadow:
+    0 0 30px var(--core),
+    0 0 60px var(--core),
+    0 0 100px rgba(0,240,255,.5),
+    inset 0 0 20px rgba(255,255,255,.4);
+  animation:bbCorePulse 1.6s ease-in-out infinite;
+  position:relative;
+}
+#bb-mk3 .boot-reactor .b-core::before{
+  content:""; position:absolute;
+  inset:16px;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, var(--core-3) 50%, transparent 100%);
+  filter:blur(2px);
+  animation:bbCorePulse 1.2s ease-in-out infinite reverse;
+}
+#bb-mk3 .boot-title{
+  font-family:'Orbitron',sans-serif;
+  font-weight:900;
+  font-size:clamp(20px, 3.4vw, 28px);
+  letter-spacing:.16em;
+  text-align:center;
+  background:linear-gradient(180deg, #fff 0%, var(--core-3) 50%, var(--core) 100%);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+  text-shadow:0 0 40px rgba(0,240,255,.4);
+  line-height:1.1;
+}
+#bb-mk3 .boot-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.26em;
+  text-align:center;
+  color:var(--core-2);
+  text-transform:uppercase;
+  opacity:.86;
+}
+#bb-mk3 .boot-bar{
+  width:100%;
+  max-width:360px;
+  height:6px;
+  border-radius:99px;
+  background:rgba(0,240,255,.08);
+  border:1px solid rgba(0,240,255,.2);
+  overflow:hidden;
+  box-shadow:inset 0 0 8px rgba(0,0,0,.5);
+}
+#bb-mk3 .boot-bar-fill{
+  height:100%; width:0%;
+  background:linear-gradient(90deg, var(--core) 0%, var(--core-3) 50%, var(--hot) 100%);
+  border-radius:99px;
+  box-shadow:0 0 16px var(--core), 0 0 24px var(--core);
+  transition:width .12s linear;
+}
+#bb-mk3 .boot-pct{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  letter-spacing:.18em;
+  color:var(--core-3);
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  max-width:360px;
+}
+#bb-mk3 .boot-pct span:last-child{color:var(--magenta-2)}
+#bb-mk3 .boot-log{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.06em;
+  text-align:left;
+  color:var(--muted);
+  width:100%; max-width:360px;
+  height:68px;
+  overflow:hidden;
+  position:relative;
+  padding:8px 12px;
+  border:1px solid rgba(0,240,255,.15);
+  border-radius:8px;
+  background:rgba(0,12,28,.5);
+  box-shadow:inset 0 0 14px rgba(0,0,0,.4);
+}
+#bb-mk3 .boot-log .log-line{
+  margin:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:1.55;
+  color:var(--core-3);
+  opacity:0;
+  transform:translateY(4px);
+  animation:bbLogIn .35s ease-out forwards;
+}
+#bb-mk3 .boot-log .log-line.warn{color:var(--magenta-2)}
+#bb-mk3 .boot-log .log-line.ok{color:#7affc9}
+#bb-mk3 .boot-log .log-line::before{
+  content:"> ";
+  color:var(--core);
+}
+
+/* ============ APP CONTAINER ============ */
+#bb-mk3 .app{
+  position:relative;
+  z-index:5;
+  width:100%;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .8s ease .25s, transform .8s cubic-bezier(.2,.8,.2,1) .25s;
+}
+#bb-mk3 .app.live{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ============ STICKY NAV (HUD) ============ */
+#bb-mk3 .hud-nav{
+  position:sticky;
+  top:0;
+  z-index:50;
+  margin:0;
+  padding:10px 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:
+    linear-gradient(180deg, rgba(4,10,28,.92), rgba(4,10,28,.74));
+  border-bottom:1px solid rgba(0,240,255,.18);
+  backdrop-filter:blur(14px) saturate(150%);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:0 8px 28px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.02) inset;
+}
+#bb-mk3 .hud-nav::before{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--core), var(--magenta), transparent);
+  opacity:.6;
+}
+#bb-mk3 .hud-brand{
+  display:flex; align-items:center; gap:10px;
+  flex-shrink:0;
+}
+#bb-mk3 .hud-brand .mini-core{
+  width:30px; height:30px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #fff, var(--core-3) 25%, var(--core) 55%, var(--blue) 100%);
+  box-shadow:0 0 10px var(--core), 0 0 22px var(--core), inset 0 0 8px rgba(255,255,255,.4);
+  position:relative;
+  animation:bbCorePulse 2.4s ease-in-out infinite;
+  flex-shrink:0;
+}
+#bb-mk3 .hud-brand .mini-core::before{
+  content:""; position:absolute; inset:-4px;
+  border:1px dashed rgba(0,240,255,.5);
+  border-radius:50%;
+  animation:bbSpin 6s linear infinite;
+}
+#bb-mk3 .hud-brand-text{
+  display:flex; flex-direction:column; line-height:1.05;
+}
+#bb-mk3 .hud-brand-text b{
+  font-family:'Orbitron',sans-serif;
+  font-weight:900;
+  font-size:13px;
+  letter-spacing:.22em;
+  color:var(--core-3);
+  text-shadow:0 0 10px rgba(0,240,255,.4);
+}
+#bb-mk3 .hud-brand-text small{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:.28em;
+  color:var(--muted-2);
+  margin-top:2px;
+}
+#bb-mk3 .hud-tabs{
+  display:flex; gap:6px; flex-wrap:wrap;
+  flex:1;
+  justify-content:center;
+  align-items:center;
+}
+#bb-mk3 .hud-tab{
+  position:relative;
+  appearance:none;
+  border:1px solid rgba(0,240,255,.15);
+  background:rgba(6,14,34,.5);
+  color:var(--core-3);
+  font-family:'Orbitron',sans-serif;
+  font-weight:600;
+  font-size:10.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:9px 14px;
+  cursor:pointer;
+  clip-path:polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition:all .25s cubic-bezier(.2,.8,.2,1);
+  z-index:1;
+  pointer-events:auto;
+}
+#bb-mk3 .hud-tab::before{
+  content:""; position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,240,255,.04), transparent);
+  clip-path:polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  z-index:-1;
+}
+#bb-mk3 .hud-tab:hover{
+  color:#fff;
+  background:rgba(0,240,255,.12);
+  border-color:var(--core-2);
+  box-shadow:0 0 14px rgba(0,240,255,.3);
+}
+#bb-mk3 .hud-tab.active{
+  color:#00141e;
+  background:linear-gradient(180deg, var(--core-3) 0%, var(--core) 100%);
+  border-color:var(--core);
+  box-shadow:
+    0 0 14px var(--core),
+    0 0 30px rgba(0,240,255,.45);
+}
+#bb-mk3 .hud-tab.active::after{
+  content:""; position:absolute; left:50%; bottom:-1px;
+  width:60%; height:2px;
+  background:var(--core);
+  box-shadow:0 0 10px var(--core);
+  transform:translateX(-50%);
+}
+#bb-mk3 .hud-status{
+  display:flex; align-items:center; gap:10px;
+  flex-shrink:0;
+}
+#bb-mk3 .hud-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px;
+  border-radius:99px;
+  border:1px solid rgba(0,240,255,.22);
+  background:rgba(0,240,255,.06);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  color:var(--core-3);
+  text-transform:uppercase;
+}
+#bb-mk3 .hud-pill .dot{
+  width:6px; height:6px; border-radius:50%;
+  background:#7affc9;
+  box-shadow:0 0 8px #7affc9, 0 0 14px #7affc9;
+  animation:bbBlink 1.6s ease-in-out infinite;
+}
+
+/* ============ HERO ============ */
+#bb-mk3 .hero{
+  position:relative;
+  padding:30px 24px 22px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  align-items:center;
+  justify-items:center;
+}
+#bb-mk3 .hero-left{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#bb-mk3 .hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 12px;
+  border-radius:99px;
+  border:1px solid rgba(0,240,255,.22);
+  background:rgba(0,240,255,.05);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.32em;
+  color:var(--core-2);
+  text-transform:uppercase;
+  margin-bottom:18px;
+  box-shadow:0 0 18px rgba(0,240,255,.08);
+}
+#bb-mk3 .hero-eyebrow::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--magenta-2);
+  box-shadow:0 0 8px var(--magenta-2);
+  animation:bbBlink 1.4s ease-in-out infinite;
+}
+#bb-mk3 .hero-title{
+  font-family:'Orbitron',sans-serif;
+  font-weight:900;
+  font-size:clamp(28px, 4.2vw, 52px);
+  line-height:1.05;
+  letter-spacing:-.012em;
+  margin:0 auto 10px;
+  text-align:center;
+  max-width:980px;
+}
+#bb-mk3 .hero-title .t-line{display:inline}
+#bb-mk3 .hero-title .t-line:not(:last-child)::after{content:" "}
+#bb-mk3 .grad-white{
+  background:linear-gradient(180deg, #fff 0%, #e0eef9 45%, #b4c8dc 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+#bb-mk3 .grad-neon{
+  background:linear-gradient(180deg, var(--core-3) 0%, var(--core) 50%, var(--blue) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 18px rgba(0,240,255,.32));
+}
+#bb-mk3 .grad-magenta{
+  background:linear-gradient(180deg, #ffdcf2 0%, var(--magenta-2) 50%, var(--magenta) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 16px rgba(217,70,239,.28));
+}
+#bb-mk3 .hero-sub{
+  margin:0 0 12px;
+  color:#d4e6f5;
+  font-size:clamp(15px, 1.5vw, 18px);
+  font-weight:400;
+  line-height:1.5;
+  max-width:760px;
+  text-align:center;
+}
+#bb-mk3 .hero-sub b{color:var(--core-3); font-weight:700}
+#bb-mk3 .hero-text{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+  max-width:860px;
+  text-align:center;
+}
+#bb-mk3 .hero-accent{
+  margin-top:18px;
+  width:240px; max-width:100%; height:2px;
+  border-radius:99px;
+  background:linear-gradient(90deg, transparent, var(--core-3), var(--core), var(--magenta-2), transparent);
+  box-shadow:0 0 12px var(--core), 0 0 28px rgba(255,45,182,.2);
+  animation:bbAccent 5s ease-in-out infinite;
+}
+#bb-mk3 .hero-tags{
+  margin-top:18px;
+  display:flex; flex-wrap:wrap; gap:8px;
+  justify-content:center;
+}
+#bb-mk3 .hero-tag{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 11px;
+  border-radius:99px;
+  border:1px solid rgba(0,240,255,.18);
+  background:linear-gradient(180deg, rgba(0,240,255,.06), rgba(0,240,255,.02));
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--core-3);
+}
+#bb-mk3 .hero-tag::before{
+  content:""; width:5px; height:5px; border-radius:50%;
+  background:var(--core);
+  box-shadow:0 0 6px var(--core);
+}
+#bb-mk3 .hero-tag.alt{
+  border-color:rgba(217,70,239,.24);
+  background:linear-gradient(180deg, rgba(217,70,239,.06), rgba(217,70,239,.02));
+  color:#ffdcf2;
+}
+#bb-mk3 .hero-tag.alt::before{
+  background:var(--magenta-2);
+  box-shadow:0 0 6px var(--magenta-2);
+}
+#bb-mk3 .hero-metrics{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:8px;
+  width:100%;
+  max-width:980px;
+}
+#bb-mk3 .metric{
+  position:relative;
+  padding:12px 10px 10px;
+  border:1px solid rgba(0,240,255,.14);
+  background:linear-gradient(180deg, rgba(8,18,42,.6), rgba(4,10,28,.4));
+  clip-path:polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  overflow:hidden;
+}
+#bb-mk3 .metric::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.7;
+}
+#bb-mk3 .metric b{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:800;
+  font-size:22px;
+  color:#fff;
+  text-shadow:0 0 12px rgba(0,240,255,.4);
+  line-height:1;
+}
+#bb-mk3 .metric span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+
+/* ============ ARC REACTOR (HERO RIGHT) ============ */
+#bb-mk3 .hero-right{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin:2px 0 16px;
+}
+#bb-mk3 .reactor-stage{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  max-width:320px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#bb-mk3 .reactor-stage::before{
+  content:""; position:absolute; inset:-12%;
+  background:radial-gradient(circle, rgba(0,240,255,.18) 0%, rgba(0,240,255,.04) 40%, transparent 70%);
+  filter:blur(10px);
+  z-index:0;
+}
+#bb-mk3 .reactor{
+  position:relative;
+  width:100%; height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1;
+}
+#bb-mk3 .reactor svg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  filter:drop-shadow(0 0 22px rgba(0,240,255,.36));
+}
+#bb-mk3 .reactor .core-light{
+  position:absolute;
+  width:34%; height:34%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%,
+      #fff 0%,
+      var(--core-3) 15%,
+      var(--core) 38%,
+      var(--blue) 65%,
+      transparent 92%);
+  box-shadow:
+    0 0 25px var(--core),
+    0 0 50px var(--core),
+    0 0 100px rgba(0,240,255,.6),
+    inset 0 0 24px rgba(255,255,255,.5);
+  animation:bbCorePulse 2.4s ease-in-out infinite;
+  z-index:3;
+}
+#bb-mk3 .reactor .core-light::before{
+  content:""; position:absolute;
+  inset:22%;
+  border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, var(--core-3) 50%, transparent 100%);
+  filter:blur(2px);
+  animation:bbCorePulse 1.8s ease-in-out infinite reverse;
+}
+#bb-mk3 .reactor .core-light::after{
+  content:""; position:absolute;
+  inset:-30%;
+  border-radius:50%;
+  background:conic-gradient(from 0deg,
+    transparent 0deg, rgba(0,240,255,.4) 40deg, transparent 80deg,
+    transparent 180deg, rgba(217,70,239,.3) 220deg, transparent 260deg);
+  filter:blur(8px);
+  animation:bbSpin 9s linear infinite;
+  z-index:-1;
+}
+#bb-mk3 .reactor .energy-arc{
+  position:absolute;
+  width:1px;
+  background:linear-gradient(180deg, transparent, var(--core-3), var(--core), transparent);
+  box-shadow:0 0 10px var(--core), 0 0 18px var(--core);
+  opacity:.7;
+  transform-origin:bottom center;
+  pointer-events:none;
+}
+#bb-mk3 .reactor .energy-arc.e1{height:18%; top:8%; left:50%; animation:bbArc 2.6s ease-in-out infinite}
+#bb-mk3 .reactor .energy-arc.e2{height:18%; top:8%; left:50%; transform:rotate(72deg) translateY(-8%); animation:bbArc 2.6s ease-in-out .4s infinite}
+#bb-mk3 .reactor .energy-arc.e3{height:18%; top:8%; left:50%; transform:rotate(144deg) translateY(-8%); animation:bbArc 2.6s ease-in-out .8s infinite}
+#bb-mk3 .reactor .energy-arc.e4{height:18%; top:8%; left:50%; transform:rotate(216deg) translateY(-8%); animation:bbArc 2.6s ease-in-out 1.2s infinite}
+#bb-mk3 .reactor .energy-arc.e5{height:18%; top:8%; left:50%; transform:rotate(288deg) translateY(-8%); animation:bbArc 2.6s ease-in-out 1.6s infinite}
+
+/* Orbiting tech chips */
+#bb-mk3 .reactor-orbit{
+  position:absolute;
+  inset:8%;
+  border:1px dashed rgba(0,240,255,.2);
+  border-radius:50%;
+  animation:bbSpin 36s linear infinite;
+  z-index:2;
+}
+#bb-mk3 .reactor-orbit-2{
+  position:absolute;
+  inset:-2%;
+  border:1px solid rgba(217,70,239,.16);
+  border-radius:50%;
+  animation:bbSpin 48s linear infinite reverse;
+  z-index:2;
+}
+
+/* ============ MAIN PANELS ============ */
+#bb-mk3 .panels{
+  padding:8px 18px 28px;
+  position:relative;
+  z-index:5;
+}
+#bb-mk3 .panel{
+  display:none;
+  opacity:0;
+  transform:translateY(12px);
+}
+#bb-mk3 .panel.active{
+  display:block;
+  animation:bbPanelIn .55s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+/* ============ HOLO CARDS ============ */
+#bb-mk3 .holo{
+  position:relative;
+  border-radius:18px;
+  padding:1px;
+  background:linear-gradient(135deg, rgba(0,240,255,.32) 0%, rgba(0,240,255,.08) 25%, transparent 50%, rgba(217,70,239,.08) 75%, rgba(217,70,239,.28) 100%);
+  margin-bottom:16px;
+  box-shadow:0 16px 40px rgba(0,0,0,.32), 0 0 40px rgba(0,240,255,.05);
+}
+#bb-mk3 .holo-inner{
+  position:relative;
+  border-radius:17px;
+  background:
+    linear-gradient(180deg, rgba(8,18,42,.92), rgba(4,10,28,.84)),
+    radial-gradient(circle at 100% 0%, rgba(0,240,255,.08), transparent 40%);
+  padding:22px 22px 20px;
+  overflow:hidden;
+}
+#bb-mk3 .holo-inner::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, var(--core) 25%, var(--magenta-2) 75%, transparent 100%);
+  opacity:.55;
+}
+#bb-mk3 .holo-inner::after{
+  content:""; position:absolute; left:0; top:18px; bottom:18px; width:2px;
+  background:linear-gradient(180deg, transparent, var(--core), transparent);
+  box-shadow:0 0 8px var(--core);
+  opacity:.5;
+}
+#bb-mk3 .holo-corner{
+  position:absolute;
+  width:18px; height:18px;
+  border-color:var(--core-2);
+  border-style:solid;
+}
+#bb-mk3 .holo-corner.tl{top:8px; left:8px; border-width:1px 0 0 1px}
+#bb-mk3 .holo-corner.tr{top:8px; right:8px; border-width:1px 1px 0 0; border-color:var(--magenta-2)}
+#bb-mk3 .holo-corner.bl{bottom:8px; left:8px; border-width:0 0 1px 1px; border-color:var(--magenta-2)}
+#bb-mk3 .holo-corner.br{bottom:8px; right:8px; border-width:0 1px 1px 0}
+
+#bb-mk3 .panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+#bb-mk3 .panel-head-left{
+  display:flex; gap:14px; align-items:center;
+  min-width:0;
+}
+#bb-mk3 .panel-icon{
+  position:relative;
+  width:48px; height:48px;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.05em;
+  color:var(--core-3);
+  background:linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
+  border:1px solid rgba(0,240,255,.32);
+  clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow:0 0 14px rgba(0,240,255,.2), inset 0 0 12px rgba(0,240,255,.1);
+  text-shadow:0 0 8px var(--core);
+}
+#bb-mk3 .panel-head h2{
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  font-weight:800;
+  font-size:clamp(18px, 2.2vw, 22px);
+  letter-spacing:.01em;
+  background:linear-gradient(180deg, #fff, var(--core-3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  line-height:1.12;
+}
+#bb-mk3 .panel-head h3{
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:clamp(16px, 1.8vw, 19px);
+  letter-spacing:.01em;
+  background:linear-gradient(180deg, #fff, var(--core-3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  line-height:1.12;
+}
+#bb-mk3 .panel-head p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:13.5px;
+  line-height:1.62;
+  max-width:760px;
+}
+#bb-mk3 .panel-badge{
+  flex-shrink:0;
+  padding:6px 10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.22em;
+  color:var(--magenta-2);
+  border:1px solid rgba(217,70,239,.32);
+  background:rgba(217,70,239,.05);
+  border-radius:99px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+#bb-mk3 .dual{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+#bb-mk3 .panel[data-panel="vision"] .dual{
+  grid-template-columns:1fr;
+  gap:16px;
+}
+#bb-mk3 .panel[data-panel="vision"] .holo{
+  width:100%;
+  margin-bottom:0;
+}
+#bb-mk3 .panel[data-panel="vision"] .holo-inner{
+  min-height:auto;
+}
+#bb-mk3 .panel[data-panel="vision"] .panel-head-left{
+  width:100%;
+}
+#bb-mk3 .panel[data-panel="vision"] .feat-grid{
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  align-items:stretch;
+}
+#bb-mk3 .panel[data-panel="vision"] .feat{
+  min-height:104px;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+#bb-mk3 .panel[data-panel="vision"] .feat span{
+  flex:1;
+}
+
+
+/* ============ FEATURE GRID ============ */
+#bb-mk3 .feat-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+#bb-mk3 .feat{
+  position:relative;
+  padding:13px 14px;
+  border:1px solid rgba(0,240,255,.14);
+  background:
+    linear-gradient(180deg, rgba(8,18,42,.66), rgba(4,10,28,.42)),
+    radial-gradient(circle at top left, rgba(0,240,255,.06), transparent 50%);
+  border-radius:12px;
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  overflow:hidden;
+}
+#bb-mk3 .feat::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.5;
+}
+#bb-mk3 .feat:hover{
+  transform:translateY(-2px);
+  border-color:rgba(0,240,255,.32);
+  box-shadow:0 12px 24px rgba(0,0,0,.3), 0 0 18px rgba(0,240,255,.1);
+}
+#bb-mk3 .feat strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  color:var(--core-3);
+  margin-bottom:5px;
+  letter-spacing:.02em;
+}
+#bb-mk3 .feat span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.55;
+}
+
+/* ============ TIMELINE ============ */
+#bb-mk3 .timeline{
+  display:grid; gap:10px;
+  margin-top:12px;
+  position:relative;
+}
+#bb-mk3 .timeline::before{
+  content:""; position:absolute;
+  left:18px; top:0; bottom:0;
+  width:1px;
+  background:linear-gradient(180deg, transparent, var(--core), var(--magenta-2), transparent);
+  opacity:.5;
+}
+#bb-mk3 .step{
+  position:relative;
+  padding:13px 14px 13px 56px;
+  border:1px solid rgba(0,240,255,.14);
+  background:linear-gradient(180deg, rgba(8,18,42,.6), rgba(4,10,28,.38));
+  border-radius:12px;
+  overflow:hidden;
+}
+#bb-mk3 .step::before{
+  content:attr(data-step);
+  position:absolute;
+  left:8px; top:50%; transform:translateY(-50%);
+  width:22px; height:22px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Orbitron',sans-serif;
+  font-weight:900;
+  font-size:11px;
+  color:#00141e;
+  background:radial-gradient(circle at 30% 30%, var(--core-3), var(--core));
+  border:1px solid var(--core);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--core), 0 0 4px rgba(0,0,0,.6) inset;
+  z-index:1;
+}
+#bb-mk3 .step::after{
+  content:""; position:absolute;
+  left:30px; top:50%; transform:translateY(-50%);
+  width:14px; height:1px;
+  background:var(--core);
+  box-shadow:0 0 6px var(--core);
+  opacity:.4;
+}
+#bb-mk3 .step strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:13.5px;
+  color:var(--core-3);
+  margin-bottom:4px;
+}
+#bb-mk3 .step span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.55;
+}
+
+/* ============ VIDEOS ============ */
+#bb-mk3 .video-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:12px;
+}
+#bb-mk3 .video-cell{
+  position:relative;
+  padding:12px;
+  border:1px solid rgba(0,240,255,.16);
+  border-radius:14px;
+  background:linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.5));
+  overflow:hidden;
+}
+#bb-mk3 .video-cell::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--core), var(--magenta-2), transparent);
+  opacity:.6;
+}
+#bb-mk3 .video-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px; gap:8px;
+}
+#bb-mk3 .video-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.28em;
+  color:var(--core-3);
+  text-transform:uppercase;
+}
+#bb-mk3 .video-tag{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.22em;
+  color:var(--magenta-2);
+  text-transform:uppercase;
+}
+#bb-mk3 .video-tag .dot{
+  width:5px; height:5px; border-radius:50%;
+  background:var(--magenta-2);
+  box-shadow:0 0 6px var(--magenta-2);
+  animation:bbBlink 1.4s ease-in-out infinite;
+}
+#bb-mk3 .iframe-wrap{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:10px;
+  overflow:hidden;
+  background:#000;
+  border:1px solid rgba(0,240,255,.18);
+  box-shadow:0 0 18px rgba(0,240,255,.08), inset 0 0 20px rgba(0,0,0,.4);
+}
+#bb-mk3 .iframe-wrap iframe{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  border:0;
+}
+#bb-mk3 .video-note{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.55;
+}
+
+/* ============ ARCHITECTURE ============ */
+#bb-mk3 .arch-row{
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr;
+  gap:8px;
+  align-items:stretch;
+  margin-top:12px;
+}
+#bb-mk3 .arch-node{
+  position:relative;
+  padding:14px 12px;
+  border:1px solid rgba(0,240,255,.18);
+  background:
+    linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.42)),
+    radial-gradient(circle at top, rgba(0,240,255,.08), transparent 60%);
+  border-radius:12px;
+  text-align:center;
+  overflow:hidden;
+  min-height:118px;
+  display:flex; flex-direction:column;
+}
+#bb-mk3 .arch-node.magenta{
+  border-color:rgba(217,70,239,.22);
+  background:
+    linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.42)),
+    radial-gradient(circle at top, rgba(217,70,239,.08), transparent 60%);
+}
+#bb-mk3 .arch-node::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.6;
+}
+#bb-mk3 .arch-node.magenta::before{
+  background:linear-gradient(90deg, transparent, var(--magenta-2), transparent);
+}
+#bb-mk3 .arch-node strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:800;
+  font-size:13px;
+  color:var(--core-3);
+  margin-bottom:6px;
+  letter-spacing:.04em;
+}
+#bb-mk3 .arch-node.magenta strong{color:#ffdcf2}
+#bb-mk3 .arch-node span{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  flex:1;
+}
+#bb-mk3 .arch-arrow{
+  align-self:center;
+  font-family:'Orbitron',sans-serif;
+  font-weight:900;
+  font-size:18px;
+  color:var(--core);
+  text-shadow:0 0 10px var(--core);
+  padding:0 2px;
+}
+
+/* ============ SCHEMA ============ */
+#bb-mk3 .schema{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+#bb-mk3 .table-card{
+  position:relative;
+  padding:14px;
+  border:1px solid rgba(0,240,255,.18);
+  background:linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.42));
+  border-radius:12px;
+  overflow:hidden;
+}
+#bb-mk3 .table-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.7;
+}
+#bb-mk3 .table-card.alt::before{
+  background:linear-gradient(90deg, transparent, var(--magenta-2), transparent);
+}
+#bb-mk3 .table-card h4{
+  margin:0 0 10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px;
+  letter-spacing:.14em;
+  color:#fff;
+  text-transform:uppercase;
+  display:flex; align-items:center; gap:8px;
+}
+#bb-mk3 .table-card h4::before{
+  content:""; width:8px; height:8px; border-radius:2px;
+  background:var(--core);
+  box-shadow:0 0 8px var(--core);
+}
+#bb-mk3 .table-card.alt h4::before{
+  background:var(--magenta-2);
+  box-shadow:0 0 8px var(--magenta-2);
+}
+#bb-mk3 .field-list{display:grid; gap:5px}
+#bb-mk3 .field{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 9px;
+  background:rgba(0,0,0,.25);
+  border-left:2px solid rgba(0,240,255,.32);
+  border-radius:4px;
+  font-family:'Share Tech Mono',monospace;
+}
+#bb-mk3 .field b{
+  font-size:12px;
+  color:#e8fcff;
+  font-weight:400;
+  letter-spacing:.02em;
+}
+#bb-mk3 .field em{
+  font-style:normal;
+  margin-left:auto;
+  font-size:9.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted-2);
+}
+#bb-mk3 .field.pk em{color:var(--core-2)}
+#bb-mk3 .field.fk em{color:var(--magenta-2)}
+#bb-mk3 .field.pk{border-left-color:var(--core); background:rgba(0,240,255,.06)}
+#bb-mk3 .field.fk{border-left-color:var(--magenta-2); background:rgba(217,70,239,.06)}
+
+#bb-mk3 .rules{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+#bb-mk3 .rule{
+  padding:12px 14px;
+  border:1px solid rgba(0,240,255,.14);
+  background:linear-gradient(180deg, rgba(8,18,42,.6), rgba(4,10,28,.38));
+  border-radius:12px;
+}
+#bb-mk3 .rule strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  color:var(--core-3);
+  margin-bottom:4px;
+}
+#bb-mk3 .rule span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.55;
+}
+
+/* ============ RESOURCES ============ */
+#bb-mk3 .resources{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-top:12px;
+}
+#bb-mk3 .resource{
+  position:relative;
+  padding:16px;
+  border:1px solid rgba(0,240,255,.18);
+  background:linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.42));
+  border-radius:14px;
+  overflow:hidden;
+}
+#bb-mk3 .resource.alt{
+  border-color:rgba(217,70,239,.22);
+}
+#bb-mk3 .resource::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.7;
+}
+#bb-mk3 .resource.alt::before{
+  background:linear-gradient(90deg, transparent, var(--magenta-2), transparent);
+}
+#bb-mk3 .resource strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:800;
+  font-size:14px;
+  color:#fff;
+  margin-bottom:6px;
+  letter-spacing:.04em;
+}
+#bb-mk3 .resource span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.6;
+  margin-bottom:12px;
+}
+#bb-mk3 .btn{
+  display:inline-flex;
+  align-items:center; gap:8px;
+  padding:10px 16px;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  text-decoration:none;
+  border-radius:8px;
+  cursor:pointer;
+  border:1px solid transparent;
+  transition:all .25s ease;
+  clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  pointer-events:auto;
+}
+#bb-mk3 .btn.primary{
+  color:#00141e;
+  background:linear-gradient(180deg, var(--core-3), var(--core));
+  border-color:var(--core);
+  box-shadow:0 0 16px var(--core), 0 0 30px rgba(0,240,255,.4);
+}
+#bb-mk3 .btn.primary:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+  box-shadow:0 0 22px var(--core), 0 0 42px rgba(0,240,255,.5);
+}
+#bb-mk3 .btn.secondary{
+  color:#fff;
+  background:linear-gradient(180deg, rgba(217,70,239,.22), rgba(217,70,239,.1));
+  border-color:rgba(217,70,239,.5);
+  box-shadow:0 0 14px rgba(217,70,239,.32);
+}
+#bb-mk3 .btn.secondary:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+  box-shadow:0 0 22px rgba(217,70,239,.45);
+}
+#bb-mk3 .btn.ghost{
+  color:var(--core-3);
+  background:rgba(0,240,255,.06);
+  border-color:rgba(0,240,255,.32);
+}
+#bb-mk3 .btn.ghost:hover{
+  background:rgba(0,240,255,.12);
+  border-color:var(--core);
+  color:#fff;
+}
+#bb-mk3 .btn::before{
+  content:"▶";
+  font-size:8px;
+  color:inherit;
+  opacity:.7;
+}
+
+/* ============ SUMMARY ============ */
+#bb-mk3 .summary{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+#bb-mk3 .sum-card{
+  position:relative;
+  padding:16px 14px;
+  border:1px solid rgba(0,240,255,.16);
+  background:linear-gradient(180deg, rgba(8,18,42,.7), rgba(4,10,28,.4));
+  border-radius:12px;
+  overflow:hidden;
+}
+#bb-mk3 .sum-card:nth-child(2){border-color:rgba(217,70,239,.2)}
+#bb-mk3 .sum-card:nth-child(4){border-color:rgba(217,70,239,.2)}
+#bb-mk3 .sum-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--core), transparent);
+  opacity:.7;
+}
+#bb-mk3 .sum-card:nth-child(2)::before,
+#bb-mk3 .sum-card:nth-child(4)::before{
+  background:linear-gradient(90deg, transparent, var(--magenta-2), transparent);
+}
+#bb-mk3 .sum-card strong{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:13.5px;
+  color:#fff;
+  margin-bottom:5px;
+  letter-spacing:.02em;
+}
+#bb-mk3 .sum-card span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
+}
+
+#bb-mk3 .actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:14px;
+}
+
+#bb-mk3 .footer-strip{
+  margin:14px 18px 18px;
+  padding:12px 16px;
+  border:1px solid rgba(0,240,255,.12);
+  border-radius:10px;
+  background:rgba(4,10,28,.5);
+  text-align:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.28em;
+  color:var(--muted-2);
+  text-transform:uppercase;
+  position:relative;
+  z-index:5;
+}
+#bb-mk3 .footer-strip b{
+  color:var(--core-3);
+  font-weight:400;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes bbSpin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes bbCounterSpin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(-360deg)}
+}
+@keyframes bbCorePulse{
+  0%,100%{transform:scale(1); filter:brightness(1)}
+  50%{transform:scale(1.06); filter:brightness(1.18)}
+}
+@keyframes bbBlink{
+  0%,100%{opacity:.42}
+  50%{opacity:1}
+}
+@keyframes bbArc{
+  0%,100%{opacity:.1; transform-origin:50% 100%; transform:scaleY(.6)}
+  50%{opacity:1; transform:scaleY(1.1)}
+}
+@keyframes bbAccent{
+  0%,100%{transform:scaleX(.92); opacity:.78}
+  50%{transform:scaleX(1.06); opacity:1}
+}
+@keyframes bbGridShift{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(48px,48px,0)}
+}
+@keyframes bbAurora{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes bbTwinkle{
+  0%,100%{opacity:.15; transform:scale(.85)}
+  50%{opacity:1; transform:scale(1.3)}
+}
+@keyframes bbRain{
+  0%{transform:translateY(0); opacity:0}
+  10%{opacity:.4}
+  90%{opacity:.2}
+  100%{transform:translateY(120%); opacity:0}
+}
+@keyframes bbPanelIn{
+  from{opacity:0; transform:translateY(12px) scale(.992)}
+  to{opacity:1; transform:translateY(0) scale(1)}
+}
+@keyframes bbLogIn{
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1080px){
+  #bb-mk3 .hero{grid-template-columns:1fr; gap:18px}
+  #bb-mk3 .reactor-stage{max-width:300px}
+  #bb-mk3 .dual{grid-template-columns:1fr}
+  #bb-mk3 .arch-row{grid-template-columns:1fr; gap:6px}
+  #bb-mk3 .arch-arrow{transform:rotate(90deg); margin:2px 0}
+}
+@media (max-width:860px){
+  #bb-mk3 .hero-title .t-line{display:block}
+  #bb-mk3 .hero-title .t-line:not(:last-child)::after{content:""}
+  #bb-mk3 .hud-nav{padding:10px 12px; gap:8px}
+  #bb-mk3 .hud-status{display:none}
+  #bb-mk3 .hud-tab{font-size:9.5px; padding:8px 10px; letter-spacing:.14em}
+  #bb-mk3 .hero{padding:24px 16px 18px}
+  #bb-mk3 .hero-metrics{grid-template-columns:repeat(2, minmax(0,1fr))}
+  #bb-mk3 .feat-grid{grid-template-columns:1fr 1fr}
+  #bb-mk3 .video-grid{grid-template-columns:1fr}
+  #bb-mk3 .schema{grid-template-columns:1fr}
+  #bb-mk3 .rules{grid-template-columns:1fr}
+  #bb-mk3 .resources{grid-template-columns:1fr}
+  #bb-mk3 .summary{grid-template-columns:1fr 1fr}
+  #bb-mk3 .panels{padding:8px 14px 22px}
+}
+@media (max-width:560px){
+  #bb-mk3{border-radius:18px}
+  #bb-mk3 .hud-brand-text{display:none}
+  #bb-mk3 .feat-grid{grid-template-columns:1fr}
+  #bb-mk3 .summary{grid-template-columns:1fr}
+  #bb-mk3 .hero-metrics{grid-template-columns:1fr 1fr}
+  #bb-mk3 .panel-head{flex-direction:column}
+}
+</style>
+
+<!-- ==================== BACKDROP ==================== -->
+<div class="bd-aurora"></div>
+<div class="bd-grid"></div>
+<div class="bd-scan"></div>
+<div class="bd-stars" id="bbStars"></div>
+<div class="bd-rain" id="bbRain"></div>
+<div class="bd-vignette"></div>
+
+<!-- ==================== BOOT LOADER ==================== -->
+<div class="boot" id="bbBoot">
+  <div class="boot-grid"></div>
+  <div class="boot-vignette"></div>
+  <div class="boot-core">
+    <div class="boot-id">BB · MK-III · CLASSIFIED // STARK INDUSTRIES PROTOCOL</div>
+    <div class="boot-reactor">
+      <div class="b-ring b-r1"></div>
+      <div class="b-ring b-r2"></div>
+      <div class="b-ring b-r3"></div>
+      <div class="b-core"></div>
+    </div>
+    <div class="boot-title">BugBusters Team</div>
+    <div class="boot-sub">Initializing persistence systems</div>
+    <div class="boot-bar"><div class="boot-bar-fill" id="bbBarFill"></div></div>
+    <div class="boot-pct"><span id="bbPct">[ 000% ]</span><span id="bbPctTag">STANDBY</span></div>
+    <div class="boot-log" id="bbLog"></div>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div class="app" id="bbApp">
+
+  <!-- ===== STICKY HUD NAV ===== -->
+  <nav class="hud-nav" id="bbNav">
+    <div class="hud-brand">
+      <div class="mini-core"></div>
+      <div class="hud-brand-text">
+        <b>BB · MK-III</b>
+        <small>BUG BUSTERS / P03</small>
+      </div>
+    </div>
+    <div class="hud-tabs" id="bbTabs">
+      <button class="hud-tab active" data-tab="vision">Visión</button>
+      <button class="hud-tab" data-tab="videos">Vídeos</button>
+      <button class="hud-tab" data-tab="arquitectura">Arquitectura</button>
+      <button class="hud-tab" data-tab="modelo">Modelo</button>
+      <button class="hud-tab" data-tab="recursos">Recursos</button>
+      <button class="hud-tab" data-tab="cierre">Cierre</button>
+    </div>
+    <div class="hud-status">
+      <div class="hud-pill"><span class="dot"></span>SYS · ONLINE</div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">BUG BUSTERS · MK-III · PERSISTENCE LAYER</div>
+      <h1 class="hero-title">
+        <span class="t-line grad-white">Núcleo de</span>
+        <span class="t-line grad-neon">persistencia</span>
+        <span class="t-line grad-magenta">relacional</span>
+      </h1>
+
+    <div class="hero-right">
+      <div class="reactor-stage">
+        <div class="reactor">
+          <!-- Outer ring SVG with markings -->
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="bbGradCore" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#c8fcff" stop-opacity=".9"/>
+                <stop offset="50%" stop-color="#00f0ff" stop-opacity=".7"/>
+                <stop offset="100%" stop-color="#4a9eff" stop-opacity=".5"/>
+              </linearGradient>
+              <linearGradient id="bbGradMag" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffdcf2" stop-opacity=".7"/>
+                <stop offset="100%" stop-color="#d946ef" stop-opacity=".4"/>
+              </linearGradient>
+              <radialGradient id="bbGradGlow">
+                <stop offset="0%" stop-color="#fff" stop-opacity=".6"/>
+                <stop offset="50%" stop-color="#00f0ff" stop-opacity=".2"/>
+                <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Outermost slow ring with tick marks -->
+            <g style="transform-origin:200px 200px; animation:bbSpin 60s linear infinite">
+              <circle cx="200" cy="200" r="194" fill="none" stroke="url(#bbGradCore)" stroke-width="1" opacity=".5"/>
+              <g stroke="#00f0ff" stroke-width="1" opacity=".4">
+                <line x1="200" y1="6" x2="200" y2="18"/>
+                <line x1="200" y1="382" x2="200" y2="394"/>
+                <line x1="6" y1="200" x2="18" y2="200"/>
+                <line x1="382" y1="200" x2="394" y2="200"/>
+              </g>
+              <g stroke="#00f0ff" stroke-width=".5" opacity=".28">
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(30 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(60 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(120 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(150 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(210 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(240 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(300 200 200)"/>
+                <line x1="200" y1="10" x2="200" y2="20" transform="rotate(330 200 200)"/>
+              </g>
+            </g>
+
+            <!-- Second ring with arc sweep -->
+            <g style="transform-origin:200px 200px; animation:bbSpin 28s linear infinite reverse">
+              <circle cx="200" cy="200" r="170" fill="none" stroke="#00f0ff" stroke-width="1" opacity=".5" stroke-dasharray="4 6"/>
+              <path d="M 200 30 A 170 170 0 0 1 370 200" fill="none" stroke="url(#bbGradCore)" stroke-width="2" opacity=".75"/>
+              <path d="M 200 370 A 170 170 0 0 1 30 200" fill="none" stroke="url(#bbGradMag)" stroke-width="2" opacity=".7"/>
+              <circle cx="200" cy="30" r="4" fill="#fff"/>
+              <circle cx="200" cy="370" r="4" fill="#d946ef"/>
+            </g>
+
+            <!-- Third ring -->
+            <g style="transform-origin:200px 200px; animation:bbSpin 18s linear infinite">
+              <circle cx="200" cy="200" r="142" fill="none" stroke="#00f0ff" stroke-width="1" opacity=".58"/>
+              <g fill="#c8fcff" opacity=".9">
+                <circle cx="200" cy="58" r="3"/>
+                <circle cx="342" cy="200" r="3"/>
+                <circle cx="200" cy="342" r="3"/>
+                <circle cx="58" cy="200" r="3"/>
+              </g>
+            </g>
+
+            <!-- Inner hex/triangular tessellation -->
+            <g style="transform-origin:200px 200px; animation:bbSpin 22s linear infinite reverse">
+              <polygon points="200,86 298,143 298,257 200,314 102,257 102,143"
+                fill="none" stroke="#00f0ff" stroke-width="1.5" opacity=".75"/>
+              <polygon points="200,108 280,154 280,246 200,292 120,246 120,154"
+                fill="rgba(0,240,255,.05)" stroke="#7af2ff" stroke-width="1" opacity=".55"/>
+              <line x1="200" y1="86" x2="200" y2="108" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+              <line x1="298" y1="143" x2="280" y2="154" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+              <line x1="298" y1="257" x2="280" y2="246" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+              <line x1="200" y1="314" x2="200" y2="292" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+              <line x1="102" y1="257" x2="120" y2="246" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+              <line x1="102" y1="143" x2="120" y2="154" stroke="#7af2ff" stroke-width=".7" opacity=".6"/>
+            </g>
+
+            <!-- Triangular blade ring -->
+            <g style="transform-origin:200px 200px; animation:bbSpin 14s linear infinite">
+              <g opacity=".62">
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(45 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(90 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(135 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(217,70,239,.4)" stroke="#d946ef" stroke-width=".8" transform="rotate(180 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(225 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(270 200 200)"/>
+                <polygon points="200,118 215,150 185,150" fill="rgba(0,240,255,.45)" stroke="#00f0ff" stroke-width=".8" transform="rotate(315 200 200)"/>
+              </g>
+            </g>
+
+            <!-- Inner glow ring -->
+            <circle cx="200" cy="200" r="78" fill="none" stroke="#00f0ff" stroke-width="2" opacity=".7"/>
+            <circle cx="200" cy="200" r="72" fill="url(#bbGradGlow)" opacity=".85"/>
+          </svg>
+
+          <div class="reactor-orbit"></div>
+          <div class="reactor-orbit-2"></div>
+
+          <!-- Energy arcs emanating from center -->
+          <div class="energy-arc e1"></div>
+          <div class="energy-arc e2"></div>
+          <div class="energy-arc e3"></div>
+          <div class="energy-arc e4"></div>
+          <div class="energy-arc e5"></div>
+
+          <!-- Central core glow -->
+          <div class="core-light"></div>
+
+        </div>
+      </div>
+    </div>
+      <p class="hero-sub">
+        Tercera fase del proyecto Bug Busters: el sistema evoluciona hacia una solución con <b>persistencia real en MySQL</b>,
+        acceso a datos mediante <b>JDBC</b> y arquitectura desacoplada basada en <b>MVC</b>, <b>DAO</b> y <b>Factory</b>.
+      </p>
+      <p class="hero-text">
+        A partir del diseño orientado a objetos desarrollado en la fase previa, el proyecto adapta sus entidades al modelo relacional
+        y traslada el almacenamiento de clientes, artículos y pedidos a una base de datos real. La lógica se conserva, pero la capa
+        del modelo evoluciona hacia una arquitectura más sólida, segura y mantenible, con control de conexiones, consultas
+        parametrizadas, transacciones, procedimientos almacenados y gestión coherente del stock y del ciclo de vida de los pedidos.
+      </p>
+      <div class="hero-accent"></div>
+      <div class="hero-tags">
+        <span class="hero-tag">IntelliJ IDEA</span>
+        <span class="hero-tag">Java</span>
+        <span class="hero-tag">JDBC</span>
+        <span class="hero-tag alt">MySQL</span>
+        <span class="hero-tag alt">DAO</span>
+        <span class="hero-tag alt">Factory</span>
+        <span class="hero-tag">Transacciones</span>
+        <span class="hero-tag">Procedimientos</span>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric"><b>03</b><span>Entidades con relaciones reales: clientes, artículos, pedidos</span></div>
+        <div class="metric"><b>02</b><span>Patrones de diseño clave para desacoplar la persistencia</span></div>
+        <div class="metric"><b>01</b><span>SGBD relacional central que garantiza la integridad</span></div>
+        <div class="metric"><b>100<small style="font-size:14px;color:var(--core-3)">%</small></b><span>Consultas seguras, parametrizadas y bajo control</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PANELS ===== -->
+  <section class="panels">
+
+    <!-- =========== VISIÓN GENERAL =========== -->
+    <div class="panel active" data-panel="vision">
+      <div class="dual">
+
+        <div class="holo">
+          <div class="holo-inner">
+            <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+            <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+            <div class="panel-head">
+              <div class="panel-head-left">
+                <div class="panel-icon">VG</div>
+                <div>
+                  <h2>Objetivo académico y alcance técnico</h2>
+                  <p>
+                    El propósito del Producto 3 es adaptar el diseño orientado a objetos del sistema al modelo relacional
+                    e implementar persistencia real en MySQL. Esta evolución sustituye estructuras dinámicas en memoria por una
+                    solución persistente gestionada desde Java mediante JDBC, manteniendo la arquitectura MVC y concentrando los
+                    cambios en la capa del modelo.
+                  </p>
+                </div>
+              </div>
+              <span class="panel-badge">Base conceptual</span>
+            </div>
+
+            <div class="feat-grid">
+              <div class="feat">
+                <strong>Persistencia real</strong>
+                <span>La información de clientes, artículos y pedidos se conserva fuera de la ejecución y se mantiene en MySQL.</span>
+              </div>
+              <div class="feat">
+                <strong>Separación de capas</strong>
+                <span>La lógica de negocio no queda acoplada a SQL: queda desacoplada mediante DAO y una factoría de acceso.</span>
+              </div>
+              <div class="feat">
+                <strong>Robustez funcional</strong>
+                <span>Transacciones, procedimientos almacenados y reglas operativas refuerzan coherencia y fiabilidad.</span>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn ghost" data-goto="videos">Ver vídeos</button>
+              <button class="btn ghost" data-goto="arquitectura">Revisar arquitectura</button>
+              <button class="btn ghost" data-goto="recursos">Abrir recursos</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="holo">
+          <div class="holo-inner">
+            <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+            <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+            <div class="panel-head">
+              <div class="panel-head-left">
+                <div class="panel-icon">EV</div>
+                <div>
+                  <h3>Evolución del producto</h3>
+                  <p>
+                    La secuencia de trabajo responde a una progresión técnica clara: partir del diseño previo,
+                    trasladar el dominio al modelo relacional y construir una capa de persistencia organizada y segura.
+                  </p>
+                </div>
+              </div>
+              <span class="panel-badge">Proceso</span>
+            </div>
+
+            <div class="timeline">
+              <div class="step" data-step="1">
+                <strong>Revisión del diseño orientado a objetos</strong>
+                <span>Se parte del diagrama de clases previo para conservar la lógica y definir su traducción relacional.</span>
+              </div>
+              <div class="step" data-step="2">
+                <strong>Construcción del modelo relacional</strong>
+                <span>Las entidades se transforman en tablas, atributos, claves primarias y claves foráneas coherentes.</span>
+              </div>
+              <div class="step" data-step="3">
+                <strong>Integración con Java mediante JDBC</strong>
+                <span>La aplicación establece conexión con MySQL y ejecuta operaciones seguras de lectura y escritura.</span>
+              </div>
+              <div class="step" data-step="4">
+                <strong>Desacoplo con DAO y Factory</strong>
+                <span>La persistencia queda encapsulada para evitar dependencia directa entre lógica y motor de datos.</span>
+              </div>
+              <div class="step" data-step="5">
+                <strong>Consistencia operativa y control</strong>
+                <span>Se refuerzan transacciones, procedimientos, stock y reglas asociadas a pedidos y estados.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========== VÍDEOS =========== -->
+    <div class="panel" data-panel="videos">
+      <div class="holo">
+        <div class="holo-inner">
+          <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+          <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="panel-icon">VD</div>
+              <div>
+                <h2>Desarrollo audiovisual del Producto 3</h2>
+                <p>
+                  La documentación audiovisual se articula en dos piezas complementarias. La primera expone el fundamento
+                  teórico, las decisiones de diseño y el valor académico de la persistencia. La segunda muestra la parte aplicada:
+                  ejecución funcional del sistema, integración con MySQL y evidencia práctica del comportamiento del programa.
+                </p>
+              </div>
+            </div>
+            <span class="panel-badge">Teoría + práctica</span>
+          </div>
+
+          <div class="video-grid">
+            <div class="video-cell">
+              <div class="video-head">
+                <span class="video-label">// Vídeo teórico</span>
+                <span class="video-tag"><span class="dot"></span>STREAM 01</span>
+              </div>
+              <div class="iframe-wrap">
+                <iframe
+                  src="https://www.youtube.com/embed/PTXiY3rUhCY"
+                  title="Vídeo teórico Producto 3"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+              <div class="video-note">
+                Explicación conceptual del Producto 3: contexto académico, adaptación al modelo relacional, uso de JDBC,
+                patrones DAO y Factory, transacciones, procedimientos almacenados y valor técnico global de la entrega.
+              </div>
+            </div>
+
+            <div class="video-cell">
+              <div class="video-head">
+                <span class="video-label">// Vídeo práctico</span>
+                <span class="video-tag"><span class="dot"></span>STREAM 02</span>
+              </div>
+              <div class="iframe-wrap">
+                <iframe
+                  src="https://www.youtube.com/embed/EftMXqGQyV4"
+                  title="Vídeo práctico Producto 3"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+              <div class="video-note">
+                Evidencia funcional del sistema en ejecución: estructura real del proyecto en IntelliJ IDEA, conexión con
+                MySQL, operaciones sobre clientes, artículos y pedidos, y comportamiento efectivo de la persistencia implementada.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== ARQUITECTURA =========== -->
+    <div class="panel" data-panel="arquitectura">
+      <div class="holo">
+        <div class="holo-inner">
+          <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+          <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="panel-icon">AR</div>
+              <div>
+                <h2>Arquitectura aplicada y flujo del sistema</h2>
+                <p>
+                  La estructura interna mantiene la organización del proyecto y desplaza los cambios a la capa de persistencia.
+                  El resultado: una arquitectura limpia, con responsabilidades delimitadas, conexión centralizada con MySQL
+                  y acceso a datos desacoplado del resto de la lógica.
+                </p>
+              </div>
+            </div>
+            <span class="panel-badge">MVC + DAO + Factory</span>
+          </div>
+
+          <div class="arch-row">
+            <div class="arch-node">
+              <strong>Vista</strong>
+              <span>Interacción por consola, menús, entrada de datos y presentación de resultados.</span>
+            </div>
+            <div class="arch-arrow">▶</div>
+            <div class="arch-node">
+              <strong>Controlador</strong>
+              <span>Coordina operaciones, aplica reglas y comunica presentación, dominio y persistencia.</span>
+            </div>
+            <div class="arch-arrow">▶</div>
+            <div class="arch-node">
+              <strong>DAO</strong>
+              <span>Encapsula el acceso a datos y evita mezclar SQL con la lógica de negocio.</span>
+            </div>
+          </div>
+
+          <div class="arch-row" style="margin-top:10px">
+            <div class="arch-node magenta">
+              <strong>DAOFactory</strong>
+              <span>Abstrae la creación de objetos DAO para independizar la lógica del motor de persistencia.</span>
+            </div>
+            <div class="arch-arrow">▶</div>
+            <div class="arch-node magenta">
+              <strong>MySQLDAOFactory</strong>
+              <span>Proporciona las implementaciones específicas para trabajar con MySQL dentro del sistema.</span>
+            </div>
+            <div class="arch-arrow">▶</div>
+            <div class="arch-node magenta">
+              <strong>MySQL</strong>
+              <span>Base relacional donde se almacena de forma persistente toda la información del dominio.</span>
+            </div>
+          </div>
+
+          <div class="feat-grid">
+            <div class="feat">
+              <strong>Conexión centralizada</strong>
+              <span>La gestión de conexión se concentra en una utilidad específica para unificar acceso y control.</span>
+            </div>
+            <div class="feat">
+              <strong>JDBC como capa de acceso</strong>
+              <span>PreparedStatement, ResultSet y CallableStatement permiten operar con la BD de forma controlada.</span>
+            </div>
+            <div class="feat">
+              <strong>Independencia del almacén</strong>
+              <span>La aplicación queda mejor preparada para cambios futuros gracias al desacoplo estructural.</span>
+            </div>
+            <div class="feat">
+              <strong>Consultas seguras</strong>
+              <span>Sentencias parametrizadas evitan concatenación insegura y refuerzan protección frente a SQL Injection.</span>
+            </div>
+            <div class="feat">
+              <strong>Transacciones operativas</strong>
+              <span>Las operaciones sensibles se confirman o revierten para preservar la integridad de los datos.</span>
+            </div>
+            <div class="feat">
+              <strong>Persistencia alineada</strong>
+              <span>La base de datos refleja de forma coherente la estructura lógica del sistema y sus relaciones.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== MODELO RELACIONAL =========== -->
+    <div class="panel" data-panel="modelo">
+      <div class="holo">
+        <div class="holo-inner">
+          <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+          <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="panel-icon">DB</div>
+              <div>
+                <h2>Modelo relacional y reglas funcionales</h2>
+                <p>
+                  La persistencia se apoya en un esquema relacional centrado en tres entidades principales. A partir de ellas
+                  se definen relaciones, restricciones y operaciones que permiten almacenar, consultar y modificar la información
+                  con coherencia respecto al comportamiento real del sistema.
+                </p>
+              </div>
+            </div>
+            <span class="panel-badge">Clientes · Artículos · Pedidos</span>
+          </div>
+
+          <div class="schema">
+            <div class="table-card">
+              <h4>clientes</h4>
+              <div class="field-list">
+                <div class="field pk"><b>id_cliente</b><em>PK</em></div>
+                <div class="field"><b>email</b><em>dato</em></div>
+                <div class="field"><b>nombre</b><em>dato</em></div>
+                <div class="field"><b>domicilio</b><em>dato</em></div>
+                <div class="field"><b>nif</b><em>dato</em></div>
+                <div class="field"><b>tipo_cliente</b><em>dato</em></div>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <h4>articulos</h4>
+              <div class="field-list">
+                <div class="field pk"><b>id_articulo</b><em>PK</em></div>
+                <div class="field"><b>codigo</b><em>dato</em></div>
+                <div class="field"><b>descripcion</b><em>dato</em></div>
+                <div class="field"><b>precio_venta</b><em>dato</em></div>
+                <div class="field"><b>gastos_envio</b><em>dato</em></div>
+                <div class="field"><b>tiempo_preparacion</b><em>dato</em></div>
+                <div class="field"><b>cantidad_disponible</b><em>dato</em></div>
+              </div>
+            </div>
+
+            <div class="table-card alt">
+              <h4>pedidos</h4>
+              <div class="field-list">
+                <div class="field pk"><b>id_pedido</b><em>PK</em></div>
+                <div class="field fk"><b>id_cliente</b><em>FK</em></div>
+                <div class="field fk"><b>id_articulo</b><em>FK</em></div>
+                <div class="field"><b>cantidad</b><em>dato</em></div>
+                <div class="field"><b>fecha_hora</b><em>dato</em></div>
+                <div class="field"><b>estado</b><em>dato</em></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rules">
+            <div class="rule">
+              <strong>Gestión de stock</strong>
+              <span>La persistencia permite actualizar la cantidad disponible de cada artículo según las operaciones del sistema, conectando la BD con la lógica real de negocio.</span>
+            </div>
+            <div class="rule">
+              <strong>Estados de pedido</strong>
+              <span>Los pedidos se registran con su estado correspondiente y forman parte de reglas de sincronización, control de envío y validación operativa.</span>
+            </div>
+            <div class="rule">
+              <strong>Procedimientos almacenados</strong>
+              <span>Las operaciones DML que lo requieren se apoyan en procedimientos para centralizar lógica SQL y reforzar la organización del acceso.</span>
+            </div>
+            <div class="rule">
+              <strong>Integridad y consistencia</strong>
+              <span>Las relaciones entre tablas y el uso de transacciones permiten evitar estados incoherentes y proteger la información persistida.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== RECURSOS =========== -->
+    <div class="panel" data-panel="recursos">
+      <div class="holo">
+        <div class="holo-inner">
+          <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+          <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="panel-icon">RX</div>
+              <div>
+                <h2>Repositorio final del proyecto</h2>
+                <p>
+                  El código fuente y la evidencia de desarrollo se reúnen en el recurso final del producto. El repositorio
+                  refleja la implementación real del sistema, el proceso seguido y la evolución técnica del trabajo.
+                </p>
+              </div>
+            </div>
+            <span class="panel-badge">Código · Trazabilidad</span>
+          </div>
+
+          <div class="resources">
+            <div class="resource">
+              <strong>Repositorio GitHub</strong>
+              <span>
+                Código fuente del proyecto, estructura real de carpetas, clases Java, scripts SQL, evolución técnica
+                del trabajo y evidencia de versionado del equipo durante el desarrollo del Producto 3.
+              </span>
+              <a class="btn primary" href="https://github.com/EricKColl/BugBustersProducto-3-.git" target="_blank" rel="noopener">Abrir repositorio</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== CIERRE =========== -->
+    <div class="panel" data-panel="cierre">
+      <div class="holo">
+        <div class="holo-inner">
+          <span class="holo-corner tl"></span><span class="holo-corner tr"></span>
+          <span class="holo-corner bl"></span><span class="holo-corner br"></span>
+          <div class="panel-head">
+            <div class="panel-head-left">
+              <div class="panel-icon">OK</div>
+              <div>
+                <h2>Síntesis final del Producto 3</h2>
+                <p>
+                  La tercera fase consolida una transformación clave: el sistema evoluciona desde un modelo apoyado en memoria
+                  hacia una solución con persistencia real, estructura desacoplada y decisiones de diseño propias de un desarrollo
+                  sólido. La combinación de Java, JDBC y MySQL, junto con MVC, DAO, Factory, transacciones y procedimientos
+                  almacenados, da lugar a una base técnica coherente, mantenible y alineada con los objetivos académicos.
+                </p>
+              </div>
+            </div>
+            <span class="panel-badge">Resultado global</span>
+          </div>
+
+          <div class="summary">
+            <div class="sum-card">
+              <strong>Persistencia estable</strong>
+              <span>Los datos dejan de depender de la ejecución puntual del programa y forman parte de una base relacional real.</span>
+            </div>
+            <div class="sum-card">
+              <strong>Arquitectura madura</strong>
+              <span>La aplicación preserva su organización y mejora el desacoplo interno gracias a la capa DAO y la factoría.</span>
+            </div>
+            <div class="sum-card">
+              <strong>Mayor rigor técnico</strong>
+              <span>JDBC, transacciones y procedimientos aportan consistencia, seguridad y un enfoque profesional.</span>
+            </div>
+            <div class="sum-card">
+              <strong>Valor académico completo</strong>
+              <span>La entrega integra teoría, aplicación, documentación y trazabilidad dentro de una evolución justificada.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn ghost" data-goto="vision">Volver al inicio</button>
+            <button class="btn ghost" data-goto="videos">Revisar vídeos</button>
+            <button class="btn ghost" data-goto="recursos">Consultar recursos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="footer-strip">
+    BUG BUSTERS · MK-III · <b>NÚCLEO DE PERSISTENCIA RELACIONAL</b> · JAVA · JDBC · MYSQL · DAO · FACTORY
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('bb-mk3');
+  if(!root) return;
+
+  /* ===== Stars ===== */
+  var stars = root.querySelector('#bbStars');
+  if(stars && !stars.dataset.ready){
+    stars.dataset.ready = '1';
+    for(var i=0;i<46;i++){
+      var s = document.createElement('span');
+      s.style.left = (Math.random()*100)+'%';
+      s.style.top = (Math.random()*100)+'%';
+      s.style.animationDuration = (2 + Math.random()*4).toFixed(2)+'s';
+      s.style.animationDelay = (-Math.random()*6)+'s';
+      s.style.opacity = (.10 + Math.random()*.7).toFixed(2);
+      stars.appendChild(s);
+    }
+  }
+
+  /* ===== Code rain ===== */
+  var rain = root.querySelector('#bbRain');
+  if(rain && !rain.dataset.ready){
+    rain.dataset.ready = '1';
+    var lines = [
+      "Connection cn = DriverManager.getConnection(url, user, pass);",
+      "PreparedStatement ps = cn.prepareStatement(sql);",
+      "CallableStatement cs = cn.prepareCall(\"{CALL sp_pedido(?,?)}\");",
+      "ResultSet rs = ps.executeQuery();",
+      "DAOFactory factory = new MySQLDAOFactory();",
+      "ClienteDAO dao = factory.getClienteDAO();",
+      "cn.setAutoCommit(false); ... cn.commit();",
+      "INSERT INTO pedidos (id_cliente, id_articulo) VALUES (?, ?);",
+      "SELECT * FROM clientes WHERE nif = ?",
+      "UPDATE articulos SET cantidad_disponible = ? WHERE id_articulo = ?",
+      "CALL sp_actualizar_stock(?, ?);",
+      "// MVC · DAO · FACTORY · TX",
+      "class Pedido { private int id; private Cliente cliente; }",
+      "class Articulo { private double precioVenta; }",
+      "throw new SQLException(\"rollback\");"
+    ];
+    for(var j=0;j<18;j++){
+      var sp = document.createElement('span');
+      sp.textContent = lines[j % lines.length];
+      sp.style.left = (Math.random()*100)+'%';
+      sp.style.animationDuration = (14 + Math.random()*16)+'s';
+      sp.style.animationDelay = (-Math.random()*22)+'s';
+      sp.style.opacity = (.14 + Math.random()*.18).toFixed(2);
+      rain.appendChild(sp);
+    }
+  }
+
+  /* ===== Boot sequence ===== */
+  var boot = root.querySelector('#bbBoot');
+  var bar = root.querySelector('#bbBarFill');
+  var pct = root.querySelector('#bbPct');
+  var pctTag = root.querySelector('#bbPctTag');
+  var log = root.querySelector('#bbLog');
+  var app = root.querySelector('#bbApp');
+
+  var logLines = [
+    {t:'Booting BB-MK-III kernel ...', k:''},
+    {t:'Mounting core modules [OK]', k:'ok'},
+    {t:'Establishing JDBC handshake ...', k:''},
+    {t:'Loading DAO factory protocols', k:''},
+    {t:'MySQL link · 3306 · online', k:'ok'},
+    {t:'Verifying schema integrity ...', k:''},
+    {t:'Procedimientos almacenados : ready', k:'ok'},
+    {t:'Transactions enabled · ACID', k:''},
+    {t:'Stark relay channel synced', k:'ok'},
+    {t:'ACCESS GRANTED · entering HUD', k:'ok'}
+  ];
+
+  var step = 0;
+  function addLog(){
+    if(!log) return;
+    if(step >= logLines.length) return;
+    var d = document.createElement('div');
+    d.className = 'log-line ' + (logLines[step].k || '');
+    d.textContent = logLines[step].t;
+    log.appendChild(d);
+    var lines = log.querySelectorAll('.log-line');
+    if(lines.length > 4){
+      lines[0].remove();
+    }
+    step++;
+  }
+
+  var pctVal = 0;
+  var tickInterval = setInterval(addLog, 320);
+
+  var startTime = performance.now();
+  var DURATION = 3400;
+  function tick(now){
+    var elapsed = now - startTime;
+    var p = Math.min(1, elapsed / DURATION);
+    var eased = p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p+2, 3)/2;
+    pctVal = Math.floor(eased * 100);
+    if(bar) bar.style.width = pctVal + '%';
+    if(pct) pct.textContent = '[ ' + String(pctVal).padStart(3,'0') + '% ]';
+    if(pctTag){
+      if(pctVal < 30) pctTag.textContent = 'BOOT';
+      else if(pctVal < 70) pctTag.textContent = 'JDBC';
+      else if(pctVal < 95) pctTag.textContent = 'DAO';
+      else pctTag.textContent = 'READY';
+    }
+    if(p < 1) requestAnimationFrame(tick);
+    else {
+      clearInterval(tickInterval);
+      setTimeout(function(){
+        if(boot) boot.classList.add('gone');
+        if(app) app.classList.add('live');
+      }, 420);
+    }
+  }
+  addLog();
+  requestAnimationFrame(tick);
+
+  /* ===== Tabs ===== */
+  function activate(name){
+    var tabs = root.querySelectorAll('.hud-tab[data-tab]');
+    var panels = root.querySelectorAll('.panel[data-panel]');
+    tabs.forEach(function(t){
+      t.classList.toggle('active', t.getAttribute('data-tab') === name);
+    });
+    panels.forEach(function(p){
+      var isActive = p.getAttribute('data-panel') === name;
+      p.classList.toggle('active', isActive);
+    });
+  }
+
+  root.addEventListener('click', function(e){
+    var t = e.target.closest('.hud-tab[data-tab]');
+    if(t && root.contains(t)){
+      e.preventDefault();
+      activate(t.getAttribute('data-tab'));
+      var nav = root.querySelector('.hud-nav');
+      if(nav && nav.scrollIntoView){
+        try { nav.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch(_){}
+      }
+      return;
+    }
+    var g = e.target.closest('[data-goto]');
+    if(g && root.contains(g)){
+      e.preventDefault();
+      activate(g.getAttribute('data-goto'));
+      var nav2 = root.querySelector('.hud-nav');
+      if(nav2 && nav2.scrollIntoView){
+        try { nav2.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch(_){}
+      }
+    }
+  }, true);
+
+  /* ===== Mouse parallax (subtle) ===== */
+  var reactor = root.querySelector('.reactor');
+  root.addEventListener('mousemove', function(e){
+    if(!reactor) return;
+    var rect = root.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width - .5;
+    var y = (e.clientY - rect.top) / rect.height - .5;
+    reactor.style.transform = 'translate(' + (x*8) + 'px, ' + (y*8) + 'px)';
+  });
+  root.addEventListener('mouseleave', function(){
+    if(reactor) reactor.style.transform = '';
+  });
+})();
+</script>
+
+</div>
+</div>
+</body>
+</html>

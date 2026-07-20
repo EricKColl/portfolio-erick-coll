@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobConnect — Full Stack Attack · Producto 1</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+:root{
+  --c:#00f5ff;
+  --m:#ff006e;
+  --g:#00ff9f;
+  --y:#ffdd00;
+  --bg:#000510;
+  --bg1:#000c1e;
+  --bg2:#001228;
+  --panel:rgba(0,15,40,.85);
+  --panelb:rgba(0,245,255,.04);
+  --border:rgba(0,245,255,.15);
+  --border2:rgba(255,0,110,.12);
+  --text:#c8f4ff;
+  --muted:#4a8fa8;
+  --glow:0 0 20px rgba(0,245,255,.5),0 0 60px rgba(0,245,255,.2);
+  --glow-m:0 0 20px rgba(255,0,110,.5),0 0 60px rgba(255,0,110,.2);
+  --glow-g:0 0 20px rgba(0,255,159,.5),0 0 60px rgba(0,255,159,.2);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+#cyb{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  width:min(1280px,100%);
+  margin:0 auto;
+  background:var(--bg);
+  font-family:'Rajdhani',sans-serif;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:4px;
+  box-shadow:
+    0 0 0 1px rgba(0,245,255,.08),
+    0 0 80px rgba(0,10,30,.9),
+    inset 0 0 120px rgba(0,5,20,.5);
+}
+
+/* CANVAS LAYER */
+#cyb canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* SCANLINES */
+#cyb::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,.12) 0px,
+    rgba(0,0,0,.12) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events:none;
+  z-index:100;
+  animation:scanmove 8s linear infinite;
+}
+/* VIGNETTE */
+#cyb::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,2,10,.7) 100%);
+  pointer-events:none;
+  z-index:99;
+}
+
+/* CIRCUIT LINES BG */
+.circuit{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background-image:
+    linear-gradient(90deg, rgba(0,245,255,.03) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,245,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,.015) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0,245,255,.015) 1px, transparent 1px);
+  background-size:80px 80px, 80px 80px, 20px 20px, 20px 20px;
+  animation:circuitScroll 40s linear infinite;
+  mask-image:radial-gradient(ellipse at 50% 30%, rgba(0,0,0,1), transparent 72%);
+}
+
+/* CONTENT */
+.cyb-content{
+  position:relative;
+  z-index:10;
+  padding:0;
+}
+
+/* ═══════════════ HERO ═══════════════ */
+.cyb-hero{
+  position:relative;
+  padding:52px 40px 44px;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(0,245,255,.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 0%, rgba(255,0,110,.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,255,159,.05) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(0,18,50,.6), rgba(0,5,20,.4));
+  text-align:center;
+}
+
+/* 3D HEX ORBS in hero */
+.hero-orb{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  animation:orbFloat 6s ease-in-out infinite;
+}
+.hero-orb-1{
+  width:300px;height:300px;
+  right:-60px;top:-80px;
+  background:conic-gradient(from 0deg,
+    transparent 0%, rgba(0,245,255,.15) 20%,
+    transparent 40%, rgba(0,255,159,.10) 60%,
+    transparent 80%, rgba(0,245,255,.12) 100%);
+  filter:blur(2px);
+  border:1px solid rgba(0,245,255,.20);
+  box-shadow:inset 0 0 80px rgba(0,245,255,.08), 0 0 60px rgba(0,245,255,.08);
+  animation-delay:0s;
+}
+.hero-orb-2{
+  width:180px;height:180px;
+  left:-40px;bottom:-40px;
+  background:conic-gradient(from 120deg,
+    transparent 0%, rgba(255,0,110,.15) 25%,
+    transparent 50%, rgba(255,0,110,.08) 75%,transparent 100%);
+  filter:blur(2px);
+  border:1px solid rgba(255,0,110,.15);
+  box-shadow:inset 0 0 40px rgba(255,0,110,.05), 0 0 40px rgba(255,0,110,.05);
+  animation-delay:2s;
+}
+
+.cyb-kicker{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:min(100%,980px);
+  margin:0 auto;
+  padding:8px 16px;
+  border:1px solid rgba(0,245,255,.25);
+  background:rgba(0,245,255,.05);
+  border-radius:2px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.22em;
+  color:var(--c);
+  text-transform:uppercase;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--glow);
+  text-align:center;
+  flex-wrap:wrap;
+}
+.cyb-kicker::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.15),transparent);
+  transform:translateX(-100%);
+  animation:shimmer 3s ease-in-out infinite;
+}
+.kicker-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c);
+  box-shadow:var(--glow);
+  animation:blink 1.4s ease-in-out infinite;
+  flex:0 0 auto;
+}
+
+.cyb-hero-title{
+  margin:22px auto 16px;
+  font-family:'Orbitron',monospace;
+  font-size:clamp(24px,3.9vw,64px);
+  font-weight:900;
+  line-height:1.02;
+  letter-spacing:-.02em;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  text-align:center;
+  max-width:100%;
+}
+.title-line{
+  display:inline-block;
+  position:relative;
+  flex:0 0 auto;
+}
+.t-silver{
+  background:linear-gradient(180deg,#ffffff 0%,#8ec8d8 60%,#4a8fa8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.t-neon{
+  background:linear-gradient(180deg,#ffffff 0%,#00f5ff 50%,#00a8b5 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 20px rgba(0,245,255,.6));
+  animation:neonPulse 3s ease-in-out infinite;
+}
+.t-mag{
+  background:linear-gradient(180deg,#ffccdf 0%,#ff006e 60%,#a00044 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 20px rgba(255,0,110,.5));
+}
+
+/* GLITCH */
+.glitch{
+  position:relative;
+  display:inline-block;
+}
+.glitch::before,.glitch::after{
+  content:attr(data-text);
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:inherit;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.glitch::before{
+  filter:drop-shadow(0 0 20px rgba(255,0,110,.8));
+  animation:glitchA 4s ease-in-out infinite;
+  clip-path:polygon(0 0,100% 0,100% 33%,0 33%);
+}
+.glitch::after{
+  filter:drop-shadow(0 0 20px rgba(0,255,159,.8));
+  animation:glitchB 4s ease-in-out infinite;
+  clip-path:polygon(0 66%,100% 66%,100% 100%,0 100%);
+}
+
+.cyb-subhero{
+  max-width:1140px;
+  color:#9dc8d8;
+  font-size:clamp(16px,1.6vw,20px);
+  line-height:1.55;
+  font-weight:400;
+  margin:0 auto 12px;
+  text-align:center;
+}
+.cyb-subhero strong{color:var(--c);}
+.cyb-intro{
+  max-width:1140px;
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(11px,.9vw,13px);
+  line-height:1.9;
+  margin:0 auto;
+  text-align:center;
+}
+.cyb-intro em{color:rgba(0,245,255,.7);font-style:normal;}
+
+.hero-accent{
+  margin:18px auto 0;
+  height:2px;
+  width:340px;
+  max-width:100%;
+  background:linear-gradient(90deg,transparent,var(--c),rgba(0,255,159,.6),var(--m),transparent);
+  box-shadow:0 0 20px rgba(0,245,255,.4), 0 0 40px rgba(255,0,110,.2);
+  border-radius:2px;
+  animation:accentPulse 4s ease-in-out infinite;
+}
+
+/* STAT GRID */
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:22px;
+}
+.stat-card{
+  padding:14px;
+  border:1px solid rgba(0,245,255,.12);
+  background:
+    linear-gradient(135deg,rgba(0,245,255,.06),rgba(0,245,255,.02)),
+    rgba(0,10,25,.4);
+  border-radius:3px;
+  position:relative;
+  overflow:hidden;
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  cursor:default;
+}
+.stat-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--c),transparent);
+  opacity:.6;
+}
+.stat-card::after{
+  content:"";
+  position:absolute;
+  bottom:-30px;right:-30px;
+  width:80px;height:80px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,245,255,.15),transparent 70%);
+  pointer-events:none;
+}
+.stat-card:hover{
+  transform:translateY(-3px) scale(1.02);
+  border-color:rgba(0,245,255,.35);
+  box-shadow:0 0 30px rgba(0,245,255,.15), 0 8px 30px rgba(0,0,0,.3);
+}
+.stat-card b{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:14px;
+  color:#fff;
+  margin-bottom:6px;
+  letter-spacing:.1em;
+}
+.stat-card span{
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  line-height:1.5;
+}
+.stat-num{
+  font-family:'Orbitron',monospace;
+  font-size:32px;
+  font-weight:900;
+  background:linear-gradient(180deg,#fff,var(--c));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  display:block;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+/* ═══════════════ NAV TABS ═══════════════ */
+.cyb-tabs{
+  display:flex;
+  gap:2px;
+  flex-wrap:wrap;
+  padding:14px 40px 0;
+  border-bottom:1px solid rgba(0,245,255,.10);
+  background:rgba(0,5,15,.6);
+  position:relative;
+}
+.cyb-tabs::before{
+  content:"";
+  position:absolute;
+  bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.3),rgba(0,255,159,.2),rgba(255,0,110,.2),transparent);
+}
+.tab-btn{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  padding:10px 16px 12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  background:transparent;
+  border-bottom:2px solid transparent;
+  position:relative;
+  transition:color .2s, border-color .2s;
+  white-space:nowrap;
+  border-radius:0;
+}
+.tab-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,245,255,.08),transparent);
+  opacity:0;
+  transition:opacity .2s;
+}
+.tab-btn:hover{color:rgba(0,245,255,.7);}
+.tab-btn:hover::before{opacity:1;}
+.tab-btn.active{
+  color:var(--c);
+  border-bottom:2px solid var(--c);
+  text-shadow:0 0 14px rgba(0,245,255,.8);
+}
+.tab-btn.active::after{
+  content:"";
+  position:absolute;
+  bottom:-1px;left:0;right:0;height:2px;
+  background:var(--c);
+  box-shadow:var(--glow);
+  border-radius:2px;
+}
+
+/* ═══════════════ PANELS ═══════════════ */
+.panel-stack{padding:28px 40px 40px;display:grid;gap:20px;}
+.tab-panel{display:none;opacity:0;}
+.tab-panel.active{display:block;animation:panelIn .4s cubic-bezier(.2,.8,.18,1) forwards;}
+
+/* ═══════════════ SECTION CARDS ═══════════════ */
+.sec-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:4px;
+  padding:28px;
+  border:1px solid rgba(0,245,255,.12);
+  background:var(--panel);
+  backdrop-filter:blur(12px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.02),
+    inset 0 1px 0 rgba(0,245,255,.10),
+    0 20px 60px rgba(0,0,0,.5);
+  transform-style:preserve-3d;
+  transition:transform .4s ease, box-shadow .4s ease;
+}
+.sec-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.6),rgba(0,255,159,.3),transparent);
+  box-shadow:0 0 16px rgba(0,245,255,.3);
+}
+.sec-card::after{
+  content:"";
+  position:absolute;
+  bottom:0;right:0;
+  width:200px;height:200px;
+  background:conic-gradient(from 240deg,transparent 0%,rgba(0,245,255,.08) 30%,transparent 60%);
+  pointer-events:none;
+  filter:blur(20px);
+}
+
+/* Corner decorations */
+.sec-card .corner{
+  position:absolute;
+  width:14px;height:14px;
+  pointer-events:none;
+}
+.sec-card .corner.tl{top:0;left:0;border-top:2px solid var(--c);border-left:2px solid var(--c);}
+.sec-card .corner.tr{top:0;right:0;border-top:2px solid var(--c);border-right:2px solid var(--c);}
+.sec-card .corner.bl{bottom:0;left:0;border-bottom:2px solid rgba(0,245,255,.4);border-left:2px solid rgba(0,245,255,.4);}
+.sec-card .corner.br{bottom:0;right:0;border-bottom:2px solid rgba(0,245,255,.4);border-right:2px solid rgba(0,245,255,.4);}
+
+.sec-card-mag::before{
+  background:linear-gradient(90deg,transparent,rgba(255,0,110,.5),rgba(0,245,255,.3),transparent);
+}
+.sec-card-mag .corner.tl,.sec-card-mag .corner.tr{border-color:var(--m);}
+.sec-card-mag::after{
+  background:conic-gradient(from 60deg,transparent 0%,rgba(255,0,110,.08) 30%,transparent 60%);
+}
+
+.sec-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:22px;
+  position:relative;z-index:1;
+}
+.title-wrap{display:flex;gap:14px;align-items:flex-start;min-width:0;}
+.sec-icon{
+  flex:0 0 auto;
+  width:52px;height:52px;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(0,245,255,.05));
+  border:1px solid rgba(0,245,255,.3);
+  box-shadow:0 0 20px rgba(0,245,255,.15),inset 0 0 20px rgba(0,245,255,.05);
+  font-family:'Orbitron',monospace;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  color:var(--c);
+  text-shadow:var(--glow);
+  position:relative;overflow:hidden;
+}
+.sec-icon::before{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);
+}
+.sec-icon-m{
+  background:linear-gradient(135deg,rgba(255,0,110,.15),rgba(255,0,110,.05));
+  border-color:rgba(255,0,110,.3);
+  box-shadow:0 0 20px rgba(255,0,110,.15),inset 0 0 20px rgba(255,0,110,.05);
+  color:var(--m);
+  text-shadow:var(--glow-m);
+}
+.sec-card h2,.sec-card h3{
+  margin:0;
+  font-family:'Orbitron',monospace;
+  color:#f0fbff;
+  letter-spacing:-.01em;
+  line-height:1.1;
+}
+.sec-card h2{font-size:26px;font-weight:900;}
+.sec-card h3{font-size:21px;font-weight:700;}
+.sec-card p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+  position:relative;z-index:1;
+}
+.sec-card p strong{color:var(--c);}
+
+.badge{
+  flex:0 0 auto;
+  padding:7px 12px;
+  border:1px solid rgba(0,245,255,.2);
+  background:rgba(0,245,255,.06);
+  color:var(--c);
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.22em;
+  border-radius:2px;
+  white-space:nowrap;
+  box-shadow:0 0 12px rgba(0,245,255,.08);
+}
+.badge-m{
+  border-color:rgba(255,0,110,.2);
+  background:rgba(255,0,110,.06);
+  color:var(--m);
+  box-shadow:0 0 12px rgba(255,0,110,.08);
+}
+.badge-g{
+  border-color:rgba(0,255,159,.2);
+  background:rgba(0,255,159,.06);
+  color:var(--g);
+  box-shadow:0 0 12px rgba(0,255,159,.08);
+}
+
+/* ═══════════════ MEDIA / VIDEO ═══════════════ */
+.media-frame{
+  position:relative;z-index:1;
+  margin-top:18px;
+  border-radius:4px;
+  padding:14px;
+  background:rgba(0,5,20,.6);
+  border:1px solid rgba(0,245,255,.12);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.4), 0 0 30px rgba(0,245,255,.05);
+}
+.holo-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:12px;
+  padding:9px 12px;
+  border:1px solid rgba(0,245,255,.10);
+  background:rgba(0,245,255,.04);
+  border-radius:2px;
+}
+.holo-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--c);
+}
+.holo-indicators{display:flex;align-items:center;gap:8px;}
+.holo-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c);
+  box-shadow:var(--glow);
+  animation:blink 1.4s ease-in-out infinite;
+}
+.holo-dot.m{background:var(--m);box-shadow:var(--glow-m);animation-delay:.5s;}
+.holo-dot.g{background:var(--g);box-shadow:var(--glow-g);animation-delay:1s;}
+.holo-bar-text{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  color:rgba(0,245,255,.35);
+}
+.iframe-wrap{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:3px;
+  overflow:hidden;
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(0,245,255,.08);
+}
+.iframe-wrap::before{
+  content:"";
+  position:absolute;
+  inset:0;z-index:1;
+  background:
+    linear-gradient(180deg,rgba(0,245,255,.04) 0%,transparent 4%),
+    linear-gradient(180deg,transparent 96%,rgba(0,245,255,.04) 100%);
+  pointer-events:none;
+}
+.iframe-wrap iframe{
+  position:absolute;inset:0;
+  width:100%;height:100%;border:0;
+}
+
+/* YOUTUBE FACADE — HD thumbnail + lazy iframe load */
+.yt-facade{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:3px;
+  overflow:hidden;
+  background:#000;
+  cursor:pointer;
+  border:1px solid rgba(0,245,255,.08);
+}
+.yt-facade img.yt-thumb{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  image-rendering:-webkit-optimize-contrast;
+  filter:saturate(1.08) contrast(1.04);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+}
+.yt-facade:hover img.yt-thumb{
+  transform:scale(1.03);
+  filter:saturate(1.15) contrast(1.06) brightness(.85);
+}
+.yt-facade .yt-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.08) 0%,transparent 30%,transparent 60%,rgba(0,0,0,.45) 100%),
+    radial-gradient(circle at center,transparent 30%,rgba(0,5,20,.25) 100%);
+  transition:background .4s;
+}
+.yt-facade:hover .yt-overlay{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.18) 0%,transparent 30%,transparent 60%,rgba(0,0,0,.62) 100%),
+    radial-gradient(circle at center,transparent 20%,rgba(0,5,20,.38) 100%);
+}
+.yt-facade .yt-scanline{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,rgba(0,0,0,.04) 1px,transparent 2px,transparent 4px);
+}
+.yt-facade .yt-play-btn{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(1);
+  z-index:3;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(0,0,0,.72);
+  border:2px solid rgba(0,245,255,.55);
+  box-shadow:0 0 0 6px rgba(0,245,255,.06),0 0 30px rgba(0,245,255,.35),0 0 60px rgba(0,245,255,.12),inset 0 0 20px rgba(0,245,255,.04);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s;
+  backdrop-filter:blur(6px);
+}
+.yt-facade:hover .yt-play-btn{
+  transform:translate(-50%,-50%) scale(1.13);
+  border-color:var(--c);
+  box-shadow:0 0 0 12px rgba(0,245,255,.08),0 0 40px rgba(0,245,255,.55),0 0 80px rgba(0,245,255,.22),inset 0 0 28px rgba(0,245,255,.07);
+}
+.yt-facade .yt-play-btn svg{
+  width:30px;height:30px;fill:var(--c);
+  margin-left:5px;
+  filter:drop-shadow(0 0 8px rgba(0,245,255,.8));
+  transition:fill .3s,filter .3s;
+}
+.yt-facade:hover .yt-play-btn svg{fill:#fff;filter:drop-shadow(0 0 14px rgba(0,245,255,1));}
+.yt-facade .yt-label{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:3;
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(0,245,255,.55);text-shadow:0 0 10px rgba(0,245,255,.35);
+  white-space:nowrap;transition:color .3s,text-shadow .3s;
+}
+.yt-facade:hover .yt-label{color:var(--c);text-shadow:0 0 16px rgba(0,245,255,.8);}
+.yt-facade.loaded iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:3px;
+}
+
+/* DOC EMBED */
+.doc-embed-wrap{
+  position:relative;
+  width:100%;
+  height:680px;
+  border-radius:3px;
+  overflow:hidden;
+  border:1px solid rgba(0,245,255,.08);
+  background:rgba(0,0,0,.3);
+}
+.doc-embed-wrap::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--c),var(--g),transparent);
+  z-index:2;
+}
+.doc-embed-wrap iframe{
+  position:absolute;inset:0;
+  width:100%;height:100%;border:0;
+}
+
+/* FEATURE GRID */
+.feat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+  position:relative;z-index:1;
+}
+.feat{
+  border-radius:3px;
+  padding:16px;
+  border:1px solid rgba(0,245,255,.10);
+  background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(0,245,255,.02));
+  position:relative;overflow:hidden;
+  transition:border-color .3s, transform .3s, box-shadow .3s;
+}
+.feat:hover{
+  border-color:rgba(0,245,255,.28);
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(0,245,255,.1);
+}
+.feat::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),transparent);
+  opacity:.5;
+}
+.feat strong{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:12px;
+  font-weight:700;
+  color:#d8f8ff;
+  margin-bottom:8px;
+  letter-spacing:.05em;
+}
+.feat span{
+  display:block;
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  line-height:1.65;
+}
+.feat-m{
+  border-color:rgba(255,0,110,.10);
+  background:linear-gradient(135deg,rgba(255,0,110,.05),rgba(255,0,110,.02));
+}
+.feat-m::before{background:linear-gradient(90deg,transparent,rgba(255,0,110,.4),transparent);}
+.feat-m:hover{border-color:rgba(255,0,110,.28);box-shadow:0 8px 30px rgba(255,0,110,.1);}
+.feat-g{
+  border-color:rgba(0,255,159,.10);
+  background:linear-gradient(135deg,rgba(0,255,159,.05),rgba(0,255,159,.02));
+}
+.feat-g::before{background:linear-gradient(90deg,transparent,rgba(0,255,159,.4),transparent);}
+
+/* LIST GRID */
+.list-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:14px;margin-top:18px;
+}
+.list-card{
+  border-radius:3px;padding:18px;
+  border:1px solid rgba(0,245,255,.10);
+  background:linear-gradient(180deg,rgba(0,245,255,.04),rgba(0,245,255,.02));
+  position:relative;overflow:hidden;
+}
+.list-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.5),transparent);
+}
+.list-card h4{
+  margin:0 0 12px;
+  font-family:'Orbitron',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--c);
+  text-shadow:0 0 10px rgba(0,245,255,.4);
+}
+.list-card ul{margin:0;padding-left:16px;}
+.list-card li{
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  line-height:1.75;
+  margin:0 0 3px;
+  position:relative;
+}
+.list-card li::marker{color:var(--c);}
+
+/* TIMELINE */
+.timeline{
+  position:relative;display:grid;gap:14px;
+  margin-top:18px;padding-left:32px;
+}
+.timeline::before{
+  content:"";
+  position:absolute;
+  left:10px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--c),rgba(0,255,159,.5),rgba(255,0,110,.3));
+  box-shadow:0 0 14px rgba(0,245,255,.4);
+  border-radius:2px;
+}
+.time-card{
+  position:relative;
+  border-radius:3px;padding:16px;
+  border:1px solid rgba(0,245,255,.10);
+  background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(0,245,255,.02));
+  transition:border-color .3s,transform .3s;
+}
+.time-card:hover{
+  border-color:rgba(0,245,255,.25);
+  transform:translateX(4px);
+}
+.time-card::before{
+  content:"";
+  position:absolute;
+  left:-28px;top:18px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--c);
+  box-shadow:0 0 14px rgba(0,245,255,.8), 0 0 28px rgba(0,245,255,.4);
+  border:2px solid var(--bg);
+}
+.time-card b{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--c);
+  margin-bottom:7px;
+}
+.time-card span{
+  display:block;
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  line-height:1.7;
+}
+
+/* UNIFORM STACK */
+.uniform-stack{
+  display:grid;gap:18px;
+  margin-top:18px;
+  justify-items:center;
+}
+.media-card{
+  position:relative;overflow:hidden;
+  border-radius:4px;padding:14px;
+  background:rgba(0,5,20,.7);
+  border:1px solid rgba(0,245,255,.12);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 0 40px rgba(0,245,255,.04);
+  width:min(100%,960px);
+}
+.media-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.8),rgba(0,255,159,.4),transparent);
+}
+.media-box{
+  width:100%;
+  overflow:hidden;border-radius:3px;
+  border:1px solid rgba(0,245,255,.08);
+  background:rgba(0,0,0,.5);
+  position:relative;
+  line-height:0;
+}
+.media-box::after{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(0,245,255,.05) 0%,transparent 6%),
+    linear-gradient(180deg,transparent 94%,rgba(0,245,255,.05) 100%),
+    linear-gradient(90deg,rgba(0,245,255,.03) 0%,transparent 6%),
+    linear-gradient(90deg,transparent 94%,rgba(0,245,255,.03) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+.media-box img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:unset;
+  image-rendering:high-quality;
+  -webkit-font-smoothing:antialiased;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+  filter:saturate(1.05) contrast(1.02);
+}
+.media-box:hover img{
+  transform:scale(1.025);
+  filter:saturate(1.12) contrast(1.04) brightness(1.02);
+}
+.media-caption{
+  margin-top:10px;
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  line-height:1.65;
+}
+
+/* ACTIONS / BUTTONS */
+.actions{
+  display:flex;gap:10px;flex-wrap:wrap;
+  margin-top:18px;position:relative;z-index:1;
+}
+.btn{
+  appearance:none;border:none;
+  border-radius:3px;
+  padding:11px 20px;
+  font-family:'Share Tech Mono',monospace;
+  font-weight:400;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;text-align:center;
+  transition:transform .2s,box-shadow .2s,opacity .2s;
+  position:relative;overflow:hidden;
+  white-space:nowrap;
+}
+.btn::before{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transform:translateX(-100%);
+  transition:transform .4s ease;
+}
+.btn:hover::before{transform:translateX(100%);}
+.btn:hover{transform:translateY(-2px);}
+
+.btn-c{
+  color:#000510;
+  background:linear-gradient(180deg,rgba(180,252,255,1) 0%,var(--c) 60%,rgba(0,160,181,1) 100%);
+  box-shadow:0 0 0 1px rgba(0,245,255,.3) inset,0 0 20px rgba(0,245,255,.3),0 0 40px rgba(0,245,255,.1);
+}
+.btn-c:hover{box-shadow:0 0 0 1px rgba(0,245,255,.5) inset,0 0 30px rgba(0,245,255,.5),0 0 60px rgba(0,245,255,.2);}
+.btn-outline{
+  color:var(--c);
+  background:rgba(0,245,255,.05);
+  border:1px solid rgba(0,245,255,.2);
+  box-shadow:0 0 10px rgba(0,245,255,.05);
+}
+.btn-outline:hover{
+  border-color:rgba(0,245,255,.45);
+  box-shadow:0 0 20px rgba(0,245,255,.2),0 0 40px rgba(0,245,255,.08);
+}
+.btn-m{
+  color:var(--m);
+  background:rgba(255,0,110,.06);
+  border:1px solid rgba(255,0,110,.2);
+  box-shadow:0 0 10px rgba(255,0,110,.05);
+}
+.btn-m:hover{border-color:rgba(255,0,110,.45);box-shadow:0 0 20px rgba(255,0,110,.2);}
+.btn-disabled{
+  color:rgba(74,143,168,.4);
+  background:rgba(0,245,255,.02);
+  border:1px dashed rgba(0,245,255,.08);
+  cursor:not-allowed;opacity:.6;
+}
+.btn-disabled:hover{transform:none;}
+
+/* DATA STREAM EFFECT in panels */
+.data-stream{
+  position:absolute;
+  right:0;top:0;bottom:0;
+  width:2px;
+  background:linear-gradient(180deg,transparent,rgba(0,245,255,.6),transparent);
+  animation:dataStream 3s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* FOOTER */
+.cyb-footer{
+  padding:16px 40px;
+  border-top:1px solid rgba(0,245,255,.08);
+  background:rgba(0,3,12,.6);
+  text-align:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(74,143,168,.5);
+  position:relative;
+}
+.cyb-footer::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,.2),rgba(255,0,110,.1),transparent);
+}
+
+/* ══════ KEYFRAMES ══════ */
+@keyframes scanmove{
+  from{background-position:0 0}
+  to{background-position:0 10px}
+}
+@keyframes circuitScroll{
+  from{transform:translate(0,0)}
+  to{transform:translate(80px,80px)}
+}
+@keyframes shimmer{
+  0%{transform:translateX(-100%)}
+  60%,100%{transform:translateX(100%)}
+}
+@keyframes blink{
+  0%,100%{opacity:.4}
+  50%{opacity:1}
+}
+@keyframes neonPulse{
+  0%,100%{filter:drop-shadow(0 0 20px rgba(0,245,255,.6))}
+  50%{filter:drop-shadow(0 0 40px rgba(0,245,255,1)) drop-shadow(0 0 80px rgba(0,245,255,.4))}
+}
+@keyframes orbFloat{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-18px) rotate(8deg)}
+}
+@keyframes accentPulse{
+  0%,100%{opacity:.8;transform:scaleX(1)}
+  50%{opacity:1;transform:scaleX(1.06)}
+}
+@keyframes glitchA{
+  0%,90%,100%{transform:translate(0,0);opacity:0}
+  92%{transform:translate(-3px,0);opacity:.8;filter:drop-shadow(0 0 20px rgba(255,0,110,.9))}
+  96%{transform:translate(2px,0);opacity:.6}
+}
+@keyframes glitchB{
+  0%,90%,100%{transform:translate(0,0);opacity:0}
+  93%{transform:translate(3px,0);opacity:.8;filter:drop-shadow(0 0 20px rgba(0,255,159,.9))}
+  97%{transform:translate(-2px,0);opacity:.6}
+}
+@keyframes dataStream{
+  0%{opacity:0;transform:scaleY(0) translateY(-100%)}
+  30%{opacity:1}
+  70%{opacity:1}
+  100%{opacity:0;transform:scaleY(0) translateY(100%)}
+}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(12px) scale(.995)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes holoPulse{
+  0%,100%{opacity:.5}50%{opacity:1}
+}
+@keyframes rotate3d{
+  from{transform:rotateY(0deg) rotateX(15deg)}
+  to{transform:rotateY(360deg) rotateX(15deg)}
+}
+
+/* RESPONSIVE */
+@media(max-width:980px){
+  #cyb{border-radius:3px;}
+  .cyb-hero{padding:36px 24px 32px;}
+  .cyb-kicker{
+    width:min(100%,100%);
+    letter-spacing:.18em;
+  }
+  .cyb-hero-title{
+    gap:10px;
+    font-size:clamp(20px,4vw,44px);
+  }
+  .cyb-subhero,.cyb-intro{
+    max-width:100%;
+  }
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .cyb-tabs{padding:12px 24px 0;}
+  .panel-stack{padding:20px 24px 32px;}
+  .sec-card{padding:20px;}
+}
+@media(max-width:768px){
+  .feat-grid,.list-grid{grid-template-columns:1fr;}
+  .sec-head{flex-direction:column;align-items:flex-start;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .cyb-kicker{
+    font-size:9px;
+    letter-spacing:.14em;
+  }
+  .cyb-hero-title{
+    gap:8px;
+    font-size:clamp(16px,3.8vw,30px);
+  }
+}
+@media(max-width:480px){
+  .cyb-hero{padding:28px 16px 24px;}
+  .panel-stack{padding:16px 16px 28px;}
+  .hero-stats{grid-template-columns:1fr;}
+  .cyb-kicker{
+    padding:8px 10px;
+    font-size:8px;
+    letter-spacing:.1em;
+  }
+  .cyb-hero-title{
+    gap:6px;
+    font-size:clamp(13px,4.4vw,22px);
+  }
+}
+</style>
+</head>
+<body style="background:#000510;padding:0;margin:0;">
+
+<div id="cyb">
+  <!-- Canvas for particles + 3D effects -->
+  <canvas id="cybCanvas"></canvas>
+  <div class="circuit"></div>
+
+  <div class="cyb-content">
+
+    <!-- ══════════ HERO ══════════ -->
+    <div class="cyb-hero">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+
+      <div class="cyb-kicker">
+        <span class="kicker-dot"></span>
+        FULL STACK ATTACK · PRODUCTO 1 · JOBCONNECT · SISTEMA OPERATIVO
+      </div>
+
+      <h1 class="cyb-hero-title">
+        <span class="title-line t-silver">PRIMERA</span>
+        <span class="title-line t-neon glitch" data-text="ÓRBITA">ÓRBITA</span>
+        <span class="title-line t-mag">JOBCONNECT</span>
+      </h1>
+
+      <p class="cyb-subhero">
+        Una idea deja de prometer y empieza a ocupar espacio en pantalla.
+        <strong>JobConnect</strong> no llega con backend todavía —
+        llega con algo infinitamente más poderoso en esta fase:
+        una interfaz que ya sabe presentarse, que ya conoce su destino
+        y que demuestra que el futuro no se anuncia, se construye línea a línea.
+      </p>
+
+      <p class="cyb-intro">
+        Este panel de control integra el <em>Producto 1</em> de <em>Full Stack Attack</em> como si fuera una estación de monitoreo del proyecto:
+        vídeos de misión, arquitectura del sistema, mapa temporal de decisiones, wireframes de diseño pre-construcción,
+        capturas del entorno real de desarrollo y documentación técnica —
+        todo dentro de una experiencia visual unificada diseñada para dejar claro que aquí no se improvisa.
+        <em>El frontend ya respira. Ahora solo tiene que aprender a volar.</em>
+      </p>
+
+      <div class="hero-accent"></div>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-num">01</span>
+          <b>INTERFAZ</b>
+          <span>Donde el proyecto deja de ser una promesa y empieza a ser algo que se puede tocar con los ojos.</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">04</span>
+          <b>MÓDULOS CORE</b>
+          <span>Dashboard · Login · Publicaciones · Usuarios. Cuatro pantallas que sostienen toda la lógica visible del sistema.</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">∞</span>
+          <b>ESCALABILIDAD</b>
+          <span>Una arquitectura modular preparada para que el backend haga su entrada en el siguiente acto sin romper nada.</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">P1</span>
+          <b>PRODUCTO 1</b>
+          <span>La fase en que el sistema aprende a respirar. La base que decide si lo que viene después tiene sentido o no.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TABS ══════════ -->
+    <div class="cyb-tabs" id="cybTabs">
+      <button class="tab-btn active" data-tab="intro">INTRO</button>
+      <button class="tab-btn" data-tab="videos">VÍDEOS</button>
+      <button class="tab-btn" data-tab="arquitectura">ARQUITECTURA</button>
+      <button class="tab-btn" data-tab="timeline">TIMELINE</button>
+      <button class="tab-btn" data-tab="proyecto">PROYECTO</button>
+      <button class="tab-btn" data-tab="mapas">MAPAS</button>
+      <button class="tab-btn" data-tab="mockup">MOCKUP</button>
+      <button class="tab-btn" data-tab="capturas">CAPTURAS</button>
+      <button class="tab-btn" data-tab="cierre">CIERRE</button>
+    </div>
+
+    <!-- ══════════ PANELS ══════════ -->
+    <div class="panel-stack">
+
+      <!-- INTRO -->
+      <div class="tab-panel active" data-panel="intro">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="data-stream"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">P1</div>
+              <div>
+                <h2>PRODUCTO 1 — INICIALIZACIÓN</h2>
+                <p>
+                  El <strong>Producto 1</strong> no es solo una colección de pantallas HTML con buen pulso visual.
+                  Es la demostración empírica de que un equipo puede construir la capa visible de un sistema complejo
+                  antes de que exista una sola línea de backend — y hacerlo con criterio, con estructura y con una intención
+                  lo suficientemente clara como para que cualquiera que lo vea entienda inmediatamente hacia dónde va esto.
+                </p>
+                <p>
+                  Datos gestionados en memoria, login como simulación frontend, lógica distribuida por módulos, validaciones reales,
+                  gestión de usuarios y publicaciones, dashboard con visión de sistema y navegación común.
+                  No hay trampa ni cartón: es exactamente lo que promete el alcance del producto,
+                  ejecutado con la seriedad de quien ya está pensando en el Producto 2.
+                </p>
+              </div>
+            </div>
+            <div class="badge">PRIMERA CAPA</div>
+          </div>
+
+          <div class="feat-grid">
+            <div class="feat">
+              <strong>LO QUE ESTE PRODUCTO CONSTRUYE</strong>
+              <span>La interfaz completa del sistema: navegación, formularios validados, listados dinámicos, dashboard operativo y flujo de uso coherente de principio a fin.</span>
+            </div>
+            <div class="feat feat-m">
+              <strong>LO QUE DEMUESTRA EN REALIDAD</strong>
+              <span>Que una fase inicial bien ejecutada comunica más sobre la madurez de un equipo que un backend mediocre. Aquí el orden no es decoración — es la propuesta.</span>
+            </div>
+            <div class="feat feat-g">
+              <strong>CÓMO OPERA EL FRONTEND</strong>
+              <span>Arrays en memoria como capa de datos temporal, renderizado dinámico del DOM, localStorage como soporte de sesión visual y scripts diferenciados por responsabilidad.</span>
+            </div>
+            <div class="feat">
+              <strong>QUÉ PROVOCA AL RECORRERLO</strong>
+              <span>La sensación exacta de ver un sistema en su primer estado operativo — incompleto por diseño, pero con una dirección tan clara que ya no admite dudas sobre lo que viene después.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-outline" data-goto="videos">↗ VER VÍDEOS</button>
+            <button class="btn btn-outline" data-goto="arquitectura">↗ ARQUITECTURA</button>
+            <button class="btn btn-outline" data-goto="timeline">↗ TIMELINE</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEOS -->
+      <div class="tab-panel" data-panel="videos">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">TH</div>
+              <div>
+                <h3>TRANSMISIÓN TEÓRICA</h3>
+                <p>
+                  Esta pieza coloca el andamiaje conceptual del proyecto: finalidad del sistema, stack tecnológico seleccionado,
+                  organización del frontend y el sentido estratégico detrás de cada decisión de diseño.
+                  Es el momento en que <strong>JobConnect</strong> deja de parecer solo una interfaz con buen pulso visual
+                  y empieza a revelarse como una propuesta técnica con estructura, discurso y lógica de sistema detrás.
+                </p>
+              </div>
+            </div>
+            <div class="badge">CONCEPTO EN ÓRBITA</div>
+          </div>
+          <div class="media-frame">
+            <div class="holo-bar">
+              <div class="holo-label">CANAL TEÓRICO — TRANSMISIÓN ACTIVA</div>
+              <div class="holo-indicators">
+                <span class="holo-bar-text">SIG:4K</span>
+                <div class="holo-dot"></div>
+                <div class="holo-dot m"></div>
+                <div class="holo-dot g"></div>
+              </div>
+            </div>
+            <div class="yt-facade" data-vid="tKrVQjMnKd8" data-title="Vídeo teórico Producto 1 JobConnect">
+              <img class="yt-thumb" src="https://img.youtube.com/vi/tKrVQjMnKd8/maxresdefault.jpg" alt="Vídeo teórico Producto 1 JobConnect" loading="lazy">
+              <div class="yt-overlay"></div>
+              <div class="yt-scanline"></div>
+              <div class="yt-play-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+              <span class="yt-label">▶ REPRODUCIR VÍDEO TEÓRICO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-card sec-card-mag">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon sec-icon-m">PR</div>
+              <div>
+                <h3>TRANSMISIÓN PRÁCTICA</h3>
+                <p>
+                  Aquí el proyecto cambia de registro completamente: deja de narrarse desde arriba y empieza a mostrarse desde dentro.
+                  Visual Studio Code, navegador real, estructura de archivos, formularios en acción, dashboard operativo,
+                  login funcional y gestión de datos entran en escena para demostrar, sin filtro,
+                  que el frontend no solo existe — también aguanta perfectamente cuando se le observa de cerca con lupa.
+                </p>
+              </div>
+            </div>
+            <div class="badge badge-m">SISTEMA EN ACCIÓN</div>
+          </div>
+          <div class="media-frame">
+            <div class="holo-bar">
+              <div class="holo-label">CANAL PRÁCTICO — EN VIVO</div>
+              <div class="holo-indicators">
+                <span class="holo-bar-text">LIVE</span>
+                <div class="holo-dot m"></div>
+                <div class="holo-dot"></div>
+              </div>
+            </div>
+            <div class="yt-facade" data-vid="iax7Z9YFup4" data-title="Vídeo práctico Producto 1 JobConnect">
+              <img class="yt-thumb" src="https://img.youtube.com/vi/iax7Z9YFup4/maxresdefault.jpg" alt="Vídeo práctico Producto 1 JobConnect" loading="lazy">
+              <div class="yt-overlay"></div>
+              <div class="yt-scanline"></div>
+              <div class="yt-play-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+              <span class="yt-label">▶ REPRODUCIR VÍDEO PRÁCTICO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARQUITECTURA -->
+      <div class="tab-panel" data-panel="arquitectura">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">ARC</div>
+              <div>
+                <h3>ARQUITECTURA DEL SISTEMA FRONTEND</h3>
+                <p>
+                  La arquitectura del frontend no se limita a repartir archivos en carpetas con nombres optimistas.
+                  Organiza responsabilidades reales: HTML define pantallas, Bootstrap y CSS construyen el lenguaje visual del sistema,
+                  JavaScript activa la interacción y los datos en memoria sostienen la lógica temporal con la misma seriedad
+                  con que lo haría una base de datos real. El resultado es un sistema que todavía no tiene backend
+                  pero que ya posee una estructura suficientemente sólida como para que nadie sospeche que acaba de nacer.
+                </p>
+              </div>
+            </div>
+            <div class="badge badge-g">ORDEN INTERNO</div>
+          </div>
+
+          <div class="list-grid">
+            <div class="list-card">
+              <h4>// CAPA ESTRUCTURAL</h4>
+              <ul>
+                <li>Páginas HTML independientes para dashboard, login, usuarios y publicaciones.</li>
+                <li>Navegación común que garantiza continuidad y coherencia en el flujo de uso.</li>
+                <li>Jerarquía visual construida para lectura rápida y recorridos sin fricción.</li>
+              </ul>
+            </div>
+            <div class="list-card">
+              <h4>// CAPA VISUAL</h4>
+              <ul>
+                <li>Bootstrap 5 como base responsive y componente visual principal del sistema.</li>
+                <li>CSS personalizado para reforzar identidad propia y coherencia estética entre pantallas.</li>
+                <li>Diferenciación visual explícita entre ofertas y demandas dentro del mismo sistema.</li>
+              </ul>
+            </div>
+            <div class="list-card">
+              <h4>// CAPA LÓGICA</h4>
+              <ul>
+                <li>JavaScript modular segmentado por pantalla y por responsabilidad técnica.</li>
+                <li>Validaciones de formulario, renderizado dinámico del DOM y actualización en tiempo real de tablas.</li>
+                <li>Gestión de sesión visual mediante localStorage como capa de persistencia frontend.</li>
+              </ul>
+            </div>
+            <div class="list-card">
+              <h4>// CAPA DE DATOS</h4>
+              <ul>
+                <li>Usuarios y publicaciones almacenados como objetos JavaScript dentro de arrays compartidos.</li>
+                <li>Sin persistencia real en esta fase — por decisión técnica deliberada del alcance del producto.</li>
+                <li>Base funcional diseñada para integrarse con backend real en el siguiente producto sin fricción.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feat-grid">
+            <div class="feat">
+              <strong>QUÉ APORTA ESTA ORGANIZACIÓN</strong>
+              <span>Claridad técnica demostrable, mantenimiento sin arqueología y una lectura del proyecto que no requiere guía.</span>
+            </div>
+            <div class="feat feat-m">
+              <strong>QUÉ PREVIENE</strong>
+              <span>Que toda la lógica acabe amontonada en un solo archivo y que la aplicación parezca un accidente con buena suerte estética.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="tab-panel" data-panel="timeline">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">TL</div>
+              <div>
+                <h3>MAPA TEMPORAL — EVOLUCIÓN DEL SISTEMA</h3>
+                <p>
+                  Este recorrido no busca sonar épico por deporte.
+                  Sintetiza la secuencia de decisiones reales que llevaron al producto desde la idea inicial
+                  hasta la consolidación del frontend — porque un buen sistema no nace de una pantalla aislada,
+                  sino de una cadena donde cada fase fue diseñada para que la siguiente tuviera suelo firme donde aterrizar.
+                </p>
+              </div>
+            </div>
+            <div class="badge">EVOLUCIÓN DEL SISTEMA</div>
+          </div>
+
+          <div class="timeline">
+            <div class="time-card">
+              <b>01 · DEFINICIÓN DE MISIÓN</b>
+              <span>Se establece el contexto operativo de la aplicación, su función como plataforma de conexión entre ofertas y demandas de empleo, y el alcance exacto del Producto 1 — sin ambigüedades, sin promesas que nadie pueda cumplir en este producto.</span>
+            </div>
+            <div class="time-card">
+              <b>02 · DISEÑO PRE-CONSTRUCCIÓN</b>
+              <span>Se desarrollan mockups y materiales de wireframe que permiten imaginar la interfaz completa antes de escribir una sola línea de código — porque construir sin diseño previo es un lujo que los buenos proyectos no se permiten.</span>
+            </div>
+            <div class="time-card">
+              <b>03 · ORGANIZACIÓN TÉCNICA</b>
+              <span>Se estructura el proyecto en páginas, estilos compartidos, datos comunes y scripts especializados para que el frontend tenga modularidad real desde el primer commit, no como arrepentimiento tardío.</span>
+            </div>
+            <div class="time-card">
+              <b>04 · CONSTRUCCIÓN FUNCIONAL</b>
+              <span>Se implementan dashboard, login, gestión de usuarios, gestión de publicaciones, sistema de validaciones y navegación interna. El sistema empieza a comportarse como lo que es: una aplicación con lógica propia.</span>
+            </div>
+            <div class="time-card">
+              <b>05 · CONSOLIDACIÓN VISUAL</b>
+              <span>Bootstrap y CSS propio se combinan para reforzar la coherencia estética del sistema y convertir el frontend en una pieza que no solo funciona — sino que convence visualmente desde el primer scroll.</span>
+            </div>
+            <div class="time-card">
+              <b>06 · PRESENTACIÓN Y DOCUMENTACIÓN</b>
+              <span>Se integran vídeos teórico y práctico, capturas del sistema real, mapas conceptuales, mockups de diseño, documentación técnica y este panel de presentación — para entregar el producto como un bloque técnico y narrativo completo.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROYECTO -->
+      <div class="tab-panel" data-panel="proyecto">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="data-stream"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">JB</div>
+              <div>
+                <h3>NÚCLEO OPERATIVO — JOBCONNECT</h3>
+                <p>
+                  <strong>JobConnect</strong> se concibe como una plataforma colaborativa de empleo donde ofertas y demandas
+                  pueden publicarse, gestionarse y visualizarse dentro de un flujo claro, sin ruido y sin fricción.
+                  La organización modular con páginas HTML separadas, estilos compartidos y scripts especializados
+                  garantiza que cada parte del frontend tenga una función concreta —
+                  eliminando la ilusión habitual de "esto luego lo ordenamos" que destruye proyectos con más frecuencia de lo que se admite.
+                </p>
+              </div>
+            </div>
+            <div class="badge">SISTEMA VISIBLE</div>
+          </div>
+
+          <div class="list-grid">
+            <div class="list-card">
+              <h4>// INTERFACES OPERATIVAS</h4>
+              <ul>
+                <li>Dashboard con visión de estado general del sistema y publicaciones visibles en tiempo de carga.</li>
+                <li>Login de acceso con validación real sobre datos almacenados en memoria.</li>
+                <li>Gestión de ofertas y demandas mediante formularios validados y tabla dinámica interactiva.</li>
+                <li>Gestión de usuarios con alta, validación de duplicados y baja desde interfaz.</li>
+              </ul>
+            </div>
+            <div class="list-card">
+              <h4>// STACK TÉCNICO</h4>
+              <ul>
+                <li>HTML5 semántico para estructurar cada pantalla del sistema con coherencia.</li>
+                <li>CSS3 y Bootstrap 5 para diseño responsive, componentes y consistencia visual global.</li>
+                <li>JavaScript modular para interacción, renderizado dinámico y gestión de validaciones.</li>
+                <li>Visual Studio Code como entorno real de desarrollo del equipo.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feat-grid">
+            <div class="feat">
+              <strong>DATOS EN MEMORIA</strong>
+              <span>Usuarios y publicaciones viven como objetos JavaScript dentro de arrays comunes — cumpliendo exactamente el alcance del producto sin sobreingeniería innecesaria.</span>
+            </div>
+            <div class="feat feat-m">
+              <strong>SESIÓN VISUAL FRONTEND</strong>
+              <span>El usuario logueado se refleja en la navegación mediante localStorage como soporte frontend del flujo de acceso — simple, efectivo y honesto sobre lo que es.</span>
+            </div>
+            <div class="feat feat-g">
+              <strong>DISEÑO CON INTENCIÓN</strong>
+              <span>La interfaz no busca impresionar: busca claridad, jerarquía y diferenciación visual suficiente para que el primer recorrido sea autoexplicativo.</span>
+            </div>
+            <div class="feat">
+              <strong>BASE TÉCNICA PARA EL SIGUIENTE ACTO</strong>
+              <span>Lo que ahora es lógica visible y estructura modular queda explícitamente preparado para persistencia real, backend funcional y nuevas capas técnicas en los productos siguientes.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn btn-c" href="https://github.com/EricKColl/full-stack-attack-jobboard.git" target="_blank" rel="noopener">↗ ABRIR REPOSITORIO GITHUB</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAPAS -->
+      <div class="tab-panel" data-panel="mapas">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">MAP</div>
+              <div>
+                <h3>MAPAS CONCEPTUALES — SÍNTESIS DEL SISTEMA</h3>
+                <p>
+                  Los mapas conceptuales son el territorio donde el conocimiento deja de caminar en fila
+                  y empieza a conectarse como debería. Sirven para condensar tecnologías, relaciones
+                  y bloques de contenido sin perder la visión global del sistema.
+                  Cuando están bien construidos no solo resumen — ordenan el mapa mental del proyecto
+                  de forma que cualquier nuevo integrante del equipo pueda orientarse sin perderse.
+                </p>
+              </div>
+            </div>
+            <div class="badge badge-g">SÍNTESIS VISUAL</div>
+          </div>
+
+          <div class="uniform-stack">
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">MAPA CONCEPTUAL — VECTOR ALFA</div>
+                <div class="holo-indicators">
+                  <div class="holo-dot g"></div>
+                  <div class="holo-dot"></div>
+                </div>
+              </div>
+              <div class="media-box">
+                <img src="https://i.imgur.com/xQYHSuh.png" alt="Mapa conceptual Producto 1 versión 1" loading="lazy">
+              </div>
+              <div class="media-caption">
+                Primera síntesis conceptual del Producto 1 — donde las tecnologías del stack, el flujo del frontend y las bases estructurales del sistema empiezan a conectarse como una red con lógica demostrable.
+              </div>
+            </div>
+
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">MAPA CONCEPTUAL — VECTOR BETA</div>
+                <div class="holo-indicators">
+                  <div class="holo-dot m"></div>
+                  <div class="holo-dot g"></div>
+                </div>
+              </div>
+              <div class="media-box">
+                <img src="https://i.imgur.com/3FjXh5l.png" alt="Mapa conceptual Producto 1 versión 2" loading="lazy">
+              </div>
+              <div class="media-caption">
+                Segunda síntesis conceptual del trabajo — útil para seguir el rastro de los contenidos asimilados y entender con precisión cómo encajan dentro de la arquitectura global del proyecto.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOCKUP -->
+      <div class="tab-panel" data-panel="mockup">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon sec-icon-m">MK</div>
+              <div>
+                <h3>WIREFRAMES — DISEÑO PRE-CONSTRUCCIÓN</h3>
+                <p>
+                  El mockup es el territorio donde el proyecto aprende a verse a sí mismo antes de aprender a funcionar.
+                  Aquí se afilan proporciones, se trazan recorridos de usuario, se ubican los elementos con intención
+                  y se toman las decisiones visuales que el código tendrá que sostener después con la misma elegancia
+                  o más. Sin esta fase, cualquier interfaz es simplemente código que tuvo suerte.
+                </p>
+              </div>
+            </div>
+            <div class="badge badge-m">DISEÑO PRE-CONSTRUCCIÓN</div>
+          </div>
+
+          <div class="uniform-stack">
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">WIREFRAME — PANTALLA 01</div>
+                <div class="holo-dot m"></div>
+              </div>
+              <div class="media-box"><img src="https://i.imgur.com/6YqQyu8.png" alt="Mockup vista 1" loading="lazy"></div>
+            </div>
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">WIREFRAME — PANTALLA 02</div>
+                <div class="holo-dot"></div>
+              </div>
+              <div class="media-box"><img src="https://i.imgur.com/jR3SVIQ.png" alt="Mockup vista 2" loading="lazy"></div>
+            </div>
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">WIREFRAME — PANTALLA 03</div>
+                <div class="holo-dot g"></div>
+              </div>
+              <div class="media-box"><img src="https://i.imgur.com/0QmvuyN.png" alt="Mockup vista 3" loading="lazy"></div>
+            </div>
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">WIREFRAME — PANTALLA 04</div>
+                <div class="holo-dot m"></div>
+              </div>
+              <div class="media-box"><img src="https://i.imgur.com/O88ZVJN.png" alt="Mockup vista 4" loading="lazy"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAPTURAS -->
+      <div class="tab-panel" data-panel="capturas">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">SC</div>
+              <div>
+                <h3>CAPTURAS DEL SISTEMA REAL</h3>
+                <p>
+                  Dos vistas clave del trabajo real del equipo, sin filtro y sin edición: la portada del sistema
+                  — la primera cara que ve cualquier usuario al llegar — y el entorno de desarrollo real en Visual Studio Code,
+                  donde esa cara se fabrica línea a línea.
+                  Primero se observa el producto terminado; después, el territorio donde fue construido.
+                </p>
+              </div>
+            </div>
+            <div class="badge">MATERIAL DE CAMPO</div>
+          </div>
+
+          <div class="uniform-stack">
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">CAPTURA — PORTADA DEL SISTEMA</div>
+                <div class="holo-indicators">
+                  <span class="holo-bar-text">LIVE BUILD</span>
+                  <div class="holo-dot g"></div>
+                </div>
+              </div>
+              <div class="media-box">
+                <img src="https://i.imgur.com/Vbk6rMZ.png" alt="Portada del proyecto JobConnect" loading="lazy">
+              </div>
+              <div class="media-caption">
+                La entrada visual de JobConnect — el primer instante en que el sistema dice quién es antes de que el usuario pulse nada. Una portada que no pide permiso para existir.
+              </div>
+            </div>
+
+            <div class="media-card">
+              <div class="holo-bar">
+                <div class="holo-label">CAPTURA — ENTORNO VS CODE</div>
+                <div class="holo-indicators">
+                  <span class="holo-bar-text">ENV:ACTIVE</span>
+                  <div class="holo-dot"></div>
+                  <div class="holo-dot m"></div>
+                </div>
+              </div>
+              <div class="media-box">
+                <img src="https://i.imgur.com/snN2psQ.png" alt="Proyecto JobConnect en VS Code" loading="lazy">
+              </div>
+              <div class="media-caption">
+                La sala de máquinas real del sistema: archivos organizados, estructura visible y el editor activo en el punto exacto donde la interfaz deja de ser idea y se convierte en código que alguien puede ejecutar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CIERRE -->
+      <div class="tab-panel" data-panel="cierre">
+        <div class="sec-card">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="data-stream"></div>
+          <div class="sec-head">
+            <div class="title-wrap">
+              <div class="sec-icon">END</div>
+              <div>
+                <h3>CIERRE DEL PRODUCTO 1 — SECUENCIA COMPLETADA</h3>
+                <p>
+                  Con este producto, <strong>Full Stack Attack</strong> ha construido algo más que una base visual para <strong>JobConnect</strong>.
+                  Ha demostrado que un equipo puede tomar una plataforma de empleo inexistente,
+                  diseñarla, estructurarla, construir su interfaz completa, validarla, documentarla
+                  y presentarla como un sistema coherente — todo en el alcance estricto de un Producto 1.
+                </p>
+                <p>
+                  El resultado no es una colección de pantallas con buena suerte estética.
+                  Es un frontend que se comporta como sistema, que comunica dirección con cada decisión técnica
+                  y que deja ver, con una claridad que no necesita adornos, que el Producto 2 ya tiene dónde aterrizar.
+                  Este panel integra la experiencia completa: teoría, práctica, arquitectura, timeline,
+                  mapas conceptuales, wireframes, capturas reales, documentación técnica y recursos enlazados.
+                  La misión del Producto 1 está cumplida. <em>Lo que viene después ya está en marcha.</em>
+                </p>
+              </div>
+            </div>
+            <div class="badge">MISIÓN COMPLETADA</div>
+          </div>
+
+          <div class="feat-grid">
+            <div class="feat feat-g">
+              <strong>LO QUE SE HA CONSTRUIDO</strong>
+              <span>Un sistema frontend completo con dashboard, login, gestión de usuarios, publicaciones y navegación modular — sin backend, con toda la seriedad.</span>
+            </div>
+            <div class="feat feat-m">
+              <strong>LO QUE SE HA DEMOSTRADO</strong>
+              <span>Que una primera fase bien ejecutada vale más que un sistema completo mediocre. El orden es aquí la propuesta, no la consecuencia.</span>
+            </div>
+            <div class="feat">
+              <strong>LO QUE QUEDA PREPARADO</strong>
+              <span>Una arquitectura modular, limpia y deliberada que espera al backend con la misma compostura que un aeropuerto espera a sus aviones.</span>
+            </div>
+            <div class="feat">
+              <strong>LO QUE VIENE DESPUÉS</strong>
+              <span>El Producto 2 tiene base. Tiene estructura. Tiene dirección. Solo necesita el servidor que merece este frontend.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-outline" data-goto="intro">↗ VOLVER AL INICIO</button>
+            <button class="btn btn-outline" data-goto="arquitectura">↗ REVISAR ARQUITECTURA</button>
+            <a class="btn btn-c" href="https://github.com/EricKColl/full-stack-attack-jobboard.git" target="_blank" rel="noopener">↗ GITHUB</a>
+          </div>
+        </div>
+
+        <div class="cyb-footer" style="border-radius:4px;">
+          FULL STACK ATTACK · JOBCONNECT · PRODUCTO 1 · SISTEMA FRONTEND COMPLETO · PANEL DE ARQUITECTURA, TIMELINE, VÍDEOS, MOCKUPS Y DOCUMENTACIÓN
+        </div>
+      </div>
+
+    </div><!-- /panel-stack -->
+  </div><!-- /cyb-content -->
+</div><!-- /#cyb -->
+
+<script>
+(function(){
+  const root = document.getElementById('cyb');
+  if(!root) return;
+
+  /* ══ CANVAS ENGINE ══ */
+  const canvas = document.getElementById('cybCanvas');
+  const ctx = canvas.getContext('2d');
+  let W,H,particles=[],nodes=[],connections=[];
+  const mouse = {x:-9999,y:-9999};
+
+  function resize(){
+    const r = root.getBoundingClientRect();
+    W = canvas.width = r.width;
+    H = canvas.height = r.height;
+  }
+
+  /* PARTICLES */
+  class Particle{
+    constructor(){this.reset(true);}
+    reset(init=false){
+      this.x = Math.random()*W;
+      this.y = init ? Math.random()*H : H+10;
+      this.size = .5+Math.random()*2;
+      this.speedY = -(0.2+Math.random()*.8);
+      this.speedX = (Math.random()-.5)*.3;
+      this.life = 0;
+      this.maxLife = 150+Math.random()*300;
+      const r=[
+        [0,245,255],
+        [0,255,159],
+        [255,0,110],
+        [255,220,0]
+      ][Math.floor(Math.random()*4)];
+      this.r=r[0];this.g=r[1];this.b=r[2];
+    }
+    update(){
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.life++;
+      // attract slightly to mouse
+      const dx=mouse.x-this.x, dy=mouse.y-this.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){this.x+=dx*.003;this.y+=dy*.003;}
+      if(this.life>this.maxLife||this.y<-10) this.reset();
+    }
+    draw(){
+      const alpha = Math.min(1, Math.min(this.life/40,(this.maxLife-this.life)/40))*.8;
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      const grd=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*3);
+      grd.addColorStop(0,`rgba(${this.r},${this.g},${this.b},${alpha})`);
+      grd.addColorStop(1,`rgba(${this.r},${this.g},${this.b},0)`);
+      ctx.fillStyle=grd;
+      ctx.fill();
+    }
+  }
+
+  /* DATA NODES */
+  class Node{
+    constructor(){this.reset();}
+    reset(){
+      this.x=Math.random()*W;
+      this.y=Math.random()*H;
+      this.vx=(Math.random()-.5)*.4;
+      this.vy=(Math.random()-.5)*.4;
+      this.size=1+Math.random()*2;
+      this.pulse=Math.random()*Math.PI*2;
+      this.pulseSpeed=.02+Math.random()*.04;
+      this.color=Math.random()>.7?[255,0,110]:Math.random()>.5?[0,255,159]:[0,245,255];
+    }
+    update(){
+      this.x+=this.vx;this.y+=this.vy;
+      this.pulse+=this.pulseSpeed;
+      if(this.x<0||this.x>W)this.vx*=-1;
+      if(this.y<0||this.y>H)this.vy*=-1;
+      // mouse repel
+      const dx=this.x-mouse.x,dy=this.y-mouse.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<80){this.vx+=dx*.003;this.vy+=dy*.003;}
+      this.vx=Math.max(-1.2,Math.min(1.2,this.vx));
+      this.vy=Math.max(-1.2,Math.min(1.2,this.vy));
+    }
+    draw(){
+      const pulse=.5+.5*Math.sin(this.pulse);
+      const alpha=.15+pulse*.45;
+      const s=this.size*(1+pulse*.5);
+      const [r,g,b]=this.color;
+      const grd=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,s*4);
+      grd.addColorStop(0,`rgba(${r},${g},${b},${alpha})`);
+      grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      ctx.beginPath();ctx.arc(this.x,this.y,s,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},${alpha})`;
+      ctx.fill();
+      ctx.beginPath();ctx.arc(this.x,this.y,s*4,0,Math.PI*2);
+      ctx.fillStyle=grd;ctx.fill();
+    }
+  }
+
+  /* HEX RING */
+  let hexAngle=0;
+  function drawHex(){
+    const cx=W-80,cy=80,R=55;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(hexAngle);
+    ctx.beginPath();
+    for(let i=0;i<6;i++){
+      const a=i*Math.PI/3;
+      i===0?ctx.moveTo(R*Math.cos(a),R*Math.sin(a)):ctx.lineTo(R*Math.cos(a),R*Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(0,245,255,0.15)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    // inner
+    ctx.rotate(Math.PI/6);
+    ctx.beginPath();
+    const Ri=R*.55;
+    for(let i=0;i<6;i++){
+      const a=i*Math.PI/3;
+      i===0?ctx.moveTo(Ri*Math.cos(a),Ri*Math.sin(a)):ctx.lineTo(Ri*Math.cos(a),Ri*Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(0,255,159,0.10)';ctx.stroke();
+    // center dot
+    ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);
+    const grd=ctx.createRadialGradient(0,0,0,0,0,12);
+    grd.addColorStop(0,'rgba(0,245,255,.9)');grd.addColorStop(1,'rgba(0,245,255,0)');
+    ctx.fillStyle=grd;ctx.fill();
+    ctx.restore();
+    hexAngle+=.008;
+  }
+
+  /* CONNECTIONS between nodes */
+  function drawConnections(){
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<160){
+          const alpha=(.15*(1-dist/160));
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=`rgba(0,245,255,${alpha})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+  }
+
+  /* SWEEP LINE */
+  let sweepY=0;
+  function drawSweep(){
+    sweepY=(sweepY+.5)%H;
+    const grd=ctx.createLinearGradient(0,sweepY-30,0,sweepY+30);
+    grd.addColorStop(0,'rgba(0,245,255,0)');
+    grd.addColorStop(.5,'rgba(0,245,255,0.04)');
+    grd.addColorStop(1,'rgba(0,245,255,0)');
+    ctx.fillStyle=grd;
+    ctx.fillRect(0,sweepY-30,W,60);
+  }
+
+  function init(){
+    resize();
+    particles=Array.from({length:80},()=>new Particle());
+    nodes=Array.from({length:22},()=>new Node());
+  }
+
+  let raf;
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    drawSweep();
+    drawConnections();
+    nodes.forEach(n=>{n.update();n.draw();});
+    particles.forEach(p=>{p.update();p.draw();});
+    drawHex();
+    raf=requestAnimationFrame(loop);
+  }
+
+  init();loop();
+  window.addEventListener('resize',()=>{resize();});
+
+  root.addEventListener('mousemove',e=>{
+    const r=root.getBoundingClientRect();
+    mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
+  });
+  root.addEventListener('mouseleave',()=>{mouse.x=-9999;mouse.y=-9999;});
+
+  /* ══ YOUTUBE FACADES ══ */
+  root.querySelectorAll('.yt-facade').forEach(facade=>{
+    facade.addEventListener('click',function(){
+      if(this.classList.contains('loaded')) return;
+      const vid = this.dataset.vid;
+      const title = this.dataset.title || 'Video';
+      // Remove all children except keep padding via class
+      this.innerHTML = '';
+      this.classList.add('loaded');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3`;
+      iframe.title = title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      this.appendChild(iframe);
+    });
+    // HD thumbnail fallback: if maxresdefault not available, use hqdefault
+    const img = facade.querySelector('.yt-thumb');
+    if(img){
+      img.addEventListener('error',function(){
+        const vid = facade.dataset.vid;
+        if(this.src.includes('maxresdefault')){
+          this.src = `https://img.youtube.com/vi/${vid}/sddefault.jpg`;
+        } else if(this.src.includes('sddefault')){
+          this.src = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
+        }
+      });
+    }
+  });
+
+  /* ══ TABS ══ */
+  const tabs=Array.from(root.querySelectorAll('.tab-btn'));
+  const panels=Array.from(root.querySelectorAll('.tab-panel'));
+
+  function activateTab(name){
+    tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    panels.forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
+  }
+
+  root.addEventListener('click',e=>{
+    const t=e.target.closest('.tab-btn');
+    if(t&&root.contains(t)){e.preventDefault();activateTab(t.dataset.tab);return;}
+    const g=e.target.closest('[data-goto]');
+    if(g&&root.contains(g)){
+      e.preventDefault();
+      activateTab(g.getAttribute('data-goto'));
+      root.querySelector('.cyb-tabs').scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  });
+
+  /* ══ 3D TILT on cards ══ */
+  root.querySelectorAll('.sec-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=e.clientX-r.left,y=e.clientY-r.top;
+      const cx=r.width/2,cy=r.height/2;
+      const rx=((y-cy)/cy)*4;
+      const ry=((cx-x)/cx)*4;
+      card.style.transform=`perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.008)`;
+      card.style.boxShadow=`0 0 0 1px rgba(0,245,255,${.08+Math.abs(ry)*.01}),0 30px 80px rgba(0,0,0,.6),0 0 ${20+Math.abs(ry)*4}px rgba(0,245,255,${.05+Math.abs(ry)*.015})`;
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform='perspective(1200px) rotateX(0) rotateY(0) scale(1)';
+      card.style.boxShadow='';
+    });
+  });
+
+  activateTab('intro');
+})();
+</script>
+
+</body>
+</html>

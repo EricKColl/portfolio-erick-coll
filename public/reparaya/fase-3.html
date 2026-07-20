@@ -1,0 +1,2770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReparaYa · Producto 3 · Laravel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ROOT
+============================================================ */
+:root{
+  --g:#D4AF37;
+  --gl:#F0D060;
+  --gh:#F8E58A;
+  --gd:#A07830;
+  --gx:#6B4E10;
+  --bk:#030303;
+  --d1:#070707;
+  --d2:#0C0C0C;
+  --tx:#EAE2D0;
+  --txm:#C8AA70;
+  --txd:#86683A;
+  --grn:#5CD860;
+  --ln:rgba(212,175,55,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bk);
+  color:var(--tx);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+  -webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit}
+button{font:inherit;border:0;background:none;color:inherit;cursor:none}
+code{
+  font-family:'Share Tech Mono',monospace;
+  color:var(--gl);
+  font-size:.92em;
+}
+
+/* ============================================================
+   CRT / VHS FRAME
+============================================================ */
+.crt-scan{
+  position:fixed;
+  inset:0;
+  z-index:9000;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,.06) 2px,
+    rgba(0,0,0,.06) 3px
+  );
+  mix-blend-mode:multiply;
+}
+.crt-vignette{
+  position:fixed;
+  inset:0;
+  z-index:8999;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%);
+}
+.vhs-track{
+  position:fixed;
+  left:0;right:0;
+  height:3px;
+  z-index:8998;
+  pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(212,175,55,.28), transparent);
+  filter:blur(.6px);
+  opacity:.7;
+  animation:vhsroll 9s linear infinite;
+}
+@keyframes vhsroll{
+  0%{top:-5%;opacity:0}
+  4%{opacity:.7}
+  96%{opacity:.6}
+  100%{top:105%;opacity:0}
+}
+.vhs-glitch{
+  position:fixed;
+  left:0;right:0;
+  height:14px;
+  z-index:8997;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(255,255,255,.04) 30%,
+    rgba(212,175,55,.06) 50%,
+    rgba(255,255,255,.04) 70%,
+    transparent 100%);
+  opacity:0;
+  animation:vhsGlitch 11s steps(1) infinite;
+}
+@keyframes vhsGlitch{
+  0%,93%,100%{opacity:0;top:30%}
+  94%{opacity:.8;top:22%;transform:translateX(0)}
+  95%{opacity:1;top:48%;transform:translateX(8px)}
+  96%{opacity:.7;top:64%;transform:translateX(-12px)}
+  97%{opacity:0;top:78%}
+}
+
+/* ============================================================
+   CURSOR
+============================================================ */
+#cur-dot{
+  position:fixed;
+  width:8px;height:8px;
+  background:var(--gl);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9999;
+  left:-30px;top:-30px;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 14px rgba(240,208,96,.85);
+  mix-blend-mode:screen;
+  transition:transform .15s ease;
+}
+#cur-cross{
+  position:fixed;
+  width:36px;height:36px;
+  pointer-events:none;
+  z-index:9998;
+  left:-30px;top:-30px;
+  transform:translate(-50%,-50%);
+  opacity:.7;
+  transition:width .25s ease, height .25s ease, opacity .25s ease;
+}
+#cur-cross::before,
+#cur-cross::after{
+  content:"";
+  position:absolute;
+  background:var(--g);
+}
+#cur-cross::before{
+  top:50%;left:0;right:0;height:1px;transform:translateY(-50%);
+}
+#cur-cross::after{
+  left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%);
+}
+#cur-cross span{
+  position:absolute;
+  width:8px;height:8px;
+  border:1px solid var(--g);
+}
+#cur-cross span.a{top:0;left:0;border-right:0;border-bottom:0}
+#cur-cross span.b{top:0;right:0;border-left:0;border-bottom:0}
+#cur-cross span.c{bottom:0;left:0;border-right:0;border-top:0}
+#cur-cross span.d{bottom:0;right:0;border-left:0;border-top:0}
+
+/* ============================================================
+   BOOT
+============================================================ */
+#boot{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:var(--bk);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  transition:opacity .9s ease;
+}
+#boot.gone{opacity:0;pointer-events:none}
+.boot-corner{
+  position:absolute;
+  width:18px;height:18px;
+}
+.boot-corner.tl{top:24px;left:24px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.boot-corner.tr{top:24px;right:24px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.boot-corner.bl{bottom:24px;left:24px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.boot-corner.br{bottom:24px;right:24px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.boot-tag{
+  position:absolute;
+  top:24px;left:50%;
+  transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.4em;
+  color:var(--gd);
+}
+.boot-meta{
+  position:absolute;
+  bottom:30px;left:50%;
+  transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.34em;
+  color:var(--gx);
+}
+.boot-logo{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2rem,5.5vw,3.6rem);
+  font-weight:900;
+  letter-spacing:.32em;
+  color:var(--g);
+  text-shadow:0 0 20px rgba(212,175,55,.4);
+  animation:bootPulse 1.6s ease-in-out infinite;
+}
+@keyframes bootPulse{
+  0%,100%{opacity:.65;text-shadow:0 0 15px rgba(212,175,55,.3)}
+  50%{opacity:1;text-shadow:0 0 35px rgba(212,175,55,.7),0 0 70px rgba(212,175,55,.2)}
+}
+.boot-bar{
+  width:min(360px,70vw);
+  height:8px;
+  border:1px solid rgba(212,175,55,.4);
+  padding:1px;
+  position:relative;
+}
+.boot-bar::before{
+  content:"";
+  position:absolute;
+  left:-12px;top:50%;
+  width:6px;height:6px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+}
+.boot-bar::after{
+  content:"";
+  position:absolute;
+  right:-12px;top:50%;
+  width:6px;height:6px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+}
+.boot-fill{
+  height:100%;
+  width:0;
+  background:repeating-linear-gradient(
+    90deg,
+    var(--g) 0 6px,
+    var(--gd) 6px 12px
+  );
+  transition:width 2.6s cubic-bezier(.4,0,.2,1);
+}
+.boot-msg{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.66rem;
+  letter-spacing:.28em;
+  color:var(--txm);
+}
+.blink{animation:blink .7s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ============================================================
+   LAYOUT BASE
+============================================================ */
+.inner{
+  width:min(1080px, calc(100% - 48px));
+  margin:0 auto;
+  position:relative;
+  z-index:3;
+}
+.divider{
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(212,175,55,.16), transparent);
+  position:relative;
+  z-index:2;
+}
+.section{
+  position:relative;
+  padding:96px 0;
+  background:var(--d1);
+  overflow:hidden;
+}
+.section.alt{background:var(--d2)}
+.section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(rgba(212,175,55,.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.012) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+.sec-hdr{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin-bottom:20px;
+}
+.sec-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.65rem;
+  letter-spacing:.32em;
+  color:var(--gd);
+}
+.sec-line{
+  width:62px;
+  height:1px;
+  background:linear-gradient(90deg, var(--g), transparent);
+}
+.sec-title{
+  margin:0;
+  font-family:'Orbitron',monospace;
+  font-weight:700;
+  font-size:clamp(1.1rem, 2.4vw, 1.85rem);
+  color:var(--gl);
+  letter-spacing:.06em;
+}
+.sec-lead{
+  max-width:880px;
+  margin:0 0 44px;
+  font-size:1rem;
+  line-height:1.84;
+  color:var(--txm);
+}
+.sec-lead strong{color:var(--gl);font-weight:600}
+
+/* ============================================================
+   HERO
+============================================================ */
+#hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:120px 24px 80px;
+  position:relative;
+  background:var(--bk);
+  overflow:hidden;
+}
+#hero-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+.hero-grid{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background-image:
+    linear-gradient(rgba(212,175,55,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.025) 1px, transparent 1px);
+  background-size:58px 58px;
+  mask-image:radial-gradient(ellipse at center, black 40%, transparent 100%);
+  -webkit-mask-image:radial-gradient(ellipse at center, black 40%, transparent 100%);
+  animation:gridMove 32s linear infinite;
+}
+@keyframes gridMove{to{background-position:58px 58px}}
+
+/* HERO FRAME CORNERS — arcade style */
+.frame-corner{
+  position:absolute;
+  width:28px;height:28px;
+  z-index:5;
+}
+.frame-corner.tl{top:32px;left:32px;border-top:1.5px solid var(--g);border-left:1.5px solid var(--g)}
+.frame-corner.tr{top:32px;right:32px;border-top:1.5px solid var(--g);border-right:1.5px solid var(--g)}
+.frame-corner.bl{bottom:32px;left:32px;border-bottom:1.5px solid var(--g);border-left:1.5px solid var(--g)}
+.frame-corner.br{bottom:32px;right:32px;border-bottom:1.5px solid var(--g);border-right:1.5px solid var(--g)}
+
+.hero-top-label,
+.hero-bot-label{
+  position:absolute;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.4em;
+  color:var(--gd);
+  z-index:5;
+}
+.hero-top-label{top:40px;left:50%;transform:translateX(-50%)}
+.hero-bot-label{bottom:42px;left:50%;transform:translateX(-50%)}
+
+.hero-sweep{
+  position:absolute;
+  left:0;right:0;
+  height:2px;
+  z-index:2;
+  background:linear-gradient(90deg, transparent 5%, rgba(212,175,55,.6) 40%, rgba(248,229,138,.95) 50%, rgba(212,175,55,.6) 60%, transparent 95%);
+  pointer-events:none;
+  animation:heroSweep 7s ease-in-out infinite;
+}
+@keyframes heroSweep{
+  0%{top:-2px;opacity:0}
+  3%{opacity:1}
+  97%{opacity:.6}
+  100%{top:100%;opacity:0}
+}
+.hero-content{position:relative;z-index:4}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.64rem;
+  letter-spacing:.36em;
+  color:var(--txm);
+  padding:8px 22px;
+  margin-bottom:32px;
+  position:relative;
+  opacity:0;
+  animation:fadeUp .8s ease 3.2s forwards;
+}
+.hero-badge::before,
+.hero-badge::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:24px;height:1px;
+  background:var(--gd);
+}
+.hero-badge::before{right:100%;margin-right:10px}
+.hero-badge::after{left:100%;margin-left:10px}
+.hero-eye{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:clamp(.85rem,1.8vw,1.25rem);
+  font-weight:500;
+  letter-spacing:.48em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(212,175,55,.42);
+  margin-bottom:10px;
+  opacity:0;
+  animation:fadeUp .9s ease 3.32s forwards;
+}
+.hero-title{
+  font-family:'Orbitron',monospace;
+  font-weight:900;
+  font-size:clamp(3rem, 10vw, 7.4rem);
+  line-height:.88;
+  letter-spacing:.06em;
+  background:linear-gradient(135deg, #F8E58A 0%, var(--gl) 22%, var(--g) 52%, #8E6420 78%, #4C3508 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 38px rgba(212,175,55,.35));
+  display:inline-block;
+  position:relative;
+  opacity:0;
+  animation:fadeUp 1s ease 3.45s forwards, heroGlitch 8.5s ease 5.6s infinite;
+}
+@keyframes heroGlitch{
+  0%,90%,100%{transform:none;filter:drop-shadow(0 0 38px rgba(212,175,55,.35))}
+  91%{transform:translate(-2px,1px) skewX(-1.2deg);filter:drop-shadow(-3px 0 rgba(0,240,255,.55)) drop-shadow(3px 0 rgba(212,175,55,.75))}
+  92%{transform:translate(2px,-1px) skewX(1.2deg);filter:drop-shadow(3px 0 rgba(255,60,80,.55)) drop-shadow(-3px 0 rgba(212,175,55,.75))}
+  93%{transform:none}
+}
+.hero-tag{
+  display:block;
+  margin-top:14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.7rem,1.4vw,.92rem);
+  letter-spacing:.22em;
+  color:var(--txm);
+  opacity:0;
+  animation:fadeUp 1s ease 3.6s forwards;
+}
+.hero-cursor{
+  display:inline-block;
+  width:8px;
+  height:.95em;
+  background:var(--g);
+  vertical-align:middle;
+  margin-left:6px;
+  animation:blink 1s step-end infinite;
+}
+.hero-sub{
+  max-width:680px;
+  margin:22px auto 0;
+  font-size:clamp(.78rem,1.2vw,.94rem);
+  line-height:1.84;
+  letter-spacing:.06em;
+  color:var(--txd);
+  opacity:0;
+  animation:fadeUp 1s ease 3.72s forwards;
+}
+.hero-actions{
+  margin-top:38px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  opacity:0;
+  animation:fadeUp 1s ease 3.84s forwards;
+}
+.btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  min-height:46px;
+  padding:11px 22px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.68rem;
+  letter-spacing:.22em;
+  color:var(--tx);
+  border:1px solid rgba(212,175,55,.3);
+  background:rgba(212,175,55,.03);
+  transition:border-color .3s, background .3s, color .3s, transform .25s, box-shadow .3s;
+  overflow:hidden;
+}
+.btn::before{
+  content:"";
+  position:absolute;
+  top:50%;left:-12px;
+  width:6px;height:6px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+  opacity:.6;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  color:var(--gh);
+  border-color:var(--gl);
+  background:rgba(212,175,55,.08);
+  box-shadow:0 14px 30px rgba(0,0,0,.4), 0 0 18px rgba(212,175,55,.18);
+}
+.btn:hover::before{opacity:1;box-shadow:0 0 12px var(--g)}
+.btn.primary{
+  background:linear-gradient(135deg, rgba(212,175,55,.22), rgba(248,229,138,.06));
+  color:var(--gh);
+  border-color:rgba(212,175,55,.5);
+}
+.hero-members{
+  margin-top:26px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  opacity:0;
+  animation:fadeUp 1s ease 3.96s forwards;
+}
+.chip{
+  position:relative;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.16em;
+  color:var(--txm);
+  padding:7px 16px;
+  border:1px solid rgba(212,175,55,.18);
+  background:rgba(212,175,55,.02);
+  transition:.3s ease;
+}
+.chip::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:6px;height:1px;
+  background:var(--g);
+}
+.chip::after{
+  content:"";
+  position:absolute;
+  bottom:0;right:0;
+  width:6px;height:1px;
+  background:var(--g);
+}
+.chip:hover{
+  color:var(--gh);
+  border-color:rgba(212,175,55,.55);
+  background:rgba(212,175,55,.07);
+}
+.hero-stack{
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:center;
+  opacity:0;
+  animation:fadeUp 1s ease 4.05s forwards;
+}
+.stackchip{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.54rem;
+  letter-spacing:.18em;
+  color:var(--txd);
+  padding:4px 10px;
+  border:1px solid rgba(212,175,55,.1);
+}
+.hero-scroll{
+  margin-top:52px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  opacity:0;
+  animation:fadeUp 1s ease 4.18s forwards;
+}
+.scroll-bar{
+  width:1px;
+  height:44px;
+  background:linear-gradient(180deg, var(--g), transparent);
+  animation:scrollPulse 2.4s ease-in-out infinite;
+}
+@keyframes scrollPulse{
+  0%,100%{opacity:.3;transform:scaleY(.7)}
+  50%{opacity:1;transform:scaleY(1.3)}
+}
+.scroll-txt{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  letter-spacing:.32em;
+  color:var(--gx);
+}
+
+/* Player ready indicator */
+.player-ready{
+  position:absolute;
+  bottom:104px;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'VT323',monospace;
+  font-size:.95rem;
+  letter-spacing:.18em;
+  color:var(--g);
+  animation:playerBlink 1.4s step-end infinite;
+  z-index:5;
+  text-shadow:0 0 12px rgba(212,175,55,.55);
+}
+@keyframes playerBlink{50%{opacity:0}}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ============================================================
+   PANELS
+============================================================ */
+.panel{
+  position:relative;
+  border:1px solid var(--ln);
+  background:rgba(212,175,55,.018);
+  padding:24px;
+  transition:border-color .35s ease, background .35s ease, box-shadow .35s ease;
+}
+.panel::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:34px;height:1px;
+  background:var(--g);
+  transition:width .4s ease;
+}
+.panel::after{
+  content:"";
+  position:absolute;
+  bottom:0;right:0;
+  width:34px;height:1px;
+  background:var(--g);
+  transition:width .4s ease;
+}
+.panel:hover{
+  border-color:rgba(212,175,55,.32);
+  background:rgba(212,175,55,.032);
+  box-shadow:0 18px 38px rgba(0,0,0,.4), 0 0 18px rgba(212,175,55,.08);
+}
+.panel:hover::before,
+.panel:hover::after{width:60px}
+.panel .pc{
+  position:absolute;
+  width:10px;height:10px;
+  pointer-events:none;
+}
+.panel .pc.tl{top:4px;left:4px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.panel .pc.tr{top:4px;right:4px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.panel .pc.bl{bottom:4px;left:4px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.panel .pc.br{bottom:4px;right:4px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+.kicker::before{
+  content:"";
+  width:6px;height:6px;
+  background:var(--g);
+  transform:rotate(45deg);
+}
+.p-title{
+  margin:0 0 12px;
+  font-family:'Orbitron',monospace;
+  font-weight:600;
+  font-size:1.18rem;
+  color:var(--tx);
+  letter-spacing:.04em;
+}
+.p-text{
+  margin:0;
+  color:var(--txm);
+  line-height:1.82;
+  font-size:.96rem;
+  font-weight:400;
+}
+.p-text strong{color:var(--gl);font-weight:600}
+
+/* ============================================================
+   COUNTERS (HEALTH BAR STYLE)
+============================================================ */
+.counters{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+  gap:12px;
+  margin-bottom:44px;
+}
+.cbox{
+  position:relative;
+  padding:22px 16px 18px;
+  border:1px solid rgba(212,175,55,.13);
+  background:rgba(212,175,55,.02);
+  text-align:center;
+  overflow:hidden;
+  transition:.35s ease;
+}
+.cbox::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  transform:scaleX(.2);
+  transition:transform .5s ease;
+}
+.cbox::after{
+  content:"";
+  position:absolute;
+  bottom:0;left:0;
+  width:0;
+  height:2px;
+  background:var(--g);
+  box-shadow:0 0 8px var(--g);
+  transition:width .9s ease .3s;
+}
+.cbox.on::before{transform:scaleX(1)}
+.cbox.on::after{width:100%}
+.cbox:hover{
+  border-color:rgba(212,175,55,.4);
+  background:rgba(212,175,55,.04);
+}
+.c-num{
+  font-family:'Orbitron',monospace;
+  font-weight:900;
+  font-size:1.85rem;
+  color:var(--gl);
+  text-shadow:0 0 18px rgba(212,175,55,.35);
+  line-height:1;
+  margin-bottom:8px;
+}
+.c-lbl{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.2em;
+  color:var(--txm);
+}
+
+/* ============================================================
+   TERMINAL
+============================================================ */
+.terminal{
+  position:relative;
+  background:#020202;
+  border:1px solid rgba(212,175,55,.16);
+  margin-bottom:0;
+  overflow:hidden;
+}
+.terminal .pc{
+  position:absolute;
+  width:10px;height:10px;
+  z-index:3;
+}
+.terminal .pc.tl{top:4px;left:4px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.terminal .pc.tr{top:4px;right:4px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.terminal .pc.bl{bottom:4px;left:4px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.terminal .pc.br{bottom:4px;right:4px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.t-bar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:rgba(212,175,55,.03);
+  border-bottom:1px solid rgba(212,175,55,.08);
+}
+.t-dot{width:9px;height:9px;border-radius:50%}
+.t-dot.r{background:#FF5F57}
+.t-dot.y{background:#FEBC2E}
+.t-dot.g{background:#28C840}
+.t-label{
+  margin-left:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.18em;
+  color:var(--txm);
+}
+.t-body{
+  padding:18px 22px;
+  height:210px;
+  overflow:hidden;
+  position:relative;
+}
+.t-body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(212,175,55,.015) 2px, rgba(212,175,55,.015) 3px);
+}
+.t-line{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.76rem;
+  line-height:1.86;
+}
+.tp{color:var(--g)}
+.tc{color:var(--tx)}
+.to{color:var(--txm)}
+.ts{color:var(--grn)}
+.te{color:#7BD8FF}
+
+/* ============================================================
+   GRID HELPERS
+============================================================ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:start}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-2-narrow{display:grid;grid-template-columns:1.05fr .95fr;gap:32px}
+
+/* ============================================================
+   STAT LIST
+============================================================ */
+.stat-list{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.stat-row{
+  position:relative;
+  padding:13px 18px;
+  border:1px solid rgba(212,175,55,.12);
+  background:rgba(212,175,55,.018);
+  transition:.3s ease;
+}
+.stat-row::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--g);
+  box-shadow:0 0 6px rgba(212,175,55,.5);
+}
+.stat-row:hover{
+  border-color:rgba(212,175,55,.32);
+  background:rgba(212,175,55,.04);
+  transform:translateX(4px);
+}
+.s-lbl{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+  margin-bottom:4px;
+}
+.s-val{
+  font-family:'Orbitron',monospace;
+  font-size:.82rem;
+  color:var(--tx);
+  font-weight:500;
+}
+
+/* ============================================================
+   TIMELINE (SAVE POINTS)
+============================================================ */
+.timeline{
+  position:relative;
+  padding-left:36px;
+}
+.timeline::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:8px;bottom:0;
+  width:1px;
+  background:linear-gradient(180deg, var(--g) 0%, rgba(212,175,55,.06) 100%);
+}
+.t-step{
+  position:relative;
+  margin-bottom:22px;
+  cursor:none;
+}
+.t-step::before{
+  content:"";
+  position:absolute;
+  left:-32px;
+  top:5px;
+  width:14px;height:14px;
+  background:var(--bk);
+  border:1.5px solid var(--txd);
+  transform:rotate(45deg);
+  transition:.35s ease;
+}
+.t-step.on::before{
+  background:var(--g);
+  border-color:var(--gl);
+  box-shadow:0 0 14px rgba(212,175,55,.7), 0 0 28px rgba(212,175,55,.25);
+}
+.t-step:hover::before{border-color:var(--gl)}
+.t-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+  margin-bottom:3px;
+}
+.t-name{
+  font-family:'Orbitron',monospace;
+  font-weight:600;
+  font-size:.98rem;
+  color:var(--tx);
+  letter-spacing:.04em;
+  transition:color .3s;
+}
+.t-step:hover .t-name,
+.t-step.on .t-name{color:var(--gl)}
+.t-check{
+  position:absolute;
+  right:0;top:3px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  color:var(--txd);
+}
+.t-step.on .t-check{color:var(--grn)}
+.t-desc{
+  font-size:.88rem;
+  color:var(--txm);
+  line-height:1.7;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .45s ease, margin-top .28s ease;
+  font-weight:400;
+}
+.t-step.on .t-desc{max-height:160px;margin-top:8px}
+
+/* ============================================================
+   FLOW STEPS
+============================================================ */
+.flow{display:grid;gap:10px}
+.flow-step{
+  position:relative;
+  padding:14px 14px 14px 50px;
+  border:1px solid rgba(212,175,55,.12);
+  background:rgba(212,175,55,.015);
+  transition:.3s ease;
+}
+.flow-step:hover{
+  border-color:rgba(212,175,55,.3);
+  transform:translateX(4px);
+}
+.flow-num{
+  position:absolute;
+  left:14px;top:14px;
+  width:24px;height:24px;
+  display:grid;place-items:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  color:var(--g);
+  border:1px solid rgba(212,175,55,.3);
+  background:rgba(212,175,55,.06);
+}
+.flow-step b{
+  display:block;
+  color:var(--gl);
+  margin-bottom:4px;
+  font-size:.94rem;
+  font-family:'Orbitron',monospace;
+  font-weight:500;
+  letter-spacing:.03em;
+}
+.flow-step p{
+  margin:0;
+  color:var(--txm);
+  font-size:.88rem;
+  line-height:1.7;
+}
+
+/* ============================================================
+   ROLE CARDS
+============================================================ */
+.role-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.role-title{
+  margin:0;
+  font-family:'Orbitron',monospace;
+  font-weight:700;
+  font-size:1.18rem;
+  color:var(--gl);
+  letter-spacing:.04em;
+}
+.role-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  letter-spacing:.18em;
+  padding:5px 10px;
+  border:1px solid rgba(212,175,55,.2);
+  color:var(--txm);
+}
+.bullets{
+  display:grid;
+  gap:8px;
+  margin-top:14px;
+}
+.bullet{
+  display:flex;
+  gap:10px;
+  color:var(--txm);
+  font-size:.9rem;
+  line-height:1.7;
+}
+.bullet i{
+  font-style:normal;
+  color:var(--g);
+  margin-top:1px;
+  font-size:.78rem;
+}
+
+/* ============================================================
+   RULE BOX
+============================================================ */
+.rule-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.rule-code{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+}
+.rule-val{
+  font-family:'Orbitron',monospace;
+  font-weight:800;
+  font-size:1.2rem;
+  color:var(--gl);
+  letter-spacing:.05em;
+}
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:14px;
+}
+.tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.14em;
+  padding:4px 9px;
+  border:1px solid rgba(212,175,55,.16);
+  color:var(--txd);
+  transition:.25s ease;
+}
+.tag:hover{
+  color:var(--gl);
+  border-color:rgba(212,175,55,.4);
+  background:rgba(212,175,55,.05);
+}
+
+/* ============================================================
+   DB DIAGRAM (waves / wireframe)
+============================================================ */
+.db-stage{
+  position:relative;
+  min-height:420px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(212,175,55,.16);
+  background:
+    radial-gradient(circle at center, rgba(212,175,55,.06), transparent 50%),
+    rgba(212,175,55,.012);
+  overflow:hidden;
+}
+.db-stage canvas{
+  position:absolute;
+  inset:0;
+}
+.db-stage .pc{
+  position:absolute;
+  width:12px;height:12px;
+  z-index:3;
+}
+.db-stage .pc.tl{top:6px;left:6px;border-top:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.db-stage .pc.tr{top:6px;right:6px;border-top:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.db-stage .pc.bl{bottom:6px;left:6px;border-bottom:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.db-stage .pc.br{bottom:6px;right:6px;border-bottom:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.db-tag{
+  position:absolute;
+  top:14px;left:14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.2em;
+  padding:5px 10px;
+  border:1px solid rgba(212,175,55,.22);
+  background:rgba(0,0,0,.7);
+  color:var(--gl);
+  z-index:3;
+}
+.db-tag.right{left:auto;right:14px}
+
+/* ============================================================
+   DOC CARDS
+============================================================ */
+.docs-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:16px;
+}
+.doc-card{
+  position:relative;
+  padding:28px;
+  border:1px solid rgba(212,175,55,.13);
+  background:linear-gradient(135deg, rgba(212,175,55,.022), transparent);
+  text-decoration:none;
+  display:block;
+  overflow:hidden;
+  transition:border-color .4s, box-shadow .4s;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.doc-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  transform:scaleX(0);
+  transition:transform .5s;
+}
+.doc-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at var(--rx,50%) var(--ry,50%), rgba(212,175,55,.07), transparent 55%);
+  opacity:0;
+  transition:opacity .4s;
+  pointer-events:none;
+}
+.doc-card:hover{
+  border-color:rgba(212,175,55,.38);
+  box-shadow:0 20px 50px rgba(0,0,0,.5), 0 0 24px rgba(212,175,55,.10);
+}
+.doc-card:hover::before{transform:scaleX(1)}
+.doc-card:hover::after{opacity:1}
+.doc-card .ca{
+  position:absolute;
+  width:12px;height:12px;
+  z-index:3;
+}
+.doc-card .ca.tl{top:5px;left:5px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.doc-card .ca.tr{top:5px;right:5px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.doc-card .ca.bl{bottom:5px;left:5px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.doc-card .ca.br{bottom:5px;right:5px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.d-ico{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(212,175,55,.4);
+  margin-bottom:14px;
+}
+.d-ico svg{width:17px;height:17px;fill:none;stroke:var(--g);stroke-width:1.6}
+.d-step{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+  margin-bottom:6px;
+}
+.d-title{
+  font-family:'Orbitron',monospace;
+  font-weight:600;
+  font-size:1.04rem;
+  color:var(--tx);
+  margin-bottom:10px;
+  line-height:1.32;
+  letter-spacing:.02em;
+}
+.d-desc{
+  font-size:.86rem;
+  color:var(--txm);
+  line-height:1.72;
+}
+.d-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:16px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.18em;
+  color:var(--g);
+}
+.d-btn svg{
+  width:11px;height:11px;
+  fill:none;stroke:currentColor;
+  stroke-width:1.8;
+  transition:transform .3s;
+}
+.doc-card:hover .d-btn svg{transform:translateX(3px)}
+.doc-card.feat{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:34px;
+  align-items:center;
+  border-color:rgba(212,175,55,.24);
+  background:linear-gradient(135deg, rgba(212,175,55,.05), transparent);
+}
+.doc-card.feat .d-title{font-size:1.32rem}
+.feat-tag{
+  display:inline-block;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.18em;
+  padding:4px 12px;
+  border:1px solid rgba(92,216,96,.4);
+  color:var(--grn);
+  margin-bottom:14px;
+}
+.feat-meta{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  margin-top:4px;
+}
+.pend{
+  cursor:default;
+  pointer-events:none;
+  opacity:.85;
+}
+.pend .d-btn{color:var(--gd)}
+
+/* ============================================================
+   VIDEO
+============================================================ */
+.v-frame{
+  position:relative;
+  border:1px solid rgba(212,175,55,.2);
+  background:#020202;
+  overflow:hidden;
+}
+.v-frame::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  z-index:2;
+  pointer-events:none;
+}
+.v-frame::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(212,175,55,.02) 3px, rgba(212,175,55,.02) 4px);
+  z-index:2;
+}
+.v-frame .vc{
+  position:absolute;
+  width:14px;height:14px;
+  z-index:3;
+}
+.v-frame .vc.tl{top:6px;left:6px;border-top:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.v-frame .vc.tr{top:6px;right:6px;border-top:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.v-frame .vc.bl{bottom:6px;left:6px;border-bottom:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.v-frame .vc.br{bottom:6px;right:6px;border-bottom:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.v-frame iframe{
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  display:block;
+}
+.v-placeholder{
+  aspect-ratio:16/9;
+  display:grid;
+  place-items:center;
+  padding:30px;
+  text-align:center;
+  color:var(--txm);
+  background:
+    radial-gradient(circle at center, rgba(212,175,55,.08), transparent 35%),
+    linear-gradient(180deg, rgba(212,175,55,.018), rgba(212,175,55,.005));
+}
+.v-placeholder b{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:1rem;
+  color:var(--gl);
+  margin-bottom:8px;
+  letter-spacing:.05em;
+}
+.v-placeholder span{
+  font-size:.86rem;
+  color:var(--txm);
+  line-height:1.7;
+}
+.v-hud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:space-between;
+  padding:12px 18px;
+  background:rgba(0,0,0,.86);
+  border:1px solid rgba(212,175,55,.12);
+  border-top:0;
+}
+.v-hud div{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.14em;
+  color:var(--txd);
+}
+.v-hud span{color:var(--txm)}
+.v-hud .ok{color:var(--grn)}
+.v-hud .pen{color:#FFB347}
+
+.media-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+/* ============================================================
+   CIERRE
+============================================================ */
+#cierre{
+  position:relative;
+  padding:110px 24px 100px;
+  text-align:center;
+  background:var(--bk);
+  overflow:hidden;
+}
+#cierre-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.c-glow{
+  position:absolute;
+  top:50%;left:50%;
+  width:620px;height:620px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(212,175,55,.06) 0%, transparent 65%);
+  pointer-events:none;
+}
+.c-rays{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(212,175,55,.04) 30deg,
+    transparent 60deg,
+    rgba(212,175,55,.03) 120deg,
+    transparent 180deg,
+    rgba(212,175,55,.04) 240deg,
+    transparent 300deg,
+    transparent 360deg);
+  animation:rays 60s linear infinite;
+}
+@keyframes rays{to{transform:rotate(360deg)}}
+.c-content{position:relative;z-index:2}
+.c-pulse{
+  width:140px;height:1px;
+  margin:0 auto 50px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  animation:cpulse 3s ease-in-out infinite;
+}
+@keyframes cpulse{
+  0%,100%{opacity:.3;transform:scaleX(.6)}
+  50%{opacity:1;transform:scaleX(1.4)}
+}
+.c-title{
+  margin:0 0 18px;
+  font-family:'Orbitron',monospace;
+  font-weight:900;
+  font-size:clamp(1.7rem,5vw,3.6rem);
+  background:linear-gradient(135deg, var(--gh), var(--gl), var(--g), #7A5C10);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:.06em;
+  filter:drop-shadow(0 0 28px rgba(212,175,55,.25));
+}
+.c-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.78rem;
+  letter-spacing:.22em;
+  color:var(--txm);
+  margin-bottom:18px;
+}
+.c-body{
+  max-width:680px;
+  margin:0 auto 36px;
+  font-size:.94rem;
+  color:var(--txd);
+  line-height:1.84;
+}
+.c-body strong{color:var(--gl)}
+.c-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:34px;
+}
+.c-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  max-width:740px;
+  margin:0 auto;
+}
+.c-sep{
+  width:100%;
+  max-width:680px;
+  height:1px;
+  margin:42px auto 22px;
+  background:linear-gradient(90deg, transparent, rgba(212,175,55,.14), transparent);
+}
+.c-foot{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  color:rgba(212,175,55,.25);
+}
+
+/* ============================================================
+   REVEAL
+============================================================ */
+.rv{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .8s ease, transform .8s ease;
+}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}
+.rv.d2{transition-delay:.16s}
+.rv.d3{transition-delay:.24s}
+.rv.d4{transition-delay:.32s}
+[id]{scroll-margin-top:30px}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:980px){
+  .grid-2,.grid-2-narrow{grid-template-columns:1fr;gap:24px}
+  .grid-3,.grid-4,.media-grid{grid-template-columns:1fr}
+  .doc-card.feat{grid-template-columns:1fr;gap:24px}
+  .hero-top-label,.hero-bot-label{display:none}
+  .frame-corner{width:18px;height:18px}
+  .frame-corner.tl,.frame-corner.tr{top:18px}
+  .frame-corner.bl,.frame-corner.br{bottom:18px}
+  .frame-corner.tl,.frame-corner.bl{left:18px}
+  .frame-corner.tr,.frame-corner.br{right:18px}
+}
+@media (max-width:680px){
+  body{cursor:auto}
+  #cur-dot,#cur-cross{display:none}
+  .inner{width:min(100% - 26px, 1080px)}
+  .section{padding:64px 0}
+  .hero-title{font-size:2.8rem}
+  .panel{padding:20px}
+  .grid-3{grid-template-columns:1fr}
+  .player-ready{bottom:80px;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<!-- CRT / VHS LAYERS -->
+<div class="crt-scan"></div>
+<div class="crt-vignette"></div>
+<div class="vhs-track"></div>
+<div class="vhs-glitch"></div>
+
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-cross">
+  <span class="a"></span>
+  <span class="b"></span>
+  <span class="c"></span>
+  <span class="d"></span>
+</div>
+
+<!-- BOOT -->
+<div id="boot">
+  <span class="boot-corner tl"></span>
+  <span class="boot-corner tr"></span>
+  <span class="boot-corner bl"></span>
+  <span class="boot-corner br"></span>
+  <div class="boot-tag">SYSTEM · PRODUCTO 03 · LARAVEL</div>
+  <div class="boot-logo">REPARAYA</div>
+  <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
+  <div class="boot-msg" id="boot-msg">INITIALIZING<span class="blink">_</span></div>
+  <div class="boot-meta">FP.448 · UOC · BACKEND PHP · 2025–2026</div>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-sweep"></div>
+
+  <span class="frame-corner tl"></span>
+  <span class="frame-corner tr"></span>
+  <span class="frame-corner bl"></span>
+  <span class="frame-corner br"></span>
+
+  <div class="hero-top-label">PRODUCTO · 03 · LARAVEL · MVC · B2B</div>
+  <div class="hero-bot-label">UOC · FP.448 · 2025–2026</div>
+  <div class="player-ready">► PLAYER READY</div>
+
+  <div class="hero-content">
+    <div class="hero-badge">FP.448 &nbsp;·&nbsp; UOC &nbsp;·&nbsp; PRODUCTO 03</div>
+    <span class="hero-eye">EQUIPO BACKLORD</span>
+    <h1 class="hero-title">REPARAYA</h1>
+    <span class="hero-tag">
+      Laravel 12 &nbsp;·&nbsp; MVC &nbsp;·&nbsp; MySQL &nbsp;·&nbsp; Docker &nbsp;·&nbsp; B2B &nbsp;·&nbsp; API REST
+      <span class="hero-cursor"></span>
+    </span>
+    <p class="hero-sub">
+      Evolución completa del sistema de gestión de reparaciones hacia una arquitectura backend profesional
+      sobre Laravel — con roles, módulo B2B para gestoras de fincas, comisiones, liquidaciones, calendarios,
+      endpoint REST y despliegue activo en el servidor UOC.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn primary" data-go="recursos">Recursos del proyecto</button>
+      <button class="btn" data-go="videos">Vídeos</button>
+      <button class="btn" data-go="arquitectura">Arquitectura</button>
+      <a class="btn" href="https://github.com/EricKColl/ReparaYa-Producto3-Laravel.git" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <div class="hero-members">
+      <span class="chip">Erick Coll Rodríguez</span>
+      <span class="chip">Carles Miguel Millán</span>
+      <span class="chip">Miguel Alegre Zaragoza</span>
+    </div>
+
+    <div class="hero-stack">
+      <span class="stackchip">Laravel 12</span>
+      <span class="stackchip">PHP 8</span>
+      <span class="stackchip">MySQL 8</span>
+      <span class="stackchip">Eloquent</span>
+      <span class="stackchip">Blade</span>
+      <span class="stackchip">Docker</span>
+      <span class="stackchip">phpMyAdmin</span>
+      <span class="stackchip">API REST</span>
+      <span class="stackchip">GitHub</span>
+      <span class="stackchip">UOC</span>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-bar"></div>
+      <span class="scroll-txt">SCROLL</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     01 · PANORAMA
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">01</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Panorama Técnico del Producto 3</h2>
+    </div>
+    <p class="sec-lead rv">
+      El Producto 3 transforma ReparaYa en una aplicación <strong>Laravel</strong> completa. El sistema integra
+      arquitectura MVC del propio framework, operaciones CRUD por rol, relaciones Eloquent, vistas Blade,
+      módulo B2B para gestoras, comisiones, liquidaciones, calendarios y un endpoint REST publicado en el
+      servidor UOC.
+    </p>
+
+    <div class="counters rv d1">
+      <div class="cbox"><div class="c-num" data-to="4">0</div><div class="c-lbl">roles activos</div></div>
+      <div class="cbox"><div class="c-num" data-to="6">0</div><div class="c-lbl">modelos eloquent</div></div>
+      <div class="cbox"><div class="c-num" data-to="7">0</div><div class="c-lbl">controladores</div></div>
+      <div class="cbox"><div class="c-num" data-to="1">0</div><div class="c-lbl">api rest</div></div>
+      <div class="cbox"><div class="c-num" data-to="3">0</div><div class="c-lbl">entornos</div></div>
+    </div>
+
+    <div class="terminal rv d2">
+      <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+      <div class="t-bar">
+        <span class="t-dot r"></span><span class="t-dot y"></span><span class="t-dot g"></span>
+        <span class="t-label">backlord@fp064 — laravel producto3</span>
+      </div>
+      <div class="t-body" id="term-body"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     02 · EVOLUCIÓN
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">02</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Evolución del Sistema</h2>
+    </div>
+    <p class="sec-lead rv">
+      El Producto 3 es la <strong>migración profesional</strong> desde una base PHP nativa con MVC propia
+      hacia un ecosistema Laravel mantenible, escalable, documentado y desplegado en producción académica.
+    </p>
+
+    <div class="grid-2">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">producto 02 → producto 03</div>
+        <h3 class="p-title">De PHP nativo a Laravel</h3>
+        <p class="p-text">
+          El Producto 2 implementó ReparaYa con una arquitectura MVC artesanal en PHP puro. El Producto 3
+          rehace el sistema sobre <strong>Laravel</strong>, ganando Eloquent, Blade, migraciones, rutas
+          declarativas, middlewares de rol y un módulo B2B nuevo.
+        </p>
+        <div class="stat-list" style="margin-top:18px;">
+          <div class="stat-row"><div class="s-lbl">Framework</div><div class="s-val">Laravel 12 · MVC nativo</div></div>
+          <div class="stat-row"><div class="s-lbl">ORM</div><div class="s-val">Eloquent · relaciones declarativas</div></div>
+          <div class="stat-row"><div class="s-lbl">Vistas</div><div class="s-val">Blade · layout y componentes</div></div>
+          <div class="stat-row"><div class="s-lbl">Persistencia</div><div class="s-val">MySQL 8 · migraciones</div></div>
+          <div class="stat-row"><div class="s-lbl">Nuevo módulo</div><div class="s-val">B2B · gestoras · comisiones</div></div>
+        </div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">recorrido del entorno</div>
+        <h3 class="p-title">Fases superadas</h3>
+        <div class="timeline" style="margin-top:6px;">
+          <div class="t-step on" onclick="tact(0)">
+            <div class="t-tag">FASE 01</div>
+            <div class="t-name">Docker local</div>
+            <div class="t-check">✓ OK</div>
+            <div class="t-desc">Contenedores para Laravel, MySQL y phpMyAdmin con ejecución reproducible del proyecto.</div>
+          </div>
+          <div class="t-step" onclick="tact(1)">
+            <div class="t-tag">FASE 02</div>
+            <div class="t-name">Optimización WSL 2</div>
+            <div class="t-check">✓ OK</div>
+            <div class="t-desc">Traslado del proyecto al filesystem Linux para evitar lentitud de Docker sobre carpetas Windows.</div>
+          </div>
+          <div class="t-step" onclick="tact(2)">
+            <div class="t-tag">FASE 03</div>
+            <div class="t-name">Servidor UOC</div>
+            <div class="t-check">✓ OK</div>
+            <div class="t-desc">Despliegue bajo <code>/producto3</code> exponiendo únicamente la carpeta <code>public</code>.</div>
+          </div>
+          <div class="t-step" onclick="tact(3)">
+            <div class="t-tag">FASE 04</div>
+            <div class="t-name">GitHub + entrega</div>
+            <div class="t-check">✓ OK</div>
+            <div class="t-desc">Flujo con ramas feature, develop y main, Pull Requests, README actualizado y ZIP limpio.</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     03 · ARQUITECTURA
+============================================================ -->
+<section class="section alt" id="arquitectura">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">03</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Arquitectura Laravel & Flujo MVC</h2>
+    </div>
+    <p class="sec-lead rv">
+      La aplicación sigue el patrón MVC propio de Laravel: las rutas son el punto de entrada, los
+      controladores concentran la lógica, los modelos Eloquent comunican con MySQL y las vistas Blade
+      construyen una interfaz diferenciada por rol.
+    </p>
+
+    <div class="grid-2-narrow">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">flujo de petición</div>
+        <h3 class="p-title">De la URL al resultado visible</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num">01</span>
+            <b>Petición HTTP</b>
+            <p>Acceso desde navegador en local Docker o desde el despliegue público en UOC.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">02</span>
+            <b>Ruta resuelta</b>
+            <p><code>routes/web.php</code> gestiona vistas y <code>routes/api.php</code> expone el endpoint REST.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">03</span>
+            <b>Controlador</b>
+            <p>Valida datos, aplica reglas de negocio, filtra por rol y prepara la información para la vista.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">04</span>
+            <b>Modelo Eloquent</b>
+            <p>Representa tablas y relaciones MySQL con <code>fillable</code>, <code>belongsTo</code> y <code>hasMany</code>.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">05</span>
+            <b>Blade o JSON</b>
+            <p>Render como interfaz Blade o respuesta JSON estructurada en la API REST.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">organización del código</div>
+        <h3 class="p-title">Controladores principales</h3>
+        <p class="p-text">
+          Lógica separada por responsabilidades, evitando concentrar todo en un único archivo y facilitando
+          la defensa del proyecto desde una perspectiva profesional.
+        </p>
+        <div class="tags" style="margin-top:18px;">
+          <span class="tag">AuthController</span>
+          <span class="tag">HomeController</span>
+          <span class="tag">IncidenciaController</span>
+          <span class="tag">B2BController</span>
+          <span class="tag">GestoraController</span>
+          <span class="tag">ComunidadController</span>
+          <span class="tag">ApiController</span>
+        </div>
+
+        <h3 class="p-title" style="margin-top:24px;">Pilares técnicos</h3>
+        <div class="bullets">
+          <div class="bullet"><i>◆</i><span>Migraciones declarativas con <code>php artisan migrate</code>.</span></div>
+          <div class="bullet"><i>◆</i><span>Middleware de autenticación y filtrado por rol.</span></div>
+          <div class="bullet"><i>◆</i><span>Validación de formularios con <code>FormRequest</code> y reglas de negocio centralizadas.</span></div>
+          <div class="bullet"><i>◆</i><span>Conexión MySQL configurada vía <code>.env</code> para local y UOC.</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     04 · CRUDS
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">04</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Bloques Funcionales Implementados</h2>
+    </div>
+    <p class="sec-lead rv">
+      El sistema combina gestión administrativa, seguimiento operativo, formularios, validaciones, listados,
+      calendarios y acceso diferenciado por roles. Cada módulo está conectado con la base de datos mediante
+      Eloquent.
+    </p>
+
+    <div class="grid-4">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 01</div>
+        <h3 class="p-title">Usuarios</h3>
+        <p class="p-text">Gestión de usuarios del sistema, correos, roles y datos personales, con navegación adaptada según sesión.</p>
+        <div class="tags"><span class="tag">admin</span><span class="tag">cliente</span><span class="tag">técnico</span></div>
+      </article>
+
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 02</div>
+        <h3 class="p-title">Técnicos</h3>
+        <p class="p-text">Fichas técnicas vinculadas a usuarios, especialidades, disponibilidad e incidencias asignadas.</p>
+        <div class="tags"><span class="tag">especialidad</span><span class="tag">agenda</span><span class="tag">servicios</span></div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 03</div>
+        <h3 class="p-title">Incidencias</h3>
+        <p class="p-text">Núcleo funcional: localizador, cliente, técnico, especialidad, estado, urgencia y fecha.</p>
+        <div class="tags"><span class="tag">avisos</span><span class="tag">estado</span><span class="tag">urgencia</span></div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 04</div>
+        <h3 class="p-title">Especialidades</h3>
+        <p class="p-text">Catálogo técnico para clasificar incidencias y asignar correctamente los perfiles profesionales.</p>
+        <div class="tags"><span class="tag">fontanería</span><span class="tag">electricidad</span><span class="tag">servicio</span></div>
+      </article>
+
+      <article class="panel rv d3">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 05 · B2B</div>
+        <h3 class="p-title">Gestoras</h3>
+        <p class="p-text">Empresas administradoras de fincas con email, teléfono, contraseña y porcentaje de comisión.</p>
+        <div class="tags"><span class="tag">gestora</span><span class="tag">comisión</span><span class="tag">panel</span></div>
+      </article>
+
+      <article class="panel rv d3">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">CRUD · 06 · B2B</div>
+        <h3 class="p-title">Comunidades</h3>
+        <p class="p-text">Comunidades vinculadas a gestoras con dirección, zona y teléfono de contacto para avisos B2B.</p>
+        <div class="tags"><span class="tag">zona</span><span class="tag">dirección</span><span class="tag">finca</span></div>
+      </article>
+
+      <article class="panel rv d4">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">operativa</div>
+        <h3 class="p-title">Calendarios</h3>
+        <p class="p-text">Componente reutilizable que representa servicios por rol: administrador, cliente, técnico o gestora.</p>
+        <div class="tags"><span class="tag">visual</span><span class="tag">planificación</span><span class="tag">rol</span></div>
+      </article>
+
+      <article class="panel rv d4">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">api · REST</div>
+        <h3 class="p-title">API por zonas</h3>
+        <p class="p-text">Endpoint JSON que agrupa servicios B2B por zona y calcula porcentajes sobre el total global.</p>
+        <div class="tags"><span class="tag">json</span><span class="tag">api</span><span class="tag">zonas</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     05 · ROLES
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">05</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Perfiles & Operación por Rol</h2>
+    </div>
+    <p class="sec-lead rv">
+      La navegación, los permisos y los datos visibles cambian según el usuario autenticado. Esto forma parte
+      del comportamiento real del backend Laravel y de su sistema de middlewares.
+    </p>
+
+    <div class="grid-4">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="role-head">
+          <h3 class="role-title">Admin</h3>
+          <span class="role-badge">CONTROL TOTAL</span>
+        </div>
+        <p class="p-text">Visión global del sistema y coordinación operativa completa.</p>
+        <div class="bullets">
+          <div class="bullet"><i>◆</i><span>Gestiona incidencias, usuarios, técnicos, especialidades, gestoras y comunidades.</span></div>
+          <div class="bullet"><i>◆</i><span>Asigna técnicos disponibles por especialidad y cambia estados.</span></div>
+          <div class="bullet"><i>◆</i><span>Consulta liquidaciones B2B mensuales por gestora.</span></div>
+        </div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="role-head">
+          <h3 class="role-title">Cliente</h3>
+          <span class="role-badge">PARTICULAR</span>
+        </div>
+        <p class="p-text">Área orientada a la solicitud y seguimiento de sus propios avisos.</p>
+        <div class="bullets">
+          <div class="bullet"><i>◆</i><span>Registra incidencias con especialidad, fecha, dirección y urgencia.</span></div>
+          <div class="bullet"><i>◆</i><span>Ve únicamente sus avisos, filtrados por sesión activa.</span></div>
+          <div class="bullet"><i>◆</i><span>Cancelación condicionada según plazo y estado del aviso.</span></div>
+        </div>
+      </article>
+
+      <article class="panel rv d3">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="role-head">
+          <h3 class="role-title">Técnico</h3>
+          <span class="role-badge">OPERATIVO</span>
+        </div>
+        <p class="p-text">Agenda propia con servicios asignados y contexto de intervención.</p>
+        <div class="bullets">
+          <div class="bullet"><i>◆</i><span>Servicios asignados con cliente, dirección, descripción y prioridad.</span></div>
+          <div class="bullet"><i>◆</i><span>Calendario visual para ordenar próximas intervenciones.</span></div>
+          <div class="bullet"><i>◆</i><span>Acceso restringido por rol técnico mediante middleware.</span></div>
+        </div>
+      </article>
+
+      <article class="panel rv d4">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="role-head">
+          <h3 class="role-title">Gestora</h3>
+          <span class="role-badge">B2B · NUEVO</span>
+        </div>
+        <p class="p-text">Empresa administradora de fincas con panel propio y comisiones.</p>
+        <div class="bullets">
+          <div class="bullet"><i>◆</i><span>Crea avisos B2B vinculados a sus comunidades.</span></div>
+          <div class="bullet"><i>◆</i><span>Consulta servicios finalizados y comisiones acumuladas.</span></div>
+          <div class="bullet"><i>◆</i><span>Calendario filtrado por comunidades bajo su gestión.</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     06 · B2B
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">06</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Módulo B2B · Comisiones & Liquidaciones</h2>
+    </div>
+    <p class="sec-lead rv">
+      El Producto 3 amplía ReparaYa con un módulo <strong>B2B</strong>. Las gestoras administran comunidades,
+      crean avisos B2B y generan comisiones únicamente cuando los servicios están finalizados.
+    </p>
+
+    <div class="grid-2-narrow">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">flujo B2B</div>
+        <h3 class="p-title">De gestora a liquidación</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num">01</span>
+            <b>Gestora</b>
+            <p>Entidad B2B con email, teléfono, contraseña y porcentaje de comisión pactado.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">02</span>
+            <b>Comunidad</b>
+            <p>Pertenece a una gestora e incluye dirección, zona y teléfono de contacto.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">03</span>
+            <b>Aviso B2B</b>
+            <p>Comunidad, especialidad, descripción, fecha, urgencia, estado y precio base.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">04</span>
+            <b>Comisión</b>
+            <p><code>precio_base × porcentaje / 100</code> únicamente si el servicio está finalizado.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">05</span>
+            <b>Liquidación</b>
+            <p>El admin consulta total de servicios finalizados y cantidad a liquidar por gestora.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">reglas críticas</div>
+        <h3 class="p-title">Lógica económica y trazabilidad</h3>
+        <p class="p-text">
+          El sistema evita liquidar servicios pendientes, asignados o cancelados. Solo los servicios
+          <strong>finalizados</strong> generan comisión. Además, las comunidades no pueden eliminarse si
+          tienen avisos asociados, protegiendo la integridad referencial.
+        </p>
+
+        <div class="stat-list" style="margin-top:18px;">
+          <div class="stat-row">
+            <div class="rule-head"><span class="rule-code">RB · 01</span><span class="rule-val">FINALIZADA</span></div>
+            <div class="s-val" style="font-family:'Rajdhani',sans-serif;font-weight:400;color:var(--txm);font-size:.88rem;">Solo los servicios finalizados generan comisión.</div>
+          </div>
+          <div class="stat-row">
+            <div class="rule-head"><span class="rule-code">RB · 02</span><span class="rule-val">precio × %</span></div>
+            <div class="s-val" style="font-family:'Rajdhani',sans-serif;font-weight:400;color:var(--txm);font-size:.88rem;">Fórmula consistente y trazable por aviso.</div>
+          </div>
+          <div class="stat-row">
+            <div class="rule-head"><span class="rule-code">RB · 03</span><span class="rule-val">INTEGRIDAD</span></div>
+            <div class="s-val" style="font-family:'Rajdhani',sans-serif;font-weight:400;color:var(--txm);font-size:.88rem;">No se borra una comunidad con avisos activos.</div>
+          </div>
+        </div>
+
+        <div class="terminal" style="margin-top:18px;">
+          <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+          <div class="t-bar">
+            <span class="t-dot r"></span><span class="t-dot y"></span><span class="t-dot g"></span>
+            <span class="t-label">commission.engine</span>
+          </div>
+          <div class="t-body" style="height:auto;min-height:130px;padding:16px 22px;">
+            <div class="t-line"><span class="tp">$</span> <span class="tc">precio_base = 450.00</span></div>
+            <div class="t-line"><span class="tp">$</span> <span class="tc">porcentaje = 5%</span></div>
+            <div class="t-line"><span class="te">IF estado === "Finalizada"</span></div>
+            <div class="t-line"><span class="ts">comision = 22.50 € ✓</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     07 · BASE DE DATOS
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">07</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Base de Datos & Relaciones</h2>
+    </div>
+    <p class="sec-lead rv">
+      MySQL actúa como núcleo de persistencia y Laravel se comunica mediante modelos Eloquent. Las
+      relaciones permiten consultar usuarios, técnicos, incidencias y comunidades de forma declarativa,
+      sin SQL manual repartido por las vistas.
+    </p>
+
+    <div class="grid-2-narrow">
+      <div class="db-stage rv d1">
+        <canvas id="db-canvas"></canvas>
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <span class="db-tag">CORE · MySQL 8</span>
+        <span class="db-tag right">6 entidades · eloquent</span>
+      </div>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">relaciones principales</div>
+        <h3 class="p-title">Estructura relacional</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num">01</span>
+            <b>Usuario → Técnico</b>
+            <p>Un usuario de rol técnico puede tener una ficha técnica asociada con especialidad y disponibilidad.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">02</span>
+            <b>Especialidad → Incidencia</b>
+            <p>Las incidencias se clasifican por especialidad para facilitar la asignación.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">03</span>
+            <b>Gestora → Comunidad</b>
+            <p>Una gestora administra varias comunidades de propietarios.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">04</span>
+            <b>Comunidad → Incidencia B2B</b>
+            <p>Los avisos B2B quedan vinculados a comunidades concretas, conservando trazabilidad.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     08 · DESPLIEGUE
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">08</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Despliegue & Accesos</h2>
+    </div>
+    <p class="sec-lead rv">
+      El proyecto está preparado para funcionar en local con Docker y en producción académica en el
+      servidor UOC, manteniendo la misma lógica de rutas mediante configuración por <code>.env</code>.
+    </p>
+
+    <div class="grid-2-narrow">
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">rutas de revisión</div>
+        <h3 class="p-title">Accesos principales</h3>
+        <div class="stat-list" style="margin-top:14px;">
+          <div class="stat-row">
+            <div class="s-lbl">Aplicación UOC</div>
+            <div class="s-val">fp064.techlab.uoc.edu/~uocx3/producto3</div>
+          </div>
+          <div class="stat-row">
+            <div class="s-lbl">API REST · zonas</div>
+            <div class="s-val">/producto3/api/servicios/zonas</div>
+          </div>
+          <div class="stat-row">
+            <div class="s-lbl">Referencia local</div>
+            <div class="s-val">http://localhost:8000</div>
+          </div>
+          <div class="stat-row">
+            <div class="s-lbl">Repositorio</div>
+            <div class="s-val">github.com/EricKColl/ReparaYa-Producto3-Laravel</div>
+          </div>
+        </div>
+
+        <div class="hero-actions" style="margin-top:22px;justify-content:flex-start;opacity:1;animation:none;">
+          <a class="btn primary" href="https://fp064.techlab.uoc.edu/~uocx3/producto3" target="_blank" rel="noopener">Abrir aplicación</a>
+          <a class="btn" href="https://fp064.techlab.uoc.edu/~uocx3/producto3/api/servicios/zonas" target="_blank" rel="noopener">Probar API</a>
+        </div>
+      </article>
+
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">qué debe quedar claro</div>
+        <h3 class="p-title">Puntos fuertes para la defensa</h3>
+        <div class="bullets" style="margin-top:14px;">
+          <div class="bullet"><i>◆</i><span>Migración real desde PHP nativo a Laravel completo.</span></div>
+          <div class="bullet"><i>◆</i><span>Arquitectura MVC del framework con Eloquent y Blade.</span></div>
+          <div class="bullet"><i>◆</i><span>Cuatro perfiles operativos con middlewares de rol.</span></div>
+          <div class="bullet"><i>◆</i><span>Módulo B2B nuevo con comisiones y liquidaciones.</span></div>
+          <div class="bullet"><i>◆</i><span>Endpoint REST publicado y verificable en producción.</span></div>
+          <div class="bullet"><i>◆</i><span>Optimización de entorno documentada (WSL 2).</span></div>
+          <div class="bullet"><i>◆</i><span>Flujo de Git con ramas, PRs y entregable limpio.</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     09 · RECURSOS
+============================================================ -->
+<section class="section alt" id="recursos">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">09</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Recursos del Proyecto</h2>
+    </div>
+    <p class="sec-lead rv">
+      Accesos directos al código fuente del Producto 3 y al endpoint REST desplegado para su comprobación.
+    </p>
+
+    <div class="docs-grid">
+
+      <a class="doc-card rv d2" href="https://github.com/EricKColl/ReparaYa-Producto3-Laravel.git" target="_blank" rel="noopener">
+        <span class="ca tl"></span><span class="ca tr"></span><span class="ca bl"></span><span class="ca br"></span>
+        <div class="d-ico"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+        <div class="d-step">REPOSITORIO</div>
+        <h3 class="d-title">GitHub · Producto 3</h3>
+        <p class="d-desc">
+          Código fuente, estructura Laravel, README, configuración, ramas, commits y evolución mediante
+          Pull Requests.
+        </p>
+        <span class="d-btn">ABRIR REPO <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+
+      <a class="doc-card rv d3" href="https://fp064.techlab.uoc.edu/~uocx3/producto3/api/servicios/zonas" target="_blank" rel="noopener">
+        <span class="ca tl"></span><span class="ca tr"></span><span class="ca bl"></span><span class="ca br"></span>
+        <div class="d-ico"><svg viewBox="0 0 24 24"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg></div>
+        <div class="d-step">API · REST</div>
+        <h3 class="d-title">Servicios agrupados por zona</h3>
+        <p class="d-desc">
+          Endpoint JSON que devuelve total global, zonas, número de servicios y porcentaje sobre el total.
+        </p>
+        <span class="d-btn">PROBAR API <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     10 · VÍDEOS
+============================================================ -->
+<section class="section" id="videos">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">10</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Vídeos del Proyecto</h2>
+    </div>
+    <p class="sec-lead rv">
+      El vídeo práctico muestra el funcionamiento real de la aplicación. El vídeo teórico queda preparado
+      para enlazar la explicación conceptual de la arquitectura Laravel y del módulo B2B.
+    </p>
+
+    <div class="media-grid">
+      <article class="panel rv d2">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">vídeo · teórico</div>
+        <h3 class="p-title">Base conceptual y técnica</h3>
+        <p class="p-text">
+          Apartado reservado para el vídeo teórico, donde se explicará Laravel, MVC, rutas, controladores,
+          modelos, Blade, Eloquent, MySQL, Docker, API REST, GitHub y despliegue UOC.
+        </p>
+        <div class="v-frame" style="margin-top:18px;">
+          <span class="vc tl"></span><span class="vc tr"></span><span class="vc bl"></span><span class="vc br"></span>
+          <iframe src="https://www.youtube.com/embed/rzh8OPauZIw"
+            title="Vídeo teórico ReparaYa Producto 3"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="v-hud">
+          <div>TIPO: <span>TEÓRICO</span></div>
+          <div>CONTENIDO: <span>MVC · Laravel · API REST</span></div>
+          <div>ESTADO: <span class="ok">▶ ACTIVO</span></div>
+        </div>
+      </article>
+
+      <article class="panel rv d1">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">vídeo · práctico</div>
+        <h3 class="p-title">Demostración funcional</h3>
+        <p class="p-text">
+          Recorrido por la home pública, login, panel administrador, usuarios, técnicos, especialidades,
+          incidencias, gestoras, comunidades, liquidaciones, cliente, técnico, gestora B2B y API REST.
+        </p>
+        <div class="v-frame" style="margin-top:18px;">
+          <span class="vc tl"></span><span class="vc tr"></span><span class="vc bl"></span><span class="vc br"></span>
+          <iframe src="https://www.youtube.com/embed/VBFj2iywMxI"
+            title="Vídeo práctico ReparaYa Producto 3"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="v-hud">
+          <div>TIPO: <span>DEMO PRÁCTICA</span></div>
+          <div>STACK: <span>Laravel · MySQL · B2B</span></div>
+          <div>ESTADO: <span class="ok">▶ ACTIVO</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     CIERRE
+============================================================ -->
+<section id="cierre">
+  <canvas id="cierre-canvas"></canvas>
+  <div class="c-rays"></div>
+  <div class="c-glow"></div>
+  <div class="c-content inner">
+    <div class="c-pulse rv"></div>
+    <h2 class="c-title rv">MISIÓN LARAVEL COMPLETADA</h2>
+    <p class="c-sub rv">Backend evolucionado &nbsp;·&nbsp; B2B operativo &nbsp;·&nbsp; API REST publicada en UOC</p>
+    <p class="c-body rv d1">
+      ReparaYa Producto 3 representa una evolución real hacia una arquitectura backend profesional:
+      <strong>Laravel</strong>, <strong>MVC</strong>, <strong>Eloquent</strong>, <strong>MySQL</strong>,
+      <strong>Blade</strong>, <strong>Docker</strong>, <strong>roles diferenciados</strong>, <strong>módulo B2B</strong>,
+      <strong>comisiones</strong>, <strong>liquidaciones</strong>, <strong>calendarios</strong>,
+      <strong>API REST</strong>, <strong>GitHub</strong> y <strong>despliegue en servidor UOC</strong>.
+    </p>
+
+    <div class="c-actions rv d2">
+      <a class="btn" href="https://youtu.be/VBFj2iywMxI" target="_blank" rel="noopener">Vídeo práctico</a>
+      <a class="btn" href="https://github.com/EricKColl/ReparaYa-Producto3-Laravel.git" target="_blank" rel="noopener">Repositorio</a>
+    </div>
+
+    <div class="c-tags rv d3">
+      <span class="tag">Laravel 12</span>
+      <span class="tag">PHP</span>
+      <span class="tag">MVC</span>
+      <span class="tag">Blade</span>
+      <span class="tag">Eloquent</span>
+      <span class="tag">MySQL</span>
+      <span class="tag">Docker</span>
+      <span class="tag">phpMyAdmin</span>
+      <span class="tag">B2B</span>
+      <span class="tag">Comisiones</span>
+      <span class="tag">API REST</span>
+      <span class="tag">GitHub</span>
+      <span class="tag">UOC</span>
+    </div>
+
+    <div class="c-sep rv"></div>
+    <p class="c-foot rv">BACKLORD &nbsp;//&nbsp; FP.448 &nbsp;//&nbsp; UNIVERSITAT OBERTA DE CATALUNYA &nbsp;//&nbsp; 2025–2026</p>
+  </div>
+</section>
+
+<script>
+/* ============================================================
+   BOOT
+============================================================ */
+(function(){
+  var lines=[
+    'INITIALIZING LARAVEL CORE',
+    'LOADING MVC MODULES',
+    'MOUNTING MYSQL RELATIONS',
+    'ACTIVATING BLADE INTERFACE',
+    'CONNECTING B2B MODULE',
+    'DEPLOYING API REST',
+    'SYSTEM ONLINE ✓'
+  ];
+  var fill=document.getElementById('boot-fill');
+  var msg=document.getElementById('boot-msg');
+  var boot=document.getElementById('boot');
+  var i=0;
+  setTimeout(function(){fill.style.width='100%'},80);
+  var iv=setInterval(function(){
+    i++;
+    if(i<lines.length){
+      msg.innerHTML=lines[i]+'<span class="blink">_</span>';
+    }else{
+      clearInterval(iv);
+      setTimeout(function(){
+        boot.classList.add('gone');
+        setTimeout(function(){boot.style.display='none'},950);
+      },350);
+    }
+  },370);
+})();
+
+/* ============================================================
+   CURSOR
+============================================================ */
+(function(){
+  var dot=document.getElementById('cur-dot');
+  var cross=document.getElementById('cur-cross');
+  if(!dot||!cross)return;
+  var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.left=mx+'px';
+    dot.style.top=my+'px';
+  });
+  function loop(){
+    rx+=(mx-rx)*.14;
+    ry+=(my-ry)*.14;
+    cross.style.left=rx+'px';
+    cross.style.top=ry+'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  document.querySelectorAll('a,button,.panel,.doc-card,.chip,.tag,.t-step,.stackchip,.cbox,.flow-step').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      cross.style.width='52px';
+      cross.style.height='52px';
+      cross.style.opacity='1';
+      dot.style.transform='translate(-50%,-50%) scale(1.7)';
+    });
+    el.addEventListener('mouseleave',function(){
+      cross.style.width='36px';
+      cross.style.height='36px';
+      cross.style.opacity='.7';
+      dot.style.transform='translate(-50%,-50%) scale(1)';
+    });
+  });
+})();
+
+/* ============================================================
+   HERO CANVAS — Wave interference + particles
+============================================================ */
+(function(){
+  var c=document.getElementById('hero-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W,H,parts=[],waves=[];
+
+  function resize(){
+    W=c.width=c.offsetWidth||window.innerWidth;
+    H=c.height=c.offsetHeight||window.innerHeight;
+    parts=[];
+    for(var i=0;i<60;i++){
+      parts.push({
+        x:Math.random()*W,
+        y:Math.random()*H,
+        vx:(Math.random()-.5)*.22,
+        vy:(Math.random()-.5)*.22,
+        r:Math.random()*1.4+.4,
+        a:Math.random()*.35+.10
+      });
+    }
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  var t=0;
+  function spawnWave(){
+    waves.push({
+      x:Math.random()*W,
+      y:Math.random()*H,
+      r:0,
+      maxR:Math.random()*160+80,
+      a:.45
+    });
+  }
+  setInterval(spawnWave,1300);
+
+  function draw(){
+    t+=.012;
+    ctx.fillStyle='rgba(3,3,3,0.16)';
+    ctx.fillRect(0,0,W,H);
+
+    // sine wave interference (top + bottom)
+    ctx.strokeStyle='rgba(212,175,55,.10)';
+    ctx.lineWidth=1;
+    for(var w=0;w<3;w++){
+      ctx.beginPath();
+      for(var x=0;x<=W;x+=4){
+        var y=H*0.5 + Math.sin(x*0.012 + t + w*1.7)*30*Math.sin(t*0.4+w) + (w-1)*120;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    // radial waves (interference rings)
+    for(var i=waves.length-1;i>=0;i--){
+      var wv=waves[i];
+      wv.r+=1.4;
+      wv.a-=.004;
+      if(wv.a<=0){waves.splice(i,1);continue}
+      ctx.beginPath();
+      ctx.arc(wv.x,wv.y,wv.r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(212,175,55,'+wv.a+')';
+      ctx.lineWidth=.6;
+      ctx.stroke();
+    }
+
+    // particles
+    for(var p=0;p<parts.length;p++){
+      var pt=parts[p];
+      pt.x+=pt.vx;pt.y+=pt.vy;
+      if(pt.x<-20)pt.x=W+20;
+      if(pt.x>W+20)pt.x=-20;
+      if(pt.y<-20)pt.y=H+20;
+      if(pt.y>H+20)pt.y=-20;
+      ctx.beginPath();
+      ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(212,175,55,'+pt.a+')';
+      ctx.fill();
+
+      for(var q=p+1;q<parts.length;q++){
+        var pq=parts[q],dx=pt.x-pq.x,dy=pt.y-pq.y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<110){
+          ctx.beginPath();
+          ctx.moveTo(pt.x,pt.y);
+          ctx.lineTo(pq.x,pq.y);
+          ctx.strokeStyle='rgba(212,175,55,'+(.07*(1-dist/110))+')';
+          ctx.lineWidth=.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   DATABASE CANVAS — Orbital nodes wireframe
+============================================================ */
+(function(){
+  var c=document.getElementById('db-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W,H;
+  var labels=['usuarios','tecnicos','especialidades','incidencias','gestoras','comunidades'];
+
+  function resize(){
+    var rect=c.parentElement.getBoundingClientRect();
+    W=c.width=rect.width;
+    H=c.height=rect.height;
+  }
+  setTimeout(resize,100);
+  window.addEventListener('resize',function(){setTimeout(resize,80)});
+
+  var t=0;
+  function draw(){
+    if(!W){resize();requestAnimationFrame(draw);return}
+    t+=.008;
+    ctx.fillStyle='rgba(12,12,12,0.18)';
+    ctx.fillRect(0,0,W,H);
+
+    var cx=W/2,cy=H/2;
+
+    // outer rings
+    for(var ring=0;ring<3;ring++){
+      ctx.beginPath();
+      ctx.arc(cx,cy,90+ring*36,0,Math.PI*2);
+      ctx.strokeStyle='rgba(212,175,55,'+(.07-ring*.015)+')';
+      ctx.lineWidth=.8;
+      ctx.stroke();
+    }
+
+    // central core — diamond
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(t*.3);
+    ctx.strokeStyle='rgba(248,229,138,.9)';
+    ctx.lineWidth=1.2;
+    ctx.beginPath();
+    ctx.moveTo(0,-26);ctx.lineTo(26,0);ctx.lineTo(0,26);ctx.lineTo(-26,0);ctx.closePath();
+    ctx.stroke();
+    // inner diamond
+    ctx.rotate(-t*.6);
+    ctx.strokeStyle='rgba(212,175,55,.6)';
+    ctx.beginPath();
+    ctx.moveTo(0,-14);ctx.lineTo(14,0);ctx.lineTo(0,14);ctx.lineTo(-14,0);ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+
+    // pulsing center
+    var pulse=4+Math.sin(t*3)*2;
+    ctx.beginPath();
+    ctx.arc(cx,cy,pulse,0,Math.PI*2);
+    ctx.fillStyle='rgba(248,229,138,.9)';
+    ctx.fill();
+
+    // 6 orbital nodes
+    for(var i=0;i<6;i++){
+      var angle=(i/6)*Math.PI*2 + t*.22;
+      var rad=Math.min(W,H)*0.32;
+      var nx=cx+Math.cos(angle)*rad;
+      var ny=cy+Math.sin(angle)*rad*0.7;
+
+      // connection line
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(nx,ny);
+      ctx.strokeStyle='rgba(212,175,55,.18)';
+      ctx.lineWidth=.7;
+      ctx.stroke();
+
+      // moving particle on line
+      var pp=(Math.sin(t*1.4+i)+1)/2;
+      var px=cx+(nx-cx)*pp, py=cy+(ny-cy)*pp;
+      ctx.beginPath();
+      ctx.arc(px,py,1.6,0,Math.PI*2);
+      ctx.fillStyle='rgba(248,229,138,.85)';
+      ctx.fill();
+
+      // node — hexagon
+      ctx.save();
+      ctx.translate(nx,ny);
+      ctx.rotate(t*.4+i);
+      ctx.strokeStyle='rgba(212,175,55,.85)';
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      for(var k=0;k<6;k++){
+        var a=k*Math.PI/3;
+        var hx=Math.cos(a)*11, hy=Math.sin(a)*11;
+        if(k===0)ctx.moveTo(hx,hy);else ctx.lineTo(hx,hy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // label
+      ctx.font='9px "Share Tech Mono",monospace';
+      ctx.fillStyle='rgba(232,218,180,.7)';
+      ctx.textAlign='center';
+      ctx.fillText(labels[i].toUpperCase(), nx, ny+24);
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   CIERRE CANVAS — sparks
+============================================================ */
+(function(){
+  var c=document.getElementById('cierre-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d'),W,H,sparks=[];
+  function resize(){
+    W=c.width=c.offsetWidth||window.innerWidth;
+    H=c.height=c.offsetHeight||500;
+    sparks=[];
+    for(var i=0;i<70;i++)sparks.push(mk());
+  }
+  function mk(){
+    var a=Math.random()*Math.PI*2,s=Math.random()*.5+.1;
+    return{
+      x:W*.5+(Math.random()-.5)*320,
+      y:H*.5+(Math.random()-.5)*140,
+      vx:Math.cos(a)*s,
+      vy:Math.sin(a)*s-.10,
+      r:Math.random()*1.3+.3,
+      a:Math.random()*.38+.08,
+      life:Math.random()*.7+.3
+    };
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<sparks.length;i++){
+      var s=sparks[i];
+      s.x+=s.vx;s.y+=s.vy;s.life-=.007;
+      if(s.life<=0){sparks[i]=mk();continue}
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(212,175,55,'+(s.a*Math.max(0,s.life))+')';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   TERMINAL
+============================================================ */
+(function(){
+  var body=document.getElementById('term-body');
+  if(!body)return;
+  var lines=[
+    {c:'tp',t:'erick@reparaya:~/Producto3$ ',d:0},
+    {c:'tc',t:'docker compose up -d --build',d:520},
+    {c:'ts',t:'✓ Container daw-db              Started',d:1180},
+    {c:'ts',t:'✓ Container daw-phpmyadmin      Started',d:1540},
+    {c:'ts',t:'✓ Container daw-laravel-web     Started',d:1900},
+    {c:'tp',t:'erick@reparaya:~/Producto3$ ',d:2580},
+    {c:'tc',t:'php artisan migrate --seed',d:2580},
+    {c:'ts',t:'INFO  Running migrations · 6 modelos creados',d:3280},
+    {c:'tp',t:'uocx3@fp064:~/producto3$ ',d:3980},
+    {c:'tc',t:'php artisan --version',d:3980},
+    {c:'te',t:'Laravel Framework 12 · PHP UOC compatible',d:4680},
+    {c:'tp',t:'api@reparaya$ ',d:5440},
+    {c:'tc',t:'GET /producto3/api/servicios/zonas',d:5440},
+    {c:'ts',t:'HTTP 200 OK · JSON · 6 zonas ✓',d:6240}
+  ];
+
+  function run(){
+    body.innerHTML='';
+    var last=null;
+    lines.forEach(function(line){
+      setTimeout(function(){
+        if(line.c==='tp'){
+          var div=document.createElement('div');
+          div.className='t-line';
+          div.innerHTML='<span class="tp">'+line.t+'</span>';
+          body.appendChild(div);
+          last=div.querySelector('.tp');
+        }else if(line.c==='tc'&&last){
+          var span=document.createElement('span');
+          span.className='tc';
+          span.textContent=line.t;
+          last.appendChild(span);
+          last=null;
+        }else{
+          var div2=document.createElement('div');
+          div2.className='t-line';
+          div2.innerHTML='<span class="'+line.c+'">'+line.t+'</span>';
+          body.appendChild(div2);
+          last=null;
+        }
+        body.scrollTop=body.scrollHeight;
+      },line.d);
+    });
+    setTimeout(run,9200);
+  }
+  setTimeout(run,500);
+})();
+
+/* ============================================================
+   COUNTERS
+============================================================ */
+function runCounter(el){
+  if(el.dataset.done)return;
+  el.dataset.done='1';
+  var target=parseInt(el.getAttribute('data-to'),10)||0;
+  var n=0;
+  var step=Math.max(1,Math.ceil(target/40));
+  var iv=setInterval(function(){
+    n=Math.min(target,n+step);
+    el.textContent=n;
+    if(n>=target)clearInterval(iv);
+  },32);
+}
+
+/* ============================================================
+   REVEAL
+============================================================ */
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      e.target.classList.add('on');
+      e.target.querySelectorAll('[data-to]').forEach(runCounter);
+      obs.unobserve(e.target);
+    });
+  },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.rv,.cbox').forEach(function(el){obs.observe(el)});
+})();
+
+/* ============================================================
+   DOC CARD TILT + RADIAL
+============================================================ */
+document.querySelectorAll('.doc-card').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var r=card.getBoundingClientRect();
+    var dx=(e.clientX-(r.left+r.width/2))/(r.width/2);
+    var dy=(e.clientY-(r.top+r.height/2))/(r.height/2);
+    card.style.transform='perspective(900px) rotateY('+(dx*4.5)+'deg) rotateX('+(-dy*3.5)+'deg) translateZ(6px)';
+    card.style.setProperty('--rx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    card.style.setProperty('--ry',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+  card.addEventListener('mouseleave',function(){
+    card.style.transform='perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+  });
+});
+
+/* ============================================================
+   TIMELINE TOGGLE
+============================================================ */
+function tact(i){
+  document.querySelectorAll('.t-step').forEach(function(s,idx){
+    s.classList.toggle('on',idx===i);
+  });
+}
+
+/* ============================================================
+   SCROLL BUTTONS
+============================================================ */
+document.querySelectorAll('[data-go]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var id=this.getAttribute('data-go');
+    var el=document.getElementById(id);
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReparaYa · Producto IV · Stellar Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CORE TOKENS
+============================================================ */
+:root{
+  --g:#D4AF37;
+  --gl:#F5DC78;
+  --gh:#FFE9A0;
+  --gd:#8B6914;
+  --gx:#4F3C0F;
+  --cy:#6DCFF6;
+  --cyd:#1B7A99;
+  --vi:#9D7CFF;
+  --vid:#5B3FB8;
+  --ink:#020203;
+  --ink2:#060708;
+  --ink3:#0B0D10;
+  --tx:#EDE3CA;
+  --txm:#C5A772;
+  --txd:#6A5530;
+  --txs:#3C3220;
+  --ok:#5CD860;
+  --warn:#FFB347;
+  --err:#FF5566;
+  --ln:rgba(212,175,55,.16);
+  --lncy:rgba(109,207,246,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--tx);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{text-decoration:none;color:inherit}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+code{font-family:'Share Tech Mono',monospace;color:var(--gl);font-size:.92em}
+
+/* ============================================================
+   GLOBAL HUD OVERLAYS
+============================================================ */
+.hud-scan{
+  position:fixed;
+  inset:0;
+  z-index:8000;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,
+    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 3px,
+    rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
+  mix-blend-mode:multiply;
+}
+.hud-vignette{
+  position:fixed;
+  inset:0;
+  z-index:7999;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.6) 100%);
+}
+.hud-pulse{
+  position:fixed;
+  left:0;right:0;
+  height:2px;
+  z-index:7998;
+  pointer-events:none;
+  background:linear-gradient(90deg, transparent 0%, rgba(109,207,246,.5) 20%, rgba(212,175,55,.85) 50%, rgba(109,207,246,.5) 80%, transparent 100%);
+  filter:blur(.5px);
+  opacity:.7;
+  animation:hudPulse 9s linear infinite;
+}
+@keyframes hudPulse{
+  0%{top:-5%;opacity:0}
+  3%{opacity:.85}
+  97%{opacity:.6}
+  100%{top:105%;opacity:0}
+}
+
+/* fixed HUD frame corners */
+.hud-corner{
+  position:fixed;
+  width:28px;height:28px;
+  z-index:7997;
+  pointer-events:none;
+}
+.hud-corner.tl{top:14px;left:14px;border-top:1.5px solid rgba(212,175,55,.4);border-left:1.5px solid rgba(212,175,55,.4)}
+.hud-corner.tr{top:14px;right:14px;border-top:1.5px solid rgba(212,175,55,.4);border-right:1.5px solid rgba(212,175,55,.4)}
+.hud-corner.bl{bottom:14px;left:14px;border-bottom:1.5px solid rgba(212,175,55,.4);border-left:1.5px solid rgba(212,175,55,.4)}
+.hud-corner.br{bottom:14px;right:14px;border-bottom:1.5px solid rgba(212,175,55,.4);border-right:1.5px solid rgba(212,175,55,.4)}
+
+.hud-tag-tl,.hud-tag-tr,.hud-tag-bl,.hud-tag-br{
+  position:fixed;
+  z-index:7996;
+  pointer-events:none;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.32em;
+  color:rgba(212,175,55,.5);
+}
+.hud-tag-tl{top:18px;left:54px}
+.hud-tag-tr{top:18px;right:54px}
+.hud-tag-bl{bottom:18px;left:54px}
+.hud-tag-br{bottom:18px;right:54px}
+.hud-tag-tl::before,.hud-tag-bl::before{content:"◆ "}
+.hud-tag-tr::after,.hud-tag-br::after{content:" ◆"}
+
+/* ============================================================
+   BOOT — STELLAR ANCHOR PROTOCOL
+============================================================ */
+#boot{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:radial-gradient(ellipse at center, #0a0810 0%, #020205 50%, #000 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:opacity 1.2s ease, transform 1.2s ease;
+}
+#boot.collapsing{
+  opacity:0;
+  transform:scale(2.2);
+  filter:blur(20px);
+  pointer-events:none;
+}
+.boot-stars{
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(2px 2px at 50% 50%, rgba(212,175,55,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 70%, rgba(109,207,246,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 20%, rgba(157,124,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 90%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 15%, rgba(212,175,55,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 85%, rgba(109,207,246,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 50%, rgba(255,255,255,.3) 0%, transparent 100%);
+  background-size:600px 600px, 800px 800px, 1000px 1000px, 700px 700px, 900px 900px, 500px 500px, 750px 750px, 850px 850px, 650px 650px, 950px 950px;
+  animation:starsDrift 90s linear infinite;
+  opacity:.7;
+}
+@keyframes starsDrift{
+  to{background-position:600px 600px, -800px 800px, 1000px -1000px, -700px 700px, 900px -900px, -500px 500px, 750px -750px, -850px 850px, 650px -650px, 950px -950px}
+}
+.boot-cosmic{
+  position:absolute;
+  width:120%;
+  height:120%;
+  background:
+    radial-gradient(ellipse 40% 30% at 30% 40%, rgba(157,124,255,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 25% at 70% 60%, rgba(109,207,246,.14) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(212,175,55,.10) 0%, transparent 70%);
+  animation:cosmicShift 20s ease-in-out infinite;
+}
+@keyframes cosmicShift{
+  0%,100%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.1)}
+}
+
+.boot-stage{
+  position:relative;
+  width:min(560px, 80vw);
+  height:min(560px, 80vw);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* concentric rings */
+.boot-ring{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(212,175,55,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.boot-ring.r1{
+  width:100%;height:100%;
+  border:1px dashed rgba(212,175,55,.32);
+  animation:spin1 50s linear infinite;
+}
+.boot-ring.r2{
+  width:80%;height:80%;
+  border:1px solid rgba(109,207,246,.32);
+  animation:spin2 35s linear infinite reverse;
+}
+.boot-ring.r3{
+  width:62%;height:62%;
+  border:1.5px dotted rgba(212,175,55,.45);
+  animation:spin3 22s linear infinite;
+}
+.boot-ring.r4{
+  width:44%;height:44%;
+  border:1px solid rgba(157,124,255,.35);
+  animation:spin2 14s linear infinite reverse;
+}
+@keyframes spin1{to{transform:rotate(360deg)}}
+@keyframes spin2{to{transform:rotate(-360deg)}}
+@keyframes spin3{to{transform:rotate(360deg)}}
+
+/* glyphs on rings — positioned around with transform */
+.boot-glyph{
+  position:absolute;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  letter-spacing:.2em;
+  color:var(--gl);
+  text-shadow:0 0 12px rgba(212,175,55,.7);
+  background:rgba(2,2,3,.85);
+  padding:3px 7px;
+  border:1px solid rgba(212,175,55,.4);
+}
+.boot-glyph.g1{top:-12px;left:50%;transform:translateX(-50%)}
+.boot-glyph.g2{bottom:-12px;left:50%;transform:translateX(-50%)}
+.boot-glyph.g3{top:50%;left:-12px;transform:translateY(-50%)}
+.boot-glyph.g4{top:50%;right:-12px;transform:translateY(-50%)}
+
+.boot-glyph.cy{color:var(--cy);text-shadow:0 0 12px rgba(109,207,246,.7);border-color:rgba(109,207,246,.4)}
+.boot-glyph.vi{color:var(--vi);text-shadow:0 0 12px rgba(157,124,255,.7);border-color:rgba(157,124,255,.4)}
+
+/* central core — octagonal sigil */
+.boot-core{
+  position:absolute;
+  width:120px;
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.boot-core svg{
+  position:absolute;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.boot-core .core-pulse{
+  position:absolute;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(212,175,55,.6) 0%, rgba(212,175,55,.2) 30%, transparent 70%);
+  animation:corePulse 2s ease-in-out infinite;
+}
+@keyframes corePulse{
+  0%,100%{transform:scale(.8);opacity:.6}
+  50%{transform:scale(1.3);opacity:1}
+}
+.boot-core-text{
+  position:relative;
+  z-index:5;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:1.5rem;
+  letter-spacing:.18em;
+  color:#fff;
+  text-shadow:0 0 20px rgba(212,175,55,.9), 0 0 40px rgba(212,175,55,.5);
+  animation:coreFloat 3s ease-in-out infinite;
+}
+@keyframes coreFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+
+/* coordinates marker */
+.boot-coord{
+  position:absolute;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.2em;
+  color:rgba(212,175,55,.55);
+}
+.boot-coord.c1{top:8%;left:50%;transform:translateX(-50%)}
+.boot-coord.c2{bottom:8%;left:50%;transform:translateX(-50%);color:rgba(109,207,246,.55)}
+
+/* status panel */
+.boot-status{
+  position:absolute;
+  bottom:max(40px, 6vh);
+  left:50%;
+  transform:translateX(-50%);
+  width:min(560px, 85vw);
+  text-align:center;
+  z-index:5;
+}
+.boot-codex{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:clamp(1.4rem, 4vw, 2.2rem);
+  letter-spacing:.4em;
+  color:var(--gl);
+  text-shadow:0 0 24px rgba(212,175,55,.6), 0 0 50px rgba(212,175,55,.2);
+  margin-bottom:14px;
+  animation:codexFade 2.5s ease-in-out infinite;
+}
+@keyframes codexFade{
+  0%,100%{opacity:.7}
+  50%{opacity:1}
+}
+.boot-codex-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.65rem;
+  letter-spacing:.42em;
+  color:var(--txm);
+  margin-bottom:24px;
+}
+.boot-progress{
+  position:relative;
+  width:min(400px, 80vw);
+  margin:0 auto;
+  height:14px;
+  background:rgba(212,175,55,.06);
+  border:1px solid rgba(212,175,55,.3);
+  overflow:hidden;
+}
+.boot-progress::before,.boot-progress::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:9px;height:9px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+}
+.boot-progress::before{left:-14px}
+.boot-progress::after{right:-14px}
+.boot-progress-fill{
+  position:absolute;
+  inset:1px;
+  width:0;
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(212,175,55,.9) 0 4px,
+      rgba(109,207,246,.7) 4px 8px,
+      rgba(157,124,255,.6) 8px 12px);
+  transition:width 4.2s cubic-bezier(.4,0,.2,1);
+}
+.boot-message{
+  margin-top:18px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  letter-spacing:.24em;
+  color:var(--gl);
+  min-height:18px;
+}
+.blink{animation:blink .7s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* boot side telemetry */
+.boot-telemetry{
+  position:absolute;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem;
+  letter-spacing:.18em;
+  color:rgba(212,175,55,.4);
+  z-index:5;
+  line-height:1.8;
+}
+.boot-telemetry.left{top:50%;left:24px;transform:translateY(-50%);text-align:left}
+.boot-telemetry.right{top:50%;right:24px;transform:translateY(-50%);text-align:right}
+@media (max-width:780px){.boot-telemetry{display:none}}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+.inner{
+  width:min(1100px, calc(100% - 60px));
+  margin:0 auto;
+  position:relative;
+  z-index:3;
+}
+.divider{
+  position:relative;
+  height:1px;
+  margin:0;
+  background:linear-gradient(90deg, transparent 0%, rgba(212,175,55,.16) 25%, rgba(109,207,246,.18) 50%, rgba(212,175,55,.16) 75%, transparent 100%);
+}
+.divider::before{
+  content:"◆";
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  background:var(--ink);
+  padding:0 10px;
+  color:var(--g);
+  font-size:.7rem;
+  text-shadow:0 0 10px rgba(212,175,55,.6);
+}
+.section{
+  position:relative;
+  padding:100px 0;
+  background:var(--ink2);
+  overflow:hidden;
+}
+.section.alt{background:var(--ink3)}
+.section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(rgba(212,175,55,.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.012) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+
+/* ============================================================
+   SECTION HEADER — CENTERED
+============================================================ */
+.sec-head{
+  text-align:center;
+  margin-bottom:54px;
+  position:relative;
+}
+.sec-tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.4em;
+  color:var(--gd);
+  margin-bottom:12px;
+}
+.sec-tag::before,.sec-tag::after{
+  content:"";
+  width:40px;height:1px;
+  background:linear-gradient(90deg, transparent, var(--g));
+}
+.sec-tag::after{background:linear-gradient(-90deg, transparent, var(--g))}
+.sec-title{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:clamp(1.6rem, 3.6vw, 2.8rem);
+  letter-spacing:.18em;
+  background:linear-gradient(180deg, var(--gh) 0%, var(--gl) 35%, var(--g) 70%, var(--gd) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 18px rgba(212,175,55,.3));
+  margin:0;
+  text-transform:uppercase;
+}
+.sec-deco{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-top:14px;
+}
+.sec-deco-line{
+  width:80px;height:1px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+}
+.sec-deco-dia{
+  width:8px;height:8px;
+  background:var(--g);
+  transform:rotate(45deg);
+  box-shadow:0 0 10px var(--g);
+}
+.sec-lead{
+  max-width:780px;
+  margin:24px auto 0;
+  text-align:center;
+  font-size:1.04rem;
+  line-height:1.84;
+  color:var(--txm);
+  font-weight:400;
+}
+.sec-lead strong{color:var(--gl);font-weight:600}
+
+/* ============================================================
+   HERO
+============================================================ */
+#hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:130px 30px 90px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(157,124,255,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 90% 70% at 50% 60%, rgba(109,207,246,.06) 0%, transparent 70%),
+    var(--ink);
+  overflow:hidden;
+}
+#hero-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+.hero-grid{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background-image:
+    linear-gradient(rgba(212,175,55,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.028) 1px, transparent 1px);
+  background-size:62px 62px;
+  mask-image:radial-gradient(ellipse at center, black 35%, transparent 95%);
+  -webkit-mask-image:radial-gradient(ellipse at center, black 35%, transparent 95%);
+  animation:gridMove 35s linear infinite;
+}
+@keyframes gridMove{to{background-position:62px 62px}}
+
+.hero-orbit{
+  position:absolute;
+  width:min(720px, 90vw);
+  height:min(720px, 90vw);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:2;
+  opacity:.6;
+}
+.hero-orbit::before,.hero-orbit::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+}
+.hero-orbit::before{
+  border:1px dashed rgba(212,175,55,.18);
+  animation:spin1 80s linear infinite;
+}
+.hero-orbit::after{
+  inset:8%;
+  border:1px solid rgba(109,207,246,.12);
+  animation:spin2 60s linear infinite reverse;
+}
+.hero-orbit .ring3{
+  position:absolute;
+  inset:18%;
+  border:1px dotted rgba(157,124,255,.16);
+  border-radius:50%;
+  animation:spin1 40s linear infinite;
+}
+
+/* frame corners */
+.hero-fcorner{
+  position:absolute;
+  width:36px;height:36px;
+  z-index:5;
+  pointer-events:none;
+}
+.hero-fcorner.tl{top:46px;left:46px;border-top:1.5px solid var(--g);border-left:1.5px solid var(--g)}
+.hero-fcorner.tr{top:46px;right:46px;border-top:1.5px solid var(--g);border-right:1.5px solid var(--g)}
+.hero-fcorner.bl{bottom:46px;left:46px;border-bottom:1.5px solid var(--g);border-left:1.5px solid var(--g)}
+.hero-fcorner.br{bottom:46px;right:46px;border-bottom:1.5px solid var(--g);border-right:1.5px solid var(--g)}
+
+.hero-label-top,.hero-label-bot{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.4em;
+  color:var(--gd);
+  z-index:5;
+}
+.hero-label-top{top:54px}
+.hero-label-bot{bottom:54px}
+.hero-label-top::before,.hero-label-bot::before{content:"◇ "}
+.hero-label-top::after,.hero-label-bot::after{content:" ◇"}
+
+.hero-content{position:relative;z-index:4;width:100%;text-align:center}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.66rem;
+  letter-spacing:.38em;
+  color:var(--txm);
+  padding:9px 24px;
+  border:1px solid rgba(212,175,55,.28);
+  background:rgba(212,175,55,.025);
+  margin-bottom:36px;
+  position:relative;
+  opacity:0;
+  animation:fadeUp 1s ease 4.4s forwards;
+}
+.hero-badge::before,.hero-badge::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:7px;height:7px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+}
+.hero-badge::before{left:-12px}
+.hero-badge::after{right:-12px}
+
+.hero-eye{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:clamp(.85rem,1.7vw,1.15rem);
+  letter-spacing:.5em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(212,175,55,.5);
+  margin-bottom:14px;
+  opacity:0;
+  animation:fadeUp 1s ease 4.55s forwards;
+  text-transform:uppercase;
+}
+.hero-title-wrap{
+  position:relative;
+  display:inline-block;
+  margin:0 auto;
+}
+.hero-title{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:clamp(3.4rem, 11vw, 8rem);
+  line-height:.9;
+  letter-spacing:.1em;
+  background:linear-gradient(180deg,
+    #FFF7DC 0%,
+    var(--gh) 22%,
+    var(--gl) 45%,
+    var(--g) 65%,
+    var(--gd) 85%,
+    #2A1F08 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 38px rgba(212,175,55,.4));
+  opacity:0;
+  animation:fadeUp 1.2s ease 4.7s forwards, heroGlitch 9s ease 7s infinite;
+  text-align:center;
+  text-transform:uppercase;
+}
+@keyframes heroGlitch{
+  0%,92%,100%{transform:none;filter:drop-shadow(0 0 38px rgba(212,175,55,.4))}
+  93%{transform:translate(-2px,1px) skewX(-1deg);filter:drop-shadow(-3px 0 rgba(109,207,246,.55)) drop-shadow(3px 0 rgba(212,175,55,.75))}
+  94%{transform:translate(2px,-1px) skewX(1deg);filter:drop-shadow(3px 0 rgba(157,124,255,.55)) drop-shadow(-3px 0 rgba(212,175,55,.75))}
+  95%{transform:none}
+}
+.hero-title-deco{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  margin-top:18px;
+  opacity:0;
+  animation:fadeUp 1s ease 4.85s forwards;
+}
+.hero-title-deco .line{
+  width:80px;height:1px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+}
+.hero-title-deco .dia{
+  width:10px;height:10px;
+  background:var(--g);
+  transform:rotate(45deg);
+  box-shadow:0 0 14px var(--g);
+}
+.hero-title-deco .num{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:1.3rem;
+  letter-spacing:.3em;
+  color:var(--gl);
+  text-shadow:0 0 16px rgba(212,175,55,.6);
+}
+
+.hero-sub{
+  display:block;
+  margin:30px auto 0;
+  max-width:760px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.72rem,1.3vw,.9rem);
+  letter-spacing:.2em;
+  color:var(--txm);
+  line-height:1.8;
+  opacity:0;
+  animation:fadeUp 1s ease 5s forwards;
+}
+.hero-desc{
+  display:block;
+  margin:22px auto 0;
+  max-width:680px;
+  font-size:clamp(.86rem,1.2vw,1rem);
+  line-height:1.88;
+  color:var(--txd);
+  opacity:0;
+  animation:fadeUp 1s ease 5.15s forwards;
+}
+.hero-desc strong{color:var(--gl);font-weight:600}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin-top:42px;
+  opacity:0;
+  animation:fadeUp 1s ease 5.3s forwards;
+}
+.btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:48px;
+  padding:12px 26px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  letter-spacing:.24em;
+  color:var(--tx);
+  border:1px solid rgba(212,175,55,.36);
+  background:rgba(212,175,55,.04);
+  transition:.35s ease;
+  cursor:pointer;
+  overflow:hidden;
+}
+.btn::before,.btn::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:6px;height:6px;
+  background:var(--g);
+  transform:translateY(-50%) rotate(45deg);
+  opacity:.6;
+}
+.btn::before{left:-8px}
+.btn::after{right:-8px}
+.btn:hover{
+  color:var(--gh);
+  border-color:var(--gl);
+  background:rgba(212,175,55,.1);
+  box-shadow:0 16px 30px rgba(0,0,0,.4), 0 0 20px rgba(212,175,55,.2);
+  transform:translateY(-2px);
+}
+.btn:hover::before,.btn:hover::after{
+  opacity:1;
+  box-shadow:0 0 12px var(--g);
+}
+.btn.primary{
+  background:linear-gradient(135deg, rgba(212,175,55,.22) 0%, rgba(157,124,255,.08) 50%, rgba(109,207,246,.08) 100%);
+  color:var(--gh);
+  border-color:rgba(212,175,55,.55);
+}
+.btn.cy{border-color:rgba(109,207,246,.4);color:var(--cy)}
+.btn.cy::before,.btn.cy::after{background:var(--cy)}
+.btn.cy:hover{border-color:var(--cy);background:rgba(109,207,246,.08);box-shadow:0 16px 30px rgba(0,0,0,.4), 0 0 20px rgba(109,207,246,.2)}
+
+.hero-team{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-top:32px;
+  opacity:0;
+  animation:fadeUp 1s ease 5.45s forwards;
+}
+.chip{
+  position:relative;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.18em;
+  color:var(--txm);
+  padding:8px 18px;
+  border:1px solid rgba(212,175,55,.22);
+  background:rgba(212,175,55,.018);
+  transition:.3s ease;
+}
+.chip::before{content:"";position:absolute;top:0;left:0;width:8px;height:1px;background:var(--g)}
+.chip::after{content:"";position:absolute;bottom:0;right:0;width:8px;height:1px;background:var(--g)}
+.chip:hover{color:var(--gh);border-color:rgba(212,175,55,.6);background:rgba(212,175,55,.08)}
+
+.hero-stack{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:center;
+  margin-top:16px;
+  opacity:0;
+  animation:fadeUp 1s ease 5.55s forwards;
+}
+.stackchip{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  letter-spacing:.2em;
+  color:var(--txd);
+  padding:5px 11px;
+  border:1px solid rgba(212,175,55,.12);
+}
+
+.hero-scroll{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-top:54px;
+  opacity:0;
+  animation:fadeUp 1s ease 5.7s forwards;
+}
+.scroll-bar{
+  width:1px;
+  height:48px;
+  background:linear-gradient(180deg, var(--g), transparent);
+  animation:scrollPulse 2.5s ease-in-out infinite;
+}
+@keyframes scrollPulse{
+  0%,100%{opacity:.3;transform:scaleY(.65)}
+  50%{opacity:1;transform:scaleY(1.35)}
+}
+.scroll-txt{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  letter-spacing:.4em;
+  color:var(--gx);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(28px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ============================================================
+   PANELS
+============================================================ */
+.panel{
+  position:relative;
+  padding:28px;
+  border:1px solid var(--ln);
+  background:
+    linear-gradient(135deg, rgba(212,175,55,.025) 0%, transparent 60%),
+    rgba(255,255,255,.012);
+  transition:.4s ease;
+}
+.panel::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:42px;height:1px;
+  background:linear-gradient(90deg, var(--g), transparent);
+  transition:width .4s ease;
+}
+.panel::after{
+  content:"";
+  position:absolute;
+  bottom:0;right:0;
+  width:42px;height:1px;
+  background:linear-gradient(-90deg, var(--g), transparent);
+  transition:width .4s ease;
+}
+.panel:hover{
+  border-color:rgba(212,175,55,.38);
+  background:
+    linear-gradient(135deg, rgba(212,175,55,.04) 0%, transparent 60%),
+    rgba(255,255,255,.025);
+  box-shadow:0 22px 50px rgba(0,0,0,.45), 0 0 22px rgba(212,175,55,.1);
+  transform:translateY(-3px);
+}
+.panel:hover::before,.panel:hover::after{width:80px}
+.panel .pc{
+  position:absolute;
+  width:11px;height:11px;
+  pointer-events:none;
+}
+.panel .pc.tl{top:5px;left:5px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.panel .pc.tr{top:5px;right:5px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.panel .pc.bl{bottom:5px;left:5px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.panel .pc.br{bottom:5px;right:5px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+.kicker::before{
+  content:"";
+  width:6px;height:6px;
+  background:var(--g);
+  transform:rotate(45deg);
+  box-shadow:0 0 8px var(--g);
+}
+.p-title{
+  margin:0 0 12px;
+  font-family:'Orbitron',monospace;
+  font-weight:600;
+  font-size:1.16rem;
+  color:var(--tx);
+  letter-spacing:.04em;
+}
+.p-text{
+  margin:0;
+  font-size:.96rem;
+  line-height:1.82;
+  color:var(--txm);
+}
+.p-text strong{color:var(--gl);font-weight:600}
+
+/* ============================================================
+   GRID HELPERS
+============================================================ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.g2-narrow{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+
+/* ============================================================
+   STATS / COUNTERS
+============================================================ */
+.cbox{
+  position:relative;
+  padding:24px 16px 20px;
+  border:1px solid rgba(212,175,55,.16);
+  background:rgba(212,175,55,.022);
+  text-align:center;
+  overflow:hidden;
+  transition:.4s ease;
+}
+.cbox::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  transform:scaleX(.2);
+  transition:transform .55s ease;
+}
+.cbox::after{
+  content:"";
+  position:absolute;
+  bottom:0;left:0;
+  height:2px;
+  width:0;
+  background:linear-gradient(90deg, var(--g), var(--cy));
+  box-shadow:0 0 8px var(--g);
+  transition:width 1s ease .25s;
+}
+.cbox.on::before{transform:scaleX(1)}
+.cbox.on::after{width:100%}
+.cbox:hover{
+  border-color:rgba(212,175,55,.4);
+  background:rgba(212,175,55,.05);
+}
+.c-num{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:2rem;
+  background:linear-gradient(180deg, var(--gh), var(--g));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1;
+  margin-bottom:10px;
+  filter:drop-shadow(0 0 12px rgba(212,175,55,.3));
+}
+.c-lbl{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  color:var(--txm);
+}
+
+/* ============================================================
+   OBJECTIVES (rubric criteria as missions)
+============================================================ */
+.obj-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+}
+.obj-card{
+  position:relative;
+  padding:24px 22px;
+  border:1px solid rgba(212,175,55,.18);
+  background:
+    linear-gradient(160deg, rgba(212,175,55,.03) 0%, transparent 60%),
+    rgba(255,255,255,.012);
+  transition:.4s ease;
+}
+.obj-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:100%;
+  height:3px;
+  background:linear-gradient(90deg, var(--g), var(--cy));
+  box-shadow:0 0 12px var(--g);
+}
+.obj-card:hover{
+  border-color:rgba(212,175,55,.5);
+  transform:translateY(-4px);
+  box-shadow:0 22px 48px rgba(0,0,0,.5), 0 0 22px rgba(212,175,55,.12);
+}
+.obj-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:16px;
+}
+.obj-code{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.24em;
+  color:var(--gd);
+}
+.obj-status{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.54rem;
+  letter-spacing:.2em;
+  padding:4px 9px;
+  border:1px solid rgba(92,216,96,.4);
+  color:var(--ok);
+  background:rgba(92,216,96,.04);
+}
+.obj-icon{
+  width:46px;height:46px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(212,175,55,.34);
+  background:rgba(212,175,55,.04);
+  margin-bottom:16px;
+  transform:rotate(45deg);
+}
+.obj-icon span{
+  transform:rotate(-45deg);
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:1.05rem;
+  color:var(--gl);
+}
+.obj-title{
+  margin:0 0 12px;
+  font-family:'Orbitron',monospace;
+  font-weight:600;
+  font-size:1.05rem;
+  color:var(--tx);
+  letter-spacing:.03em;
+  line-height:1.32;
+}
+.obj-text{
+  margin:0;
+  font-size:.9rem;
+  line-height:1.74;
+  color:var(--txm);
+}
+.obj-score{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px solid rgba(212,175,55,.14);
+}
+.obj-score small{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  color:var(--gd);
+}
+.obj-score b{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:1.15rem;
+  color:var(--gl);
+  letter-spacing:.06em;
+}
+
+/* ============================================================
+   FLOW STEPS
+============================================================ */
+.flow{display:grid;gap:12px}
+.flow-step{
+  position:relative;
+  padding:16px 16px 16px 56px;
+  border:1px solid rgba(212,175,55,.14);
+  background:rgba(212,175,55,.014);
+  transition:.3s ease;
+}
+.flow-step:hover{
+  border-color:rgba(212,175,55,.34);
+  transform:translateX(4px);
+  background:rgba(212,175,55,.03);
+}
+.flow-num{
+  position:absolute;
+  left:16px;top:16px;
+  width:28px;height:28px;
+  display:grid;place-items:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.64rem;
+  color:var(--gl);
+  border:1px solid rgba(212,175,55,.34);
+  background:rgba(212,175,55,.06);
+  transform:rotate(45deg);
+}
+.flow-num span{transform:rotate(-45deg)}
+.flow-step b{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-weight:500;
+  font-size:.96rem;
+  letter-spacing:.03em;
+  color:var(--gl);
+  margin-bottom:5px;
+}
+.flow-step p{
+  margin:0;
+  font-size:.89rem;
+  line-height:1.72;
+  color:var(--txm);
+}
+
+/* ============================================================
+   STAT LIST
+============================================================ */
+.stat-list{display:grid;gap:10px;margin-top:18px}
+.stat-row{
+  position:relative;
+  padding:13px 18px;
+  border:1px solid rgba(212,175,55,.14);
+  background:rgba(212,175,55,.018);
+  transition:.3s ease;
+}
+.stat-row::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(180deg, var(--g), var(--cy));
+  box-shadow:0 0 8px rgba(212,175,55,.45);
+}
+.stat-row:hover{
+  border-color:rgba(212,175,55,.34);
+  transform:translateX(5px);
+  background:rgba(212,175,55,.04);
+}
+.s-lbl{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.24em;
+  color:var(--gd);
+  margin-bottom:5px;
+}
+.s-val{
+  font-family:'Orbitron',monospace;
+  font-size:.84rem;
+  color:var(--tx);
+  font-weight:500;
+  word-break:break-word;
+}
+
+/* ============================================================
+   TERMINAL
+============================================================ */
+.terminal{
+  position:relative;
+  background:#020203;
+  border:1px solid rgba(212,175,55,.18);
+  overflow:hidden;
+}
+.terminal .pc{position:absolute;width:10px;height:10px;z-index:3}
+.terminal .pc.tl{top:4px;left:4px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.terminal .pc.tr{top:4px;right:4px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.terminal .pc.bl{bottom:4px;left:4px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.terminal .pc.br{bottom:4px;right:4px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.t-bar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 18px;
+  background:rgba(212,175,55,.04);
+  border-bottom:1px solid rgba(212,175,55,.1);
+}
+.t-dot{width:9px;height:9px;border-radius:50%}
+.t-dot.r{background:#FF5F57}
+.t-dot.y{background:#FEBC2E}
+.t-dot.g{background:#28C840}
+.t-label{
+  margin-left:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.2em;
+  color:var(--txm);
+}
+.t-body{
+  padding:20px 24px;
+  height:220px;
+  overflow:hidden;
+  position:relative;
+}
+.t-body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(212,175,55,.018) 2px, rgba(212,175,55,.018) 3px);
+}
+.t-line{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.78rem;
+  line-height:1.86;
+}
+.tp{color:var(--g)}
+.tc{color:var(--tx)}
+.to{color:var(--txm)}
+.ts{color:var(--ok)}
+.te{color:var(--cy)}
+.tv{color:var(--vi)}
+
+/* ============================================================
+   CALLOUT — JSON sample
+============================================================ */
+.callout{
+  position:relative;
+  padding:22px 26px;
+  border:1px solid rgba(109,207,246,.24);
+  background:
+    linear-gradient(135deg, rgba(109,207,246,.04) 0%, rgba(212,175,55,.02) 50%, transparent 100%);
+  margin-top:18px;
+}
+.callout::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(180deg, var(--cy), var(--g));
+  box-shadow:0 0 10px var(--cy);
+}
+.callout p{font-size:.95rem;line-height:1.82;color:var(--txm)}
+.callout strong{color:var(--cy)}
+
+.codeblock{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.78rem;
+  line-height:1.78;
+  background:#01010194;
+  border:1px solid rgba(109,207,246,.18);
+  padding:16px 18px;
+  color:var(--cy);
+  overflow-x:auto;
+  margin-top:14px;
+  white-space:pre-wrap;
+  word-break:break-all;
+}
+
+/* ============================================================
+   TAGS
+============================================================ */
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  letter-spacing:.16em;
+  padding:5px 11px;
+  border:1px solid rgba(212,175,55,.18);
+  color:var(--txd);
+  transition:.25s ease;
+}
+.tag:hover{color:var(--gl);border-color:rgba(212,175,55,.5);background:rgba(212,175,55,.05)}
+.tag.cy{border-color:rgba(109,207,246,.24);color:var(--cy)}
+.tag.cy:hover{border-color:rgba(109,207,246,.6);background:rgba(109,207,246,.06)}
+.tag.vi{border-color:rgba(157,124,255,.24);color:var(--vi)}
+.tag.vi:hover{border-color:rgba(157,124,255,.6);background:rgba(157,124,255,.06)}
+
+/* ============================================================
+   COMMAND CENTER (deliverables)
+============================================================ */
+.cmd-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:18px;
+}
+.cmd-card{
+  position:relative;
+  padding:28px 26px;
+  border:1px solid rgba(212,175,55,.18);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(212,175,55,.018), transparent 80%);
+  text-align:center;
+  overflow:hidden;
+  transition:.4s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:300px;
+}
+.cmd-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:0;height:2px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  transition:width .5s ease;
+}
+.cmd-card:hover::before{width:100%}
+.cmd-card:hover{
+  border-color:rgba(212,175,55,.45);
+  transform:translateY(-5px);
+  box-shadow:0 26px 60px rgba(0,0,0,.5), 0 0 25px rgba(212,175,55,.12);
+}
+.cmd-card .ca{position:absolute;width:12px;height:12px;z-index:3}
+.cmd-card .ca.tl{top:5px;left:5px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.cmd-card .ca.tr{top:5px;right:5px;border-top:1px solid var(--g);border-right:1px solid var(--g)}
+.cmd-card .ca.bl{bottom:5px;left:5px;border-bottom:1px solid var(--g);border-left:1px solid var(--g)}
+.cmd-card .ca.br{bottom:5px;right:5px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.cmd-icon{
+  width:64px;height:64px;
+  display:grid;
+  place-items:center;
+  border:1.5px solid rgba(212,175,55,.42);
+  background:rgba(212,175,55,.04);
+  margin-bottom:18px;
+  position:relative;
+}
+.cmd-icon::before,.cmd-icon::after{
+  content:"";
+  position:absolute;
+  width:8px;height:8px;
+}
+.cmd-icon::before{top:-1px;left:-1px;border-top:1px solid var(--g);border-left:1px solid var(--g)}
+.cmd-icon::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g)}
+.cmd-icon svg{width:26px;height:26px;fill:none;stroke:var(--gl);stroke-width:1.6}
+.cmd-step{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.24em;
+  color:var(--gd);
+  margin-bottom:8px;
+}
+.cmd-title{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:1.18rem;
+  letter-spacing:.06em;
+  color:var(--tx);
+  margin-bottom:14px;
+  line-height:1.32;
+}
+.cmd-desc{
+  font-size:.88rem;
+  line-height:1.74;
+  color:var(--txm);
+  flex-grow:1;
+  margin-bottom:18px;
+}
+.cmd-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.66rem;
+  letter-spacing:.22em;
+  color:var(--gl);
+  padding:11px 22px;
+  border:1px solid rgba(212,175,55,.36);
+  background:rgba(212,175,55,.05);
+  transition:.3s ease;
+  text-decoration:none;
+}
+.cmd-btn:hover{
+  background:rgba(212,175,55,.12);
+  border-color:var(--gl);
+  color:var(--gh);
+  transform:translateY(-1px);
+}
+.cmd-btn.pending{
+  color:var(--warn);
+  border-color:rgba(255,179,71,.36);
+  background:rgba(255,179,71,.04);
+  cursor:default;
+  pointer-events:none;
+}
+.cmd-state{
+  position:absolute;
+  top:14px;right:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem;
+  letter-spacing:.2em;
+  padding:4px 8px;
+  border:1px solid rgba(92,216,96,.4);
+  color:var(--ok);
+  background:rgba(92,216,96,.06);
+}
+.cmd-state.pend{
+  border-color:rgba(255,179,71,.4);
+  color:var(--warn);
+  background:rgba(255,179,71,.06);
+}
+.cmd-state .dot{
+  width:5px;height:5px;border-radius:50%;
+  background:currentColor;
+  box-shadow:0 0 6px currentColor;
+  animation:blinkDot 1.4s ease-in-out infinite;
+}
+@keyframes blinkDot{50%{opacity:.3}}
+
+/* ============================================================
+   VIDEO FRAME
+============================================================ */
+.v-frame{
+  position:relative;
+  border:1px solid rgba(212,175,55,.22);
+  background:#020203;
+  overflow:hidden;
+  margin-top:18px;
+}
+.v-frame::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  z-index:3;
+  pointer-events:none;
+}
+.v-frame::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(212,175,55,.02) 3px, rgba(212,175,55,.02) 4px);
+  z-index:2;
+}
+.v-frame .vc{position:absolute;width:14px;height:14px;z-index:4}
+.v-frame .vc.tl{top:6px;left:6px;border-top:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.v-frame .vc.tr{top:6px;right:6px;border-top:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.v-frame .vc.bl{bottom:6px;left:6px;border-bottom:1.2px solid var(--g);border-left:1.2px solid var(--g)}
+.v-frame .vc.br{bottom:6px;right:6px;border-bottom:1.2px solid var(--g);border-right:1.2px solid var(--g)}
+.v-frame iframe{width:100%;aspect-ratio:16/9;border:0;display:block;z-index:1;position:relative}
+.v-frame iframe.doc{aspect-ratio:auto;height:720px}
+.v-placeholder{
+  aspect-ratio:16/9;
+  display:grid;
+  place-items:center;
+  padding:30px;
+  text-align:center;
+  background:
+    radial-gradient(circle at center, rgba(212,175,55,.08), transparent 40%),
+    linear-gradient(180deg, rgba(212,175,55,.018), rgba(212,175,55,.005));
+  position:relative;
+}
+.v-placeholder .pulse-orb{
+  position:absolute;
+  width:120px;height:120px;
+  border-radius:50%;
+  border:1px solid rgba(212,175,55,.35);
+  animation:orbPulse 2.5s ease-in-out infinite;
+}
+.v-placeholder .pulse-orb::before{
+  content:"";
+  position:absolute;
+  inset:20%;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(212,175,55,.4), transparent 60%);
+}
+@keyframes orbPulse{
+  0%,100%{transform:scale(.85);opacity:.6}
+  50%{transform:scale(1.15);opacity:1}
+}
+.v-placeholder b{
+  position:relative;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:1.2rem;
+  color:var(--gl);
+  letter-spacing:.18em;
+  margin-bottom:8px;
+  z-index:2;
+}
+.v-placeholder span{
+  position:relative;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  letter-spacing:.28em;
+  color:var(--txm);
+  z-index:2;
+}
+.v-hud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:space-between;
+  padding:13px 20px;
+  background:rgba(0,0,0,.9);
+  border:1px solid rgba(212,175,55,.14);
+  border-top:0;
+}
+.v-hud div{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.16em;
+  color:var(--txd);
+}
+.v-hud span{color:var(--txm)}
+.v-hud .ok{color:var(--ok)}
+.v-hud .pen{color:var(--warn)}
+
+/* document showcase (full width) */
+.doc-showcase{margin-top:42px}
+.doc-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin-top:20px;
+}
+
+/* ============================================================
+   CLOSING
+============================================================ */
+#cierre{
+  position:relative;
+  padding:120px 30px 110px;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(157,124,255,.06) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(109,207,246,.04) 0%, transparent 70%),
+    var(--ink);
+  overflow:hidden;
+}
+#cierre-canvas{position:absolute;inset:0;pointer-events:none;width:100%;height:100%}
+.c-rays{
+  position:absolute;
+  top:50%;left:50%;
+  width:120%;height:120%;
+  transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(212,175,55,.04) 30deg,
+    transparent 60deg,
+    rgba(109,207,246,.03) 120deg,
+    transparent 180deg,
+    rgba(157,124,255,.03) 240deg,
+    transparent 300deg,
+    transparent 360deg);
+  animation:rays 65s linear infinite;
+  pointer-events:none;
+}
+@keyframes rays{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.c-glow{
+  position:absolute;
+  top:50%;left:50%;
+  width:600px;height:600px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(212,175,55,.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+.c-content{position:relative;z-index:3}
+.c-pulse{
+  width:160px;height:1px;
+  margin:0 auto 50px;
+  background:linear-gradient(90deg, transparent, var(--g), transparent);
+  animation:cpulse 3s ease-in-out infinite;
+}
+@keyframes cpulse{
+  0%,100%{opacity:.3;transform:scaleX(.6)}
+  50%{opacity:1;transform:scaleX(1.4)}
+}
+.c-title{
+  margin:0 0 18px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  font-size:clamp(1.8rem, 5.5vw, 3.8rem);
+  letter-spacing:.18em;
+  background:linear-gradient(180deg, var(--gh) 0%, var(--gl) 30%, var(--g) 60%, var(--gd) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 28px rgba(212,175,55,.3));
+  text-transform:uppercase;
+}
+.c-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.78rem;
+  letter-spacing:.34em;
+  color:var(--txm);
+  margin-bottom:22px;
+}
+.c-body{
+  max-width:720px;
+  margin:0 auto 36px;
+  font-size:.96rem;
+  line-height:1.86;
+  color:var(--txd);
+}
+.c-body strong{color:var(--gl)}
+.c-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin-bottom:36px;
+}
+.c-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  max-width:760px;
+  margin:0 auto;
+}
+.c-sep{
+  width:100%;
+  max-width:700px;
+  height:1px;
+  margin:46px auto 24px;
+  background:linear-gradient(90deg, transparent, rgba(212,175,55,.16), transparent);
+}
+.c-foot{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;
+  letter-spacing:.24em;
+  color:rgba(212,175,55,.3);
+}
+
+/* ============================================================
+   REVEAL
+============================================================ */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}
+.rv.d2{transition-delay:.16s}
+.rv.d3{transition-delay:.24s}
+.rv.d4{transition-delay:.32s}
+.rv.d5{transition-delay:.40s}
+[id]{scroll-margin-top:30px}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:1100px){
+  .g2,.g2-narrow,.g3,.g4,.g5,.g6{grid-template-columns:repeat(2,1fr)}
+  .g6{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:780px){
+  .inner{width:min(100% - 32px, 1100px)}
+  .section{padding:70px 0}
+  .g2,.g2-narrow,.g3,.g4,.g5,.g6{grid-template-columns:1fr}
+  .hero-label-top,.hero-label-bot{display:none}
+  .hero-fcorner{width:22px;height:22px}
+  .hero-fcorner.tl,.hero-fcorner.tr{top:22px}
+  .hero-fcorner.bl,.hero-fcorner.br{bottom:22px}
+  .hero-fcorner.tl,.hero-fcorner.bl{left:22px}
+  .hero-fcorner.tr,.hero-fcorner.br{right:22px}
+  .v-frame iframe.doc{height:520px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HUD OVERLAYS
+============================================================ -->
+<div class="hud-scan"></div>
+<div class="hud-vignette"></div>
+<div class="hud-pulse"></div>
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+<div class="hud-tag-tl">PROTOCOL · WP-FSE</div>
+<div class="hud-tag-tr">SECTOR · UOC FP064</div>
+<div class="hud-tag-bl">BACKLORD · 2026</div>
+<div class="hud-tag-br">PRODUCTO · IV</div>
+
+<!-- ============================================================
+     BOOT — STELLAR ANCHOR PROTOCOL
+============================================================ -->
+<div id="boot">
+  <div class="boot-stars"></div>
+  <div class="boot-cosmic"></div>
+
+  <div class="boot-telemetry left">
+    LAT · 41.7867° N<br>
+    LON · 02.8221° E<br>
+    QDX · 0x9F47<br>
+    NEX · STABLE<br>
+    SYS · NOMINAL
+  </div>
+  <div class="boot-telemetry right">
+    SECTOR · IV<br>
+    BAND · 5.8GHz<br>
+    LOCK · ACQUIRED<br>
+    SIG · STRONG<br>
+    KEY · ROTATING
+  </div>
+
+  <div class="boot-stage">
+    <div class="boot-coord c1">LAT · 41.78N // LON · 02.82E</div>
+    <div class="boot-coord c2">QUANTUM ANCHOR · CALIBRATING</div>
+
+    <div class="boot-ring r1">
+      <span class="boot-glyph g1">◊ WP ◊</span>
+      <span class="boot-glyph g2 cy">◇ FSE ◇</span>
+      <span class="boot-glyph g3 vi">⬡ JSON</span>
+      <span class="boot-glyph g4">REST ⬡</span>
+    </div>
+
+    <div class="boot-ring r2">
+      <span class="boot-glyph g1 cy">04</span>
+      <span class="boot-glyph g2">PHP</span>
+      <span class="boot-glyph g3">DB</span>
+      <span class="boot-glyph g4 vi">UOC</span>
+    </div>
+
+    <div class="boot-ring r3"></div>
+    <div class="boot-ring r4"></div>
+
+    <div class="boot-core">
+      <svg viewBox="-50 -50 100 100">
+        <polygon points="0,-32 28,-12 28,12 0,32 -28,12 -28,-12"
+                 fill="none" stroke="rgba(212,175,55,.9)" stroke-width="1.5"/>
+        <polygon points="0,-20 18,-8 18,8 0,20 -18,8 -18,-8"
+                 fill="none" stroke="rgba(109,207,246,.7)" stroke-width="1">
+          <animateTransform attributeName="transform" type="rotate"
+                            from="0" to="360" dur="8s" repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="0,-14 12,-6 12,6 0,14 -12,6 -12,-6"
+                 fill="rgba(212,175,55,.18)" stroke="rgba(212,175,55,.9)" stroke-width="1">
+          <animateTransform attributeName="transform" type="rotate"
+                            from="360" to="0" dur="6s" repeatCount="indefinite"/>
+        </polygon>
+      </svg>
+      <div class="core-pulse"></div>
+      <div class="boot-core-text">IV</div>
+    </div>
+  </div>
+
+  <div class="boot-status">
+    <div class="boot-codex">STELLAR · ANCHOR · PROTOCOL</div>
+    <div class="boot-codex-sub">REPARAYA · CODENAME · PRODUCTO IV</div>
+    <div class="boot-progress"><div class="boot-progress-fill" id="boot-fill"></div></div>
+    <div class="boot-message" id="boot-msg">CALIBRATING<span class="blink">_</span></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-orbit"><div class="ring3"></div></div>
+
+  <span class="hero-fcorner tl"></span>
+  <span class="hero-fcorner tr"></span>
+  <span class="hero-fcorner bl"></span>
+  <span class="hero-fcorner br"></span>
+
+  <div class="hero-label-top">FP.064 · WORDPRESS · FSE · CUSTOM BLOCK</div>
+  <div class="hero-label-bot">BACKLORD · UOC · 2025 — 2026</div>
+
+  <div class="hero-content">
+    <div class="hero-badge">SECTOR &nbsp;·&nbsp; IV &nbsp;·&nbsp; WORDPRESS &nbsp;·&nbsp; INSTITUTIONAL</div>
+    <span class="hero-eye">Equipo BackLord</span>
+
+    <div class="hero-title-wrap">
+      <span class="hero-title">REPARAYA</span>
+    </div>
+
+    <div class="hero-title-deco">
+      <span class="line"></span>
+      <span class="dia"></span>
+      <span class="num">IV</span>
+      <span class="dia"></span>
+      <span class="line"></span>
+    </div>
+
+    <span class="hero-sub">
+      WordPress &nbsp;·&nbsp; FSE &nbsp;·&nbsp; Tema de bloques &nbsp;·&nbsp; Genesis Custom Blocks
+      <br>Web Service REST &nbsp;·&nbsp; Despliegue UOC
+    </span>
+
+    <p class="hero-desc">
+      Web institucional WordPress construida sobre <strong>tema de bloques propio</strong>, Full Site Editing
+      y un <strong>bloque PHP personalizado</strong> que consume el web service REST del Producto&nbsp;3 y
+      renderiza estadísticas de servicios agrupados por zona. Desplegada en local con Docker y en producción
+      en <code>fp064.techlab.uoc.edu</code>.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn primary" data-go="briefing">Mission briefing</button>
+      <button class="btn" data-go="objetivos">Objetivos rúbrica</button>
+      <button class="btn cy" data-go="command">Centro de comando</button>
+      <a class="btn" href="https://github.com/EricKColl/ReparaYa-Producto4-WordPress" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <div class="hero-team">
+      <span class="chip">Erick Coll Rodríguez</span>
+      <span class="chip">Carles Miguel Millán</span>
+      <span class="chip">Miguel Alegre Zaragoza</span>
+    </div>
+
+    <div class="hero-stack">
+      <span class="stackchip">WordPress 6.9</span>
+      <span class="stackchip">PHP 8</span>
+      <span class="stackchip">MySQL 8</span>
+      <span class="stackchip">FSE</span>
+      <span class="stackchip">Create Block Theme</span>
+      <span class="stackchip">Genesis Custom Blocks</span>
+      <span class="stackchip">Docker</span>
+      <span class="stackchip">JSON REST</span>
+      <span class="stackchip">UOC</span>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-bar"></div>
+      <span class="scroll-txt">SCROLL</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     01 · MISSION BRIEFING
+============================================================ -->
+<section class="section alt" id="briefing">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">SECCIÓN · 01</div>
+      <h2 class="sec-title">Mission Briefing</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        El <strong>Producto IV</strong> implementa la web institucional de ReparaYa sobre <strong>WordPress</strong>
+        con un tema de bloques propio, plantillas FSE, blog, identidad de marca y un bloque PHP personalizado
+        que conecta con el web service REST del Producto&nbsp;3.
+      </p>
+    </div>
+
+    <div class="g6 rv d1">
+      <div class="cbox"><div class="c-num" data-to="5">0</div><div class="c-lbl">criterios rúbrica</div></div>
+      <div class="cbox"><div class="c-num" data-to="4">0</div><div class="c-lbl">páginas fijas</div></div>
+      <div class="cbox"><div class="c-num" data-to="3">0</div><div class="c-lbl">entradas blog</div></div>
+      <div class="cbox"><div class="c-num" data-to="7">0</div><div class="c-lbl">plantillas FSE</div></div>
+      <div class="cbox"><div class="c-num" data-to="2">0</div><div class="c-lbl">patrones</div></div>
+      <div class="cbox"><div class="c-num" data-to="1">0</div><div class="c-lbl">bloque PHP</div></div>
+    </div>
+
+    <div class="terminal rv d2" style="margin-top:42px;">
+      <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+      <div class="t-bar">
+        <span class="t-dot r"></span><span class="t-dot y"></span><span class="t-dot g"></span>
+        <span class="t-label">backlord@fp064 · wordpress-producto4</span>
+      </div>
+      <div class="t-body" id="term-body"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     02 · ARCHITECTURE
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">SECCIÓN · 02</div>
+      <h2 class="sec-title">Arquitectura del Sistema</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        La solución se apoya en una <strong>arquitectura dual</strong>: WordPress sirve el contenido y el bloque
+        personalizado consume el endpoint REST publicado en el Producto&nbsp;3, dentro del servidor UOC y
+        replicado en entorno local con Docker.
+      </p>
+    </div>
+
+    <div class="g2 rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">flujo de datos</div>
+        <h3 class="p-title">De WordPress al endpoint JSON</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num"><span>01</span></span>
+            <b>Visita pública</b>
+            <p>El usuario accede a <code>/~uocx3/</code> y WordPress resuelve la plantilla FSE correspondiente.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>02</span></span>
+            <b>Render del tema</b>
+            <p>El tema <code>reparaya-producto-4</code> compone cabecera, plantilla y pie con block theme nativo.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>03</span></span>
+            <b>Bloque PHP</b>
+            <p>En la página <em>Nuestros servicios</em> se carga el bloque Genesis con su lógica <code>block.php</code>.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>04</span></span>
+            <b>Consumo REST</b>
+            <p><code>wp_remote_get()</code> ataca el endpoint del Producto&nbsp;3 y valida el JSON recibido.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>05</span></span>
+            <b>Render dinámico</b>
+            <p>Se muestra el total global y un grid de zonas con número de servicios y porcentaje.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">capas del sistema</div>
+        <h3 class="p-title">Stack técnico operativo</h3>
+        <p class="p-text">
+          Cada capa cumple una función concreta dentro del flujo. La separación facilita el doble despliegue
+          local / UOC sin tocar la lógica del tema ni del bloque personalizado.
+        </p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">CMS</div><div class="s-val">WordPress 6.9 · block themes</div></div>
+          <div class="stat-row"><div class="s-lbl">Lenguaje</div><div class="s-val">PHP 8 · render server-side</div></div>
+          <div class="stat-row"><div class="s-lbl">Base de datos</div><div class="s-val">MySQL 8 · contenido + opciones</div></div>
+          <div class="stat-row"><div class="s-lbl">Tema propio</div><div class="s-val">reparaya-producto-4 · FSE</div></div>
+          <div class="stat-row"><div class="s-lbl">Bloque PHP</div><div class="s-val">Genesis Custom Blocks · servicios-zonas</div></div>
+          <div class="stat-row"><div class="s-lbl">Fuente JSON</div><div class="s-val">Web service REST · Producto 3 Laravel</div></div>
+          <div class="stat-row"><div class="s-lbl">Despliegue</div><div class="s-val">Docker local · servidor UOC</div></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     03 · PRIMARY OBJECTIVES — RUBRIC
+============================================================ -->
+<section class="section alt" id="objetivos">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">SECCIÓN · 03</div>
+      <h2 class="sec-title">Primary Objectives</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Los cinco criterios de la rúbrica oficial materializados como objetivos de misión. Cada objetivo
+        equivale a <strong>3 puntos</strong> sobre los 15 totales del producto.
+      </p>
+    </div>
+
+    <div class="obj-grid rv d1">
+      <article class="obj-card">
+        <div class="obj-head">
+          <span class="obj-code">OBJ · 01</span>
+          <span class="obj-status">● ACTIVE</span>
+        </div>
+        <div class="obj-icon"><span>α</span></div>
+        <h3 class="obj-title">Tema en blanco · Create Block Theme</h3>
+        <p class="obj-text">
+          Instalación de WordPress y generación de un tema de bloques en blanco con el plugin
+          <em>Create Block Theme</em>, base limpia sobre la que construir todo el diseño FSE.
+        </p>
+        <div class="obj-score"><small>PESO</small><b>3 / 15</b></div>
+      </article>
+
+      <article class="obj-card">
+        <div class="obj-head">
+          <span class="obj-code">OBJ · 02</span>
+          <span class="obj-status">● ACTIVE</span>
+        </div>
+        <div class="obj-icon"><span>β</span></div>
+        <h3 class="obj-title">Configuración del blog institucional</h3>
+        <p class="obj-text">
+          Cuatro páginas — Home, Nuestros servicios, Nuestra flota y Noticias — más tres entradas de blog
+          con contenido propio del proyecto, todo conectado en el menú de navegación.
+        </p>
+        <div class="obj-score"><small>PESO</small><b>3 / 15</b></div>
+      </article>
+
+      <article class="obj-card">
+        <div class="obj-head">
+          <span class="obj-code">OBJ · 03</span>
+          <span class="obj-status">● ACTIVE</span>
+        </div>
+        <div class="obj-icon"><span>γ</span></div>
+        <h3 class="obj-title">Estilos del editor de tema</h3>
+        <p class="obj-text">
+          Modificación de estilos globales desde el editor de estilos del tema de bloques con identidad
+          coherente: paleta negro / oro, tipografía Rajdhani y diseño institucional.
+        </p>
+        <div class="obj-score"><small>PESO</small><b>3 / 15</b></div>
+      </article>
+
+      <article class="obj-card">
+        <div class="obj-head">
+          <span class="obj-code">OBJ · 04</span>
+          <span class="obj-status">● ACTIVE</span>
+        </div>
+        <div class="obj-icon"><span>δ</span></div>
+        <h3 class="obj-title">Plantillas y patrones FSE</h3>
+        <p class="obj-text">
+          Plantillas para inicio, entradas individuales, flota y servicios, junto con los patrones
+          reutilizables de cabecera y pie de página personalizados con la marca del proyecto.
+        </p>
+        <div class="obj-score"><small>PESO</small><b>3 / 15</b></div>
+      </article>
+
+      <article class="obj-card">
+        <div class="obj-head">
+          <span class="obj-code">OBJ · 05</span>
+          <span class="obj-status">● ACTIVE</span>
+        </div>
+        <div class="obj-icon"><span>Ω</span></div>
+        <h3 class="obj-title">Bloque PHP · Web Service REST</h3>
+        <p class="obj-text">
+          Bloque personalizado creado con <em>Genesis Custom Blocks</em>: consume el JSON del web service
+          del Producto&nbsp;3 y muestra el listado de servicios agrupados por zona.
+        </p>
+        <div class="obj-score"><small>PESO</small><b>3 / 15</b></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     04 · PROTOCOL ALPHA — Theme Forge
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">PROTOCOLO · α</div>
+      <h2 class="sec-title">Theme Forge</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Forja del tema de bloques propio con <strong>Create Block Theme</strong>, base limpia y trazable
+        sobre la que se construyen plantillas, estilos y patrones de Full Site Editing.
+      </p>
+    </div>
+
+    <div class="g2-narrow rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">generación</div>
+        <h3 class="p-title">Proceso de creación</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num"><span>01</span></span>
+            <b>Activar plugin</b>
+            <p>Instalación de <code>create-block-theme</code> desde Plugins → Add new.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>02</span></span>
+            <b>Crear tema en blanco</b>
+            <p>Apariencia → Create Block Theme → <em>Create blank theme</em> con metadatos propios.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>03</span></span>
+            <b>Activación inmediata</b>
+            <p>Tema <code>reparaya-producto-4</code> queda activo sin estilos residuales heredados.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>04</span></span>
+            <b>Estructura mínima</b>
+            <p>Carpeta del tema con <code>style.css</code>, <code>theme.json</code>, <code>templates/</code> y <code>parts/</code>.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">identidad del tema</div>
+        <h3 class="p-title">Metadatos del proyecto</h3>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Nombre</div><div class="s-val">reparaya-producto-4</div></div>
+          <div class="stat-row"><div class="s-lbl">Texto del tema</div><div class="s-val">ReparaYa · Producto 4</div></div>
+          <div class="stat-row"><div class="s-lbl">Autor</div><div class="s-val">Grupo BackLord</div></div>
+          <div class="stat-row"><div class="s-lbl">Versión</div><div class="s-val">1.0.0 · entrega final</div></div>
+          <div class="stat-row"><div class="s-lbl">Tipo</div><div class="s-val">Block theme · FSE compatible</div></div>
+          <div class="stat-row"><div class="s-lbl">Base</div><div class="s-val">Plantilla en blanco · sin frontend heredado</div></div>
+        </div>
+        <div class="tags">
+          <span class="tag">FSE</span>
+          <span class="tag">block-theme</span>
+          <span class="tag">create-block-theme</span>
+          <span class="tag cy">criterio 1</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     05 · PROTOCOL BETA — Style Matrix
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">PROTOCOLO · β</div>
+      <h2 class="sec-title">Style Matrix</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Identidad visual coherente con la marca BackLord: paleta dorado / negro / crema, tipografía técnica
+        y composición elegante centrada en la experiencia institucional.
+      </p>
+    </div>
+
+    <div class="g3 rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">paleta</div>
+        <h3 class="p-title">Sistema cromático</h3>
+        <p class="p-text">Colores definidos directamente en <code>theme.json</code> y reutilizables como variables CSS desde el editor.</p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Black</div><div class="s-val">#060606 · base general</div></div>
+          <div class="stat-row"><div class="s-lbl">Gold</div><div class="s-val">#D4AF37 · acento principal</div></div>
+          <div class="stat-row"><div class="s-lbl">Gold-light</div><div class="s-val">#F5D77A · resaltes</div></div>
+          <div class="stat-row"><div class="s-lbl">Cream</div><div class="s-val">#F5EFE1 · texto sobre oscuro</div></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">tipografía</div>
+        <h3 class="p-title">Sistema tipográfico</h3>
+        <p class="p-text">Fuentes técnicas con buena legibilidad en titulares, cuerpos y elementos secundarios del tema.</p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Display</div><div class="s-val">Rajdhani · titulares</div></div>
+          <div class="stat-row"><div class="s-lbl">Body</div><div class="s-val">Rajdhani regular</div></div>
+          <div class="stat-row"><div class="s-lbl">Mono</div><div class="s-val">Share Tech Mono · etiquetas</div></div>
+          <div class="stat-row"><div class="s-lbl">Carga</div><div class="s-val">Google Fonts desde theme.json</div></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">layout</div>
+        <h3 class="p-title">Composición del sitio</h3>
+        <p class="p-text">Ancho controlado para mantener equilibrio visual y legibilidad en pantallas grandes y móvil.</p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Content width</div><div class="s-val">1080 px · contenido principal</div></div>
+          <div class="stat-row"><div class="s-lbl">Wide width</div><div class="s-val">1200 px · bloques anchos</div></div>
+          <div class="stat-row"><div class="s-lbl">Edit style</div><div class="s-val">desde el editor de estilos del tema</div></div>
+          <div class="stat-row"><div class="s-lbl">Criterio</div><div class="s-val">cubre criterio 3 de la rúbrica</div></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="callout rv d2" style="margin-top:32px;">
+      <p>
+        <strong>EDITOR DE ESTILOS · CRITERIO 3 ◆</strong> los ajustes globales — paleta, tipografía,
+        espaciados y estilos por bloque — se aplican desde Apariencia → Editor → Estilos. Esto cumple
+        textualmente el criterio: <em>“modificación de estilos en el editor de estilos del tema”</em>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     06 · PROTOCOL GAMMA — Template Network
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">PROTOCOLO · γ</div>
+      <h2 class="sec-title">Template Network</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Red de plantillas FSE que cubre <strong>página principal</strong>, <strong>flota</strong>,
+        <strong>servicios</strong>, <strong>blog</strong>, <strong>entradas individuales</strong>
+        y los <strong>patrones de cabecera y pie</strong>.
+      </p>
+    </div>
+
+    <div class="g2-narrow rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">templates · FSE</div>
+        <h3 class="p-title">Plantillas del tema</h3>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">front-page.html</div><div class="s-val">Home institucional</div></div>
+          <div class="stat-row"><div class="s-lbl">home.html</div><div class="s-val">Listado del blog (Noticias)</div></div>
+          <div class="stat-row"><div class="s-lbl">single.html</div><div class="s-val">Entrada individual</div></div>
+          <div class="stat-row"><div class="s-lbl">page.html</div><div class="s-val">Página genérica</div></div>
+          <div class="stat-row"><div class="s-lbl">page-nuestros-servicios.html</div><div class="s-val">Servicios + bloque PHP</div></div>
+          <div class="stat-row"><div class="s-lbl">page-nuestra-flota.html</div><div class="s-val">Flota institucional</div></div>
+          <div class="stat-row"><div class="s-lbl">index.html</div><div class="s-val">Fallback global</div></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">parts · header / footer</div>
+        <h3 class="p-title">Patrones reutilizables</h3>
+        <p class="p-text">
+          Los <em>template parts</em> garantizan coherencia visual: la misma cabecera y el mismo pie en cada
+          página, modificables desde un único punto.
+        </p>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num"><span>01</span></span>
+            <b>parts/header.html</b>
+            <p>Logo, menú principal y navegación premium en negro y dorado, sticky en scroll.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>02</span></span>
+            <b>parts/footer.html</b>
+            <p>Datos del grupo, enlaces institucionales y créditos del Producto&nbsp;4.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>03</span></span>
+            <b>Inclusión</b>
+            <p>Cada plantilla incluye <code>&lt;!-- wp:template-part /--&gt;</code> para reutilizarlos.</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">template-parts</span>
+          <span class="tag cy">criterio 4</span>
+          <span class="tag vi">patrones FSE</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     07 · PROTOCOL DELTA — Content Vault
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">PROTOCOLO · δ</div>
+      <h2 class="sec-title">Content Vault</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Cuatro páginas institucionales y tres entradas de blog construyen la base de contenido exigida por
+        la rúbrica. Cada página tiene su plantilla y su rol claro dentro del sitio.
+      </p>
+    </div>
+
+    <div class="g4 rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">página · 01</div>
+        <h3 class="p-title">Home</h3>
+        <p class="p-text">Página de inicio institucional con hero, presentación de la marca y accesos a servicios y noticias.</p>
+        <div class="tags"><span class="tag">front-page</span><span class="tag">contenido fijo</span></div>
+      </article>
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">página · 02</div>
+        <h3 class="p-title">Nuestros servicios</h3>
+        <p class="p-text">Aloja el bloque PHP personalizado que muestra el listado JSON de servicios por zona en tiempo real.</p>
+        <div class="tags"><span class="tag cy">bloque JSON</span><span class="tag">criterio 5</span></div>
+      </article>
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">página · 03</div>
+        <h3 class="p-title">Nuestra flota</h3>
+        <p class="p-text">Página de contenido fijo con vehículos, equipos y recursos operativos del servicio ReparaYa.</p>
+        <div class="tags"><span class="tag">contenido fijo</span><span class="tag">FSE</span></div>
+      </article>
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">página · 04</div>
+        <h3 class="p-title">Noticias</h3>
+        <p class="p-text">Sección de blog con listado de entradas y enlace a cada noticia individual con plantilla propia.</p>
+        <div class="tags"><span class="tag">home.html</span><span class="tag">single.html</span></div>
+      </article>
+    </div>
+
+    <div class="g3 rv d2" style="margin-top:24px;">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">entrada · 01</div>
+        <h3 class="p-title">Transformación web</h3>
+        <p class="p-text">ReparaYa transforma su web institucional con WordPress, FSE y tema de bloques personalizado.</p>
+      </article>
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">entrada · 02</div>
+        <h3 class="p-title">Servicios conectados</h3>
+        <p class="p-text">Nuevo sistema de servicios conectado a una fuente JSON externa del Producto&nbsp;3 Laravel.</p>
+      </article>
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">entrada · 03</div>
+        <h3 class="p-title">Tema de bloques propio</h3>
+        <p class="p-text">WordPress FSE y tema de bloques personalizado por el equipo BackLord, de cero al despliegue.</p>
+      </article>
+    </div>
+
+    <div class="callout rv d3" style="margin-top:30px;">
+      <p>
+        <strong>CRITERIO 2 ◆</strong> el blog se compone de las 4 páginas institucionales más las 3 entradas
+        requeridas, todas accesibles desde el menú principal del tema y con plantillas propias.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     08 · PROTOCOL OMEGA — Quantum Block
+============================================================ -->
+<section class="section">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">PROTOCOLO · Ω</div>
+      <h2 class="sec-title">Quantum Block</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Bloque PHP personalizado creado con <strong>Genesis Custom Blocks</strong>, capaz de consumir el web
+        service REST del Producto&nbsp;3 y renderizar el listado de servicios agrupados por zona dentro de
+        cualquier página WordPress.
+      </p>
+    </div>
+
+    <div class="g2-narrow rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">creación del bloque</div>
+        <h3 class="p-title">Pasos del bloque personalizado</h3>
+        <div class="flow" style="margin-top:14px;">
+          <div class="flow-step">
+            <span class="flow-num"><span>01</span></span>
+            <b>Activar Genesis Custom Blocks</b>
+            <p>Plugin instalado, accesible desde el panel admin de WordPress.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>02</span></span>
+            <b>Definir bloque <code>servicios-zonas</code></b>
+            <p>Slug, icono, atributos (endpoint) y editor preview configurados.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>03</span></span>
+            <b>Lógica en <code>block.php</code></b>
+            <p>Cadena de endpoints (local → UOC), <code>wp_remote_get()</code> y validación del JSON.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>04</span></span>
+            <b>Render server-side</b>
+            <p>Bloque devuelve HTML con total global, grid de zonas y porcentaje por zona.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num"><span>05</span></span>
+            <b>Inserción en página</b>
+            <p>Se añade desde el editor a la página <em>Nuestros servicios</em> y queda persistido.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">endpoint REST</div>
+        <h3 class="p-title">Web Service del Producto 3</h3>
+        <p class="p-text">
+          El endpoint expone los servicios agrupados por zona, calculando el total global y el porcentaje
+          relativo de cada zona. Está publicado dentro del subdominio del servidor UOC.
+        </p>
+        <div class="stat-list">
+          <div class="stat-row">
+            <div class="s-lbl">URL pública UOC</div>
+            <div class="s-val" style="font-size:.74rem;">fp064.techlab.uoc.edu/~uocx3/producto3/api/servicios/zonas</div>
+          </div>
+          <div class="stat-row">
+            <div class="s-lbl">Método</div>
+            <div class="s-val">GET · JSON · 200 OK</div>
+          </div>
+          <div class="stat-row">
+            <div class="s-lbl">Origen</div>
+            <div class="s-val">Producto 3 Laravel</div>
+          </div>
+        </div>
+
+        <div class="codeblock">{
+  "total_global": 3,
+  "zonas": [
+    { "zona":"Norte", "total_servicios":3, "porcentaje":100 },
+    { "zona":"Sur",   "total_servicios":0, "porcentaje":0   },
+    { "zona":"Este",  "total_servicios":0, "porcentaje":0   },
+    { "zona":"Oeste", "total_servicios":0, "porcentaje":0   },
+    { "zona":"Centro","total_servicios":0, "porcentaje":0   }
+  ]
+}</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     09 · DEPLOYMENT VECTOR
+============================================================ -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">SECCIÓN · 09</div>
+      <h2 class="sec-title">Deployment Vector</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Doble entorno operativo: <strong>Docker local</strong> para desarrollo iterativo y <strong>servidor
+        UOC</strong> para la entrega pública. La lógica del tema y del bloque se mantiene idéntica.
+      </p>
+    </div>
+
+    <div class="g2 rv d1">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">local</div>
+        <h3 class="p-title">Entorno Docker</h3>
+        <p class="p-text">Stack reproducible con WordPress, MySQL y phpMyAdmin orquestados con Docker Compose.</p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">WP container</div><div class="s-val">p4-wordpress · puerto 8084</div></div>
+          <div class="stat-row"><div class="s-lbl">DB</div><div class="s-val">p4-wp-db · MySQL 8.0</div></div>
+          <div class="stat-row"><div class="s-lbl">phpMyAdmin</div><div class="s-val">p4-phpmyadmin · 8085</div></div>
+          <div class="stat-row"><div class="s-lbl">Endpoint local</div><div class="s-val">host.docker.internal:8000</div></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">producción</div>
+        <h3 class="p-title">Servidor UOC</h3>
+        <p class="p-text">Despliegue final con SSH puerto 55000, rsync, base de datos importada y normalización de rutas bajo <code>/~uocx3/</code>.</p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Host</div><div class="s-val">fp064.techlab.uoc.edu</div></div>
+          <div class="stat-row"><div class="s-lbl">Path</div><div class="s-val">/home/uocx3/public_html</div></div>
+          <div class="stat-row"><div class="s-lbl">URL pública</div><div class="s-val" style="font-size:.74rem;">fp064.techlab.uoc.edu/~uocx3/</div></div>
+          <div class="stat-row"><div class="s-lbl">SSH</div><div class="s-val">puerto 55000 · usuario uocx3</div></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="callout rv d2" style="margin-top:30px;">
+      <p>
+        <strong>NORMALIZACIÓN DE RUTAS ◆</strong> el tema incluye un filtro en <code>functions.php</code>
+        que reescribe rutas absolutas <code>/wp-content/…</code> para que funcionen correctamente bajo el
+        subdirectorio <code>/~uocx3/</code> del servidor UOC sin tocar el contenido editado en el panel.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     10 · COMMAND CENTER
+============================================================ -->
+<section class="section" id="command">
+  <div class="inner">
+    <div class="sec-head rv">
+      <div class="sec-tag">SECCIÓN · 10</div>
+      <h2 class="sec-title">Command Center</h2>
+      <div class="sec-deco">
+        <span class="sec-deco-line"></span>
+        <span class="sec-deco-dia"></span>
+        <span class="sec-deco-line"></span>
+      </div>
+      <p class="sec-lead">
+        Punto único de acceso a los recursos principales del Producto&nbsp;4:
+        <strong>vídeos</strong>, <strong>repositorio</strong> y <strong>despliegue público</strong>.
+      </p>
+    </div>
+
+    <div class="cmd-grid rv d1">
+
+      <a class="cmd-card" href="https://youtu.be/aggb_z_NO1c" target="_blank" rel="noopener">
+        <span class="ca tl"></span><span class="ca tr"></span><span class="ca bl"></span><span class="ca br"></span>
+        <span class="cmd-state"><span class="dot"></span>ACTIVO</span>
+        <div class="cmd-icon">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="cmd-step">UNIDAD · 01</div>
+        <h3 class="cmd-title">Vídeo Teórico</h3>
+        <p class="cmd-desc">
+          Explicación técnica del proyecto: arquitectura WordPress, tema de bloques, Genesis Custom Blocks
+          y consumo del JSON del web service REST.
+        </p>
+        <span class="cmd-btn">► VER VÍDEO</span>
+      </a>
+
+      <a class="cmd-card" href="https://youtu.be/oa_59x55yGo" target="_blank" rel="noopener">
+        <span class="ca tl"></span><span class="ca tr"></span><span class="ca bl"></span><span class="ca br"></span>
+        <span class="cmd-state"><span class="dot"></span>ACTIVO</span>
+        <div class="cmd-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="cmd-step">UNIDAD · 02</div>
+        <h3 class="cmd-title">Vídeo Práctico</h3>
+        <p class="cmd-desc">
+          Demostración funcional del entorno: panel de WordPress, edición del tema, plantillas FSE,
+          páginas, blog y bloque consumiendo el JSON.
+        </p>
+        <span class="cmd-btn">► VER VÍDEO</span>
+      </a>
+
+      <a class="cmd-card" href="https://github.com/EricKColl/ReparaYa-Producto4-WordPress" target="_blank" rel="noopener">
+        <span class="ca tl"></span><span class="ca tr"></span><span class="ca bl"></span><span class="ca br"></span>
+        <span class="cmd-state"><span class="dot"></span>ACTIVO</span>
+        <div class="cmd-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        </div>
+        <div class="cmd-step">UNIDAD · 03</div>
+        <h3 class="cmd-title">Repositorio GitHub</h3>
+        <p class="cmd-desc">
+          Código fuente completo del Producto&nbsp;4: tema, plugins, scripts, base de datos exportada,
+          ramas y commits del flujo de trabajo del equipo.
+        </p>
+        <span class="cmd-btn">↗ ABRIR REPO</span>
+      </a>
+
+    </div>
+
+    <div class="g2 rv d2" style="margin-top:42px;">
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">vídeo teórico</div>
+        <h3 class="p-title">Base conceptual del Producto IV</h3>
+        <p class="p-text">
+          Recorrido explicativo por la arquitectura WordPress, la creación del tema de bloques, la
+          configuración de plantillas FSE y la implementación del bloque PHP que consume el web service REST.
+        </p>
+        <div class="v-frame">
+          <span class="vc tl"></span><span class="vc tr"></span><span class="vc bl"></span><span class="vc br"></span>
+          <iframe src="https://www.youtube.com/embed/aggb_z_NO1c"
+                  title="Vídeo teórico ReparaYa Producto 4"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="v-hud">
+          <div>TIPO: <span>TEÓRICO</span></div>
+          <div>CONTENIDO: <span>WordPress · FSE · Bloque PHP</span></div>
+          <div>ESTADO: <span class="ok">▶ ACTIVO</span></div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pc tl"></span><span class="pc tr"></span><span class="pc bl"></span><span class="pc br"></span>
+        <div class="kicker">vídeo práctico</div>
+        <h3 class="p-title">Demostración funcional</h3>
+        <p class="p-text">
+          Demostración en vivo del entorno: panel admin, gestión del tema, edición de plantillas
+          FSE, páginas, entradas y consumo del JSON desde el bloque personalizado.
+        </p>
+        <div class="v-frame">
+          <span class="vc tl"></span><span class="vc tr"></span><span class="vc bl"></span><span class="vc br"></span>
+          <iframe src="https://www.youtube.com/embed/oa_59x55yGo"
+                  title="Vídeo práctico ReparaYa Producto 4"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="v-hud">
+          <div>TIPO: <span>DEMO PRÁCTICA</span></div>
+          <div>STACK: <span>WordPress · MySQL · Docker</span></div>
+          <div>ESTADO: <span class="ok">▶ ACTIVO</span></div>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================
+     CLOSING
+============================================================ -->
+<section id="cierre">
+  <canvas id="cierre-canvas"></canvas>
+  <div class="c-rays"></div>
+  <div class="c-glow"></div>
+  <div class="c-content inner">
+    <div class="c-pulse rv"></div>
+    <h2 class="c-title rv">Anchor Locked · Mission Sealed</h2>
+    <p class="c-sub rv">Producto IV &nbsp;·&nbsp; WordPress &nbsp;·&nbsp; FSE &nbsp;·&nbsp; Custom Block &nbsp;·&nbsp; UOC</p>
+    <p class="c-body rv d1">
+      ReparaYa Producto&nbsp;IV consolida la presencia institucional de la marca dentro del ecosistema
+      académico de la <strong>UOC</strong>: <strong>WordPress 6.9</strong>, <strong>tema de bloques propio</strong>,
+      <strong>Full Site Editing</strong>, <strong>identidad visual coherente</strong>, <strong>blog</strong>,
+      <strong>plantillas y patrones FSE</strong>, <strong>bloque PHP personalizado</strong> que consume el
+      <strong>web service REST</strong> del Producto&nbsp;3 y <strong>despliegue dual</strong> en Docker
+      local y servidor UOC.
+    </p>
+
+    <div class="c-actions rv d2">
+      <a class="btn primary" href="https://youtu.be/aggb_z_NO1c" target="_blank" rel="noopener">Vídeo teórico</a>
+      <a class="btn primary" href="https://youtu.be/oa_59x55yGo" target="_blank" rel="noopener">Vídeo práctico</a>
+      <a class="btn" href="https://github.com/EricKColl/ReparaYa-Producto4-WordPress" target="_blank" rel="noopener">Repositorio</a>
+      <a class="btn cy" href="https://fp064.techlab.uoc.edu/~uocx3/" target="_blank" rel="noopener">Web pública</a>
+    </div>
+
+    <div class="c-tags rv d3">
+      <span class="tag">WordPress 6.9</span>
+      <span class="tag">FSE</span>
+      <span class="tag">Block Theme</span>
+      <span class="tag">Create Block Theme</span>
+      <span class="tag">Genesis Custom Blocks</span>
+      <span class="tag">PHP 8</span>
+      <span class="tag">MySQL 8</span>
+      <span class="tag">REST</span>
+      <span class="tag">JSON</span>
+      <span class="tag">Docker</span>
+      <span class="tag">UOC</span>
+      <span class="tag">BackLord</span>
+      <span class="tag cy">5 / 5 objetivos</span>
+    </div>
+
+    <div class="c-sep rv"></div>
+    <p class="c-foot rv">BACKLORD &nbsp;//&nbsp; FP.064 &nbsp;//&nbsp; UNIVERSITAT OBERTA DE CATALUNYA &nbsp;//&nbsp; 2025 — 2026</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script>
+/* ============================================================
+   BOOT — STELLAR ANCHOR PROTOCOL
+============================================================ */
+(function(){
+  var messages = [
+    'CALIBRATING STELLAR ANCHOR',
+    'LOADING WORDPRESS NEXUS',
+    'BINDING FSE TEMPLATES',
+    'INJECTING GENESIS BLOCK',
+    'OPENING REST CHANNEL',
+    'SYNCING UOC SECTOR',
+    'ANCHOR · LOCKED ✓'
+  ];
+  var fill = document.getElementById('boot-fill');
+  var msg  = document.getElementById('boot-msg');
+  var boot = document.getElementById('boot');
+  var i = 0;
+  setTimeout(function(){ fill.style.width = '100%'; }, 120);
+  var iv = setInterval(function(){
+    i++;
+    if(i < messages.length){
+      msg.innerHTML = messages[i] + '<span class="blink">_</span>';
+    } else {
+      clearInterval(iv);
+      setTimeout(function(){
+        boot.classList.add('collapsing');
+        setTimeout(function(){ boot.style.display='none'; }, 1300);
+      }, 380);
+    }
+  }, 590);
+})();
+
+/* ============================================================
+   HERO CANVAS — Constellation + drifting particles
+============================================================ */
+(function(){
+  var c = document.getElementById('hero-canvas');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  var W, H, parts = [];
+
+  function resize(){
+    W = c.width = c.offsetWidth || window.innerWidth;
+    H = c.height = c.offsetHeight || window.innerHeight;
+    parts = [];
+    for(var i = 0; i < 70; i++){
+      parts.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        r: Math.random() * 1.5 + 0.4,
+        a: Math.random() * 0.4 + 0.1,
+        hue: Math.random() > 0.85 ? 'cy' : (Math.random() > 0.9 ? 'vi' : 'g')
+      });
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw(){
+    ctx.fillStyle = 'rgba(2,2,3,0.18)';
+    ctx.fillRect(0, 0, W, H);
+
+    for(var i = 0; i < parts.length; i++){
+      var p = parts[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x < -20) p.x = W + 20;
+      if(p.x > W + 20) p.x = -20;
+      if(p.y < -20) p.y = H + 20;
+      if(p.y > H + 20) p.y = -20;
+
+      var color;
+      if(p.hue === 'cy') color = 'rgba(109,207,246,';
+      else if(p.hue === 'vi') color = 'rgba(157,124,255,';
+      else color = 'rgba(212,175,55,';
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = color + p.a + ')';
+      ctx.fill();
+
+      for(var j = i + 1; j < parts.length; j++){
+        var q = parts[j];
+        var dx = p.x - q.x, dy = p.y - q.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if(dist < 130){
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = 'rgba(212,175,55,' + (0.07 * (1 - dist / 130)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   CLOSING CANVAS — sparks
+============================================================ */
+(function(){
+  var c = document.getElementById('cierre-canvas');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  var W, H, sparks = [];
+
+  function mk(){
+    var ang = Math.random() * Math.PI * 2;
+    var s = Math.random() * 0.5 + 0.1;
+    return {
+      x: W * 0.5 + (Math.random() - 0.5) * 340,
+      y: H * 0.5 + (Math.random() - 0.5) * 160,
+      vx: Math.cos(ang) * s,
+      vy: Math.sin(ang) * s - 0.1,
+      r: Math.random() * 1.3 + 0.3,
+      a: Math.random() * 0.4 + 0.08,
+      life: Math.random() * 0.7 + 0.3,
+      hue: Math.random() > 0.85 ? 'cy' : (Math.random() > 0.92 ? 'vi' : 'g')
+    };
+  }
+
+  function resize(){
+    W = c.width = c.offsetWidth || window.innerWidth;
+    H = c.height = c.offsetHeight || 500;
+    sparks = [];
+    for(var i = 0; i < 80; i++) sparks.push(mk());
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    for(var i = 0; i < sparks.length; i++){
+      var s = sparks[i];
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life -= 0.007;
+      if(s.life <= 0){ sparks[i] = mk(); continue; }
+      var color;
+      if(s.hue === 'cy') color = 'rgba(109,207,246,';
+      else if(s.hue === 'vi') color = 'rgba(157,124,255,';
+      else color = 'rgba(212,175,55,';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = color + (s.a * Math.max(0, s.life)) + ')';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   TERMINAL
+============================================================ */
+(function(){
+  var body = document.getElementById('term-body');
+  if(!body) return;
+  var lines = [
+    { c:'tp', t:'backlord@p4-wordpress:/var/www/html$ ', d:0 },
+    { c:'tc', t:'wp theme activate reparaya-producto-4', d:520 },
+    { c:'ts', t:'✓ Theme activated · block theme · FSE ready', d:1180 },
+    { c:'tp', t:'backlord@p4-wordpress:/var/www/html$ ', d:1900 },
+    { c:'tc', t:'wp post list --post_type=page --field=post_title', d:1900 },
+    { c:'ts', t:'Home · Nuestros servicios · Nuestra flota · Noticias', d:2620 },
+    { c:'tp', t:'backlord@p4-wordpress:/var/www/html$ ', d:3340 },
+    { c:'tc', t:'wp post list --post_type=post --field=post_title', d:3340 },
+    { c:'ts', t:'3 entradas · WordPress FSE · Servicios JSON · Tema propio', d:4060 },
+    { c:'tp', t:'backlord@p4-wordpress:/var/www/html$ ', d:4780 },
+    { c:'tc', t:'curl -s /producto3/api/servicios/zonas | jq .total_global', d:4780 },
+    { c:'te', t:'3', d:5520 },
+    { c:'ts', t:'✓ JSON OK · 5 zonas · render del bloque verificado', d:6160 }
+  ];
+
+  function run(){
+    body.innerHTML = '';
+    var last = null;
+    lines.forEach(function(line){
+      setTimeout(function(){
+        if(line.c === 'tp'){
+          var div = document.createElement('div');
+          div.className = 't-line';
+          div.innerHTML = '<span class="tp">' + line.t + '</span>';
+          body.appendChild(div);
+          last = div.querySelector('.tp');
+        } else if(line.c === 'tc' && last){
+          var span = document.createElement('span');
+          span.className = 'tc';
+          span.textContent = line.t;
+          last.appendChild(span);
+          last = null;
+        } else {
+          var div2 = document.createElement('div');
+          div2.className = 't-line';
+          div2.innerHTML = '<span class="' + line.c + '">' + line.t + '</span>';
+          body.appendChild(div2);
+          last = null;
+        }
+        body.scrollTop = body.scrollHeight;
+      }, line.d);
+    });
+    setTimeout(run, 9000);
+  }
+  setTimeout(run, 500);
+})();
+
+/* ============================================================
+   COUNTERS
+============================================================ */
+function runCounter(el){
+  if(el.dataset.done) return;
+  el.dataset.done = '1';
+  var target = parseInt(el.getAttribute('data-to'), 10) || 0;
+  var n = 0;
+  var step = Math.max(1, Math.ceil(target / 36));
+  var iv = setInterval(function(){
+    n = Math.min(target, n + step);
+    el.textContent = n;
+    if(n >= target) clearInterval(iv);
+  }, 35);
+}
+
+/* ============================================================
+   REVEAL
+============================================================ */
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('on');
+      e.target.querySelectorAll('[data-to]').forEach(runCounter);
+      e.target.querySelectorAll('.cbox').forEach(function(c){ c.classList.add('on'); });
+      obs.unobserve(e.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.rv, .cbox').forEach(function(el){ obs.observe(el); });
+})();
+
+/* ============================================================
+   SCROLL BUTTONS
+============================================================ */
+document.querySelectorAll('[data-go]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var id = this.getAttribute('data-go');
+    var el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BugBusters · Producto 4 · JPA e Hibernate</title>
+</head>
+<body>
+<div style="width:100%;display:flex;justify-content:center;align-items:flex-start;margin:0 auto;padding:0;">
+  <div id="bugbusters-p4-quantum">
+    <style>
+      #bugbusters-p4-quantum{
+        --bg0:#01020a;
+        --bg1:#040c1c;
+        --bg2:#081830;
+        --bg3:#0c2a4e;
+        --bg4:#06162e;
+        --text:#f8fcff;
+        --muted:#c5dbf0;
+        --muted2:#9bb3cf;
+        --line:rgba(146,212,255,.07);
+        --stroke:rgba(210,231,255,.14);
+        --cyan:#7af2ff;
+        --cyan2:#d4fbff;
+        --cyan-deep:#1a8db0;
+        --blue:#3a8fff;
+        --blue-deep:#0a3a7a;
+        --gold-1:#fff8e2;
+        --gold-2:#ffe4a0;
+        --gold-3:#ffd978;
+        --gold-4:#e6b242;
+        --gold-5:#b8821e;
+        --shadow:rgba(0,0,0,.55);
+        position:relative;
+        isolation:isolate;
+        overflow:hidden;
+        box-sizing:border-box;
+        width:min(1320px, calc(100% - 12px));
+        max-width:1320px;
+        margin:0 auto !important;
+        padding:28px 24px;
+        color:var(--text);
+        font-family:'Inter','Segoe UI',Roboto,Arial,sans-serif;
+        background:
+          radial-gradient(ellipse 80% 60% at 50% 0%, rgba(122,242,255,.16), transparent 60%),
+          radial-gradient(ellipse 60% 40% at 50% 100%, rgba(58,143,255,.14), transparent 60%),
+          radial-gradient(circle at 10% 22%, rgba(122,242,255,.16), transparent 28%),
+          radial-gradient(circle at 90% 22%, rgba(255,217,120,.10), transparent 26%),
+          radial-gradient(circle at 85% 80%, rgba(124,174,255,.16), transparent 30%),
+          radial-gradient(circle at 15% 80%, rgba(122,242,255,.10), transparent 26%),
+          linear-gradient(170deg, var(--bg0) 0%, var(--bg1) 22%, var(--bg2) 50%, var(--bg3) 76%, var(--bg4) 100%);
+        border:1px solid rgba(210,231,255,.14);
+        border-radius:42px;
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          inset 0 0 110px rgba(122,242,255,.05),
+          0 36px 110px var(--shadow);
+      }
+
+      #bugbusters-p4-quantum,
+      #bugbusters-p4-quantum *{box-sizing:border-box}
+
+      #bugbusters-p4-quantum .aurora,
+      #bugbusters-p4-quantum .grid,
+      #bugbusters-p4-quantum .circuit,
+      #bugbusters-p4-quantum .scanlines,
+      #bugbusters-p4-quantum .ringscape,
+      #bugbusters-p4-quantum .cursor-light,
+      #bugbusters-p4-quantum .code-rain,
+      #bugbusters-p4-quantum .particles,
+      #bugbusters-p4-quantum .beams,
+      #bugbusters-p4-quantum .vignette,
+      #bugbusters-p4-quantum .stars,
+      #bugbusters-p4-quantum .glow-orb,
+      #bugbusters-p4-quantum .scanner{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+      }
+
+      #bugbusters-p4-quantum .aurora{
+        inset:-25%;
+        background:
+          conic-gradient(from 200deg at 50% 50%,
+            rgba(255,255,255,0) 0%,
+            rgba(122,242,255,.12) 14%,
+            rgba(58,143,255,.14) 30%,
+            rgba(255,217,120,.08) 46%,
+            rgba(124,174,255,.10) 62%,
+            rgba(122,242,255,.10) 78%,
+            rgba(255,255,255,0) 96%);
+        filter:blur(32px);
+        opacity:.95;
+        animation:bbP4Aurora 32s linear infinite;
+      }
+
+      #bugbusters-p4-quantum .glow-orb{
+        background:
+          radial-gradient(circle at 50% 14%, rgba(122,242,255,.22), transparent 38%),
+          radial-gradient(circle at 50% 86%, rgba(58,143,255,.14), transparent 42%);
+        opacity:.8;
+        animation:bbP4OrbPulse 8s ease-in-out infinite alternate;
+      }
+
+      /* Circuit pattern background */
+      #bugbusters-p4-quantum .circuit{
+        opacity:.16;
+        background-image:
+          linear-gradient(90deg, transparent 49.4%, rgba(122,242,255,.6) 49.6%, rgba(122,242,255,.6) 50.4%, transparent 50.6%),
+          linear-gradient(0deg, transparent 49.4%, rgba(122,242,255,.4) 49.6%, rgba(122,242,255,.4) 50.4%, transparent 50.6%);
+        background-size:80px 80px, 80px 80px;
+        mask-image:
+          radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,0,.7), rgba(0,0,0,.2) 70%, transparent 100%);
+        animation:bbP4CircuitPulse 6s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .grid{
+        background-image:
+          linear-gradient(to right, var(--line) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+        background-size:48px 48px;
+        mask-image:radial-gradient(circle at 50% 30%, rgba(0,0,0,1), rgba(0,0,0,.6) 60%, transparent 95%);
+        opacity:.4;
+        animation:bbP4Grid 24s linear infinite;
+      }
+
+      #bugbusters-p4-quantum .scanlines{
+        background:repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.02) 0px,
+          rgba(255,255,255,.02) 1px,
+          transparent 2px,
+          transparent 7px
+        );
+        mix-blend-mode:soft-light;
+        opacity:.2;
+      }
+
+      /* Sweeping scanner beam */
+      #bugbusters-p4-quantum .scanner{
+        background:linear-gradient(180deg,
+          transparent 0%,
+          transparent 40%,
+          rgba(122,242,255,.08) 49%,
+          rgba(212,251,255,.16) 50%,
+          rgba(122,242,255,.08) 51%,
+          transparent 60%,
+          transparent 100%);
+        mix-blend-mode:screen;
+        animation:bbP4Scan 7s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .stars span{
+        position:absolute;
+        width:2px;height:2px;
+        border-radius:50%;
+        background:radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(212,251,255,.85) 56%, transparent 72%);
+        box-shadow:0 0 8px rgba(212,251,255,.4);
+        animation:bbP4StarBlink linear infinite;
+      }
+
+      #bugbusters-p4-quantum .stars span.gold{
+        background:radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,228,160,.85) 56%, transparent 72%);
+        box-shadow:0 0 10px rgba(255,217,120,.5);
+      }
+
+      #bugbusters-p4-quantum .beams:before,
+      #bugbusters-p4-quantum .beams:after{
+        content:"";
+        position:absolute;
+        height:1.5px;
+        border-radius:999px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.95), rgba(122,242,255,.95), rgba(255,255,255,.7), transparent);
+        box-shadow:0 0 22px rgba(122,242,255,.4), 0 0 44px rgba(124,174,255,.18);
+        opacity:.7;
+      }
+
+      #bugbusters-p4-quantum .beams:before{
+        width:38%;
+        left:6%;
+        top:200px;
+        animation:bbP4Beam 11s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .beams:after{
+        width:34%;
+        right:8%;
+        bottom:140px;
+        animation:bbP4Beam 13s ease-in-out infinite reverse;
+      }
+
+      #bugbusters-p4-quantum .ringscape .ring,
+      #bugbusters-p4-quantum .ringscape .orbit,
+      #bugbusters-p4-quantum .ringscape .diamond,
+      #bugbusters-p4-quantum .ringscape .node,
+      #bugbusters-p4-quantum .ringscape .trace{
+        position:absolute;
+        opacity:.7;
+        filter:drop-shadow(0 0 16px rgba(122,242,255,.22));
+      }
+
+      #bugbusters-p4-quantum .ringscape .ring{
+        border:1px solid rgba(210,231,255,.15);
+        border-radius:50%;
+        box-shadow:inset 0 0 22px rgba(212,251,255,.05), 0 0 28px rgba(122,242,255,.08);
+        animation:bbP4Spin 32s linear infinite;
+      }
+      #bugbusters-p4-quantum .ringscape .r1{width:340px;height:340px;right:-72px;top:-64px}
+      #bugbusters-p4-quantum .ringscape .r2{width:180px;height:180px;left:-32px;bottom:280px;animation-duration:22s;animation-direction:reverse}
+      #bugbusters-p4-quantum .ringscape .r3{width:110px;height:110px;right:24px;bottom:24px;animation-duration:16s}
+
+      #bugbusters-p4-quantum .ringscape .orbit{
+        border:1px dashed rgba(212,251,255,.16);
+        border-radius:999px;
+        animation:bbP4Spin 20s linear infinite reverse;
+      }
+      #bugbusters-p4-quantum .ringscape .o1{width:240px;height:60px;right:8%;top:22%}
+      #bugbusters-p4-quantum .ringscape .o2{width:200px;height:54px;left:6%;bottom:8%;transform:rotate(-14deg)}
+
+      #bugbusters-p4-quantum .ringscape .diamond{
+        width:18px;height:18px;
+        border:1px solid rgba(219,235,255,.26);
+        transform:rotate(45deg);
+        box-shadow:0 0 18px rgba(212,251,255,.12);
+        animation:bbP4Pulse 4.5s ease-in-out infinite;
+      }
+      #bugbusters-p4-quantum .ringscape .diamond.gold{
+        border-color:rgba(255,228,160,.32);
+        box-shadow:0 0 18px rgba(255,217,120,.18);
+      }
+      #bugbusters-p4-quantum .ringscape .d1{left:6%;top:18%}
+      #bugbusters-p4-quantum .ringscape .d2{right:7%;top:24%;animation-delay:1.2s}
+      #bugbusters-p4-quantum .ringscape .d3{right:5%;bottom:18%;animation-delay:2.1s}
+      #bugbusters-p4-quantum .ringscape .d4{left:8%;bottom:32%;animation-delay:.8s;width:12px;height:12px}
+
+      #bugbusters-p4-quantum .ringscape .trace{
+        height:1px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.96), rgba(214,226,243,.74), transparent);
+        box-shadow:0 0 20px rgba(212,251,255,.34);
+        animation:bbP4Trace 7.5s ease-in-out infinite;
+      }
+      #bugbusters-p4-quantum .ringscape .t1{width:280px;left:50px;top:38px}
+      #bugbusters-p4-quantum .ringscape .t2{width:320px;right:32px;bottom:96px;animation-direction:reverse}
+
+      #bugbusters-p4-quantum .ringscape .node{
+        width:9px;height:9px;border-radius:50%;
+        background:radial-gradient(circle, #fff 0%, #d4fbff 42%, #7af2ff 68%, transparent 74%);
+        box-shadow:0 0 14px rgba(212,251,255,.4);
+        animation:bbP4Blink 3.2s ease-in-out infinite;
+      }
+      #bugbusters-p4-quantum .ringscape .node.gold{
+        background:radial-gradient(circle, #fff 0%, #ffe4a0 42%, #ffd978 68%, transparent 74%);
+        box-shadow:0 0 14px rgba(255,217,120,.5);
+      }
+      #bugbusters-p4-quantum .ringscape .n1{left:22%;top:14%}
+      #bugbusters-p4-quantum .ringscape .n2{right:21%;top:30%;animation-delay:1s}
+      #bugbusters-p4-quantum .ringscape .n3{left:14%;bottom:18%;animation-delay:2s}
+      #bugbusters-p4-quantum .ringscape .n4{right:10%;bottom:14%;animation-delay:.6s}
+
+      #bugbusters-p4-quantum .particles span{
+        position:absolute;
+        width:4px;height:4px;
+        border-radius:50%;
+        background:radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(212,251,255,.9) 42%, rgba(122,242,255,.25) 72%, transparent 76%);
+        box-shadow:0 0 14px rgba(212,251,255,.36);
+        opacity:.7;
+        animation:bbP4Particle linear infinite;
+      }
+
+      #bugbusters-p4-quantum .particles span.gold{
+        background:radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,228,160,.9) 42%, rgba(255,217,120,.25) 72%, transparent 76%);
+        box-shadow:0 0 14px rgba(255,217,120,.4);
+      }
+
+      #bugbusters-p4-quantum .code-rain{
+        overflow:hidden;
+        opacity:.1;
+      }
+
+      #bugbusters-p4-quantum .code-rain span{
+        position:absolute;
+        top:-30%;
+        font-size:11px;
+        line-height:1.7;
+        letter-spacing:.18em;
+        color:rgba(212,251,255,.6);
+        white-space:pre;
+        text-shadow:0 0 12px rgba(122,242,255,.22);
+        font-family:'JetBrains Mono','Courier New',monospace;
+        animation:bbP4Rain linear infinite;
+      }
+
+      #bugbusters-p4-quantum .cursor-light{
+        width:380px;height:380px;
+        border-radius:50%;
+        transform:translate(-50%,-50%);
+        background:
+          radial-gradient(circle,
+            rgba(212,251,255,.22) 0%,
+            rgba(122,242,255,.12) 28%,
+            rgba(122,242,255,.05) 48%,
+            transparent 76%);
+        mix-blend-mode:screen;
+        filter:blur(14px);
+        z-index:3;
+        transition:transform .05s linear, opacity .25s ease;
+        opacity:1;
+      }
+
+      #bugbusters-p4-quantum .vignette{
+        background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.10) 75%, rgba(0,0,0,.26) 100%);
+        z-index:1;
+      }
+
+      #bugbusters-p4-quantum .content{
+        position:relative;
+        z-index:4;
+        width:100%;
+        max-width:1240px;
+        margin:0 auto;
+      }
+
+      /* ============== HERO APOTEÓSICO ============== */
+      #bugbusters-p4-quantum .hero-shell{
+        position:relative;
+        padding:1.5px;
+        border-radius:40px;
+        background:linear-gradient(135deg,
+          rgba(255,228,160,.45) 0%,
+          rgba(122,242,255,.22) 16%,
+          rgba(255,255,255,.10) 32%,
+          rgba(58,143,255,.20) 48%,
+          rgba(255,217,120,.30) 64%,
+          rgba(212,251,255,.40) 80%,
+          rgba(255,228,160,.45) 100%);
+        background-size:300% 100%;
+        animation:bbP4NeonBorder 10s linear infinite;
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,.04) inset,
+          0 0 70px rgba(122,242,255,.20),
+          0 0 110px rgba(255,217,120,.10),
+          0 26px 80px rgba(0,0,0,.36);
+      }
+
+      #bugbusters-p4-quantum .hero{
+        position:relative;
+        overflow:hidden;
+        border-radius:38px;
+        padding:48px 36px 40px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(ellipse at top, rgba(122,242,255,.20), transparent 50%),
+          radial-gradient(ellipse at bottom, rgba(58,143,255,.14), transparent 55%),
+          radial-gradient(circle at left center, rgba(122,242,255,.08), transparent 30%),
+          radial-gradient(circle at right center, rgba(124,174,255,.08), transparent 30%),
+          linear-gradient(135deg, rgba(5,14,36,.96), rgba(2,8,22,.88));
+        border:1px solid rgba(210,231,255,.14);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          inset 0 0 60px rgba(122,242,255,.07),
+          0 20px 60px rgba(0,0,0,.32);
+        backdrop-filter:blur(14px);
+        text-align:center;
+      }
+
+      #bugbusters-p4-quantum .hero:before{
+        content:"";
+        position:absolute;
+        inset:-2px;
+        background:
+          linear-gradient(120deg, transparent 0%, rgba(255,255,255,.12) 18%, transparent 36%);
+        opacity:.5;
+        mix-blend-mode:screen;
+        transform:translateX(-32%);
+        animation:bbP4Sheen 11s linear infinite;
+      }
+
+      #bugbusters-p4-quantum .hero-inner{
+        position:relative;
+        z-index:2;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:0;
+      }
+
+      #bugbusters-p4-quantum .eyebrow{
+        display:inline-flex;
+        align-items:center;
+        gap:12px;
+        padding:11px 20px;
+        border-radius:999px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)),
+          radial-gradient(circle at center, rgba(255,217,120,.10), transparent 70%);
+        border:1px solid rgba(255,228,160,.22);
+        color:var(--gold-3);
+        font-size:11px;
+        font-weight:800;
+        letter-spacing:.30em;
+        text-transform:uppercase;
+        box-shadow:
+          0 0 30px rgba(255,217,120,.14),
+          inset 0 0 0 1px rgba(255,255,255,.04);
+        margin-bottom:24px;
+        text-shadow:0 0 12px rgba(255,217,120,.3);
+      }
+
+      #bugbusters-p4-quantum .eyebrow:before,
+      #bugbusters-p4-quantum .eyebrow:after{
+        content:"";
+        width:8px;height:8px;border-radius:50%;
+        background:radial-gradient(circle, #fff 0%, #ffe4a0 44%, #ffd978 72%, transparent 76%);
+        box-shadow:0 0 12px #ffd978, 0 0 22px rgba(255,217,120,.5);
+        animation:bbP4Blink 2.6s ease-in-out infinite;
+      }
+      #bugbusters-p4-quantum .eyebrow:after{animation-delay:1.3s}
+
+      /* ===== SHOWCASE STAGE ===== */
+      #bugbusters-p4-quantum .showcase-stage{
+        position:relative;
+        width:100%;
+        max-width:1180px;
+        margin:0 auto 32px;
+        display:grid;
+        grid-template-columns:auto 1fr auto;
+        gap:24px;
+        align-items:center;
+        perspective:1600px;
+        perspective-origin:50% 50%;
+      }
+
+      /* Hexagonal tech badges columns */
+      #bugbusters-p4-quantum .tech-column{
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        position:relative;
+        z-index:3;
+      }
+
+      #bugbusters-p4-quantum .tech-column .hex-badge:nth-child(odd){
+        margin-left:-10px;
+      }
+      #bugbusters-p4-quantum .tech-column .hex-badge:nth-child(even){
+        margin-left:10px;
+      }
+      #bugbusters-p4-quantum .tech-column.tech-right .hex-badge:nth-child(odd){
+        margin-left:0;
+        margin-right:-10px;
+      }
+      #bugbusters-p4-quantum .tech-column.tech-right .hex-badge:nth-child(even){
+        margin-left:0;
+        margin-right:10px;
+      }
+
+      /* Hexagon shape - now with 3D depth + parallax */
+      #bugbusters-p4-quantum .hex-badge{
+        position:relative;
+        width:108px;
+        height:124px;
+        cursor:default;
+        transform-style:preserve-3d;
+        transition:transform .4s cubic-bezier(.2,.8,.18,1), filter .3s ease;
+        animation:bbP4HexFloat3D 6s ease-in-out infinite;
+        filter:drop-shadow(0 6px 12px rgba(0,0,0,.4));
+        --mx:0px;
+        --my:0px;
+        will-change:transform;
+      }
+
+      #bugbusters-p4-quantum .hex-badge:nth-child(1){animation-delay:0s}
+      #bugbusters-p4-quantum .hex-badge:nth-child(2){animation-delay:.5s}
+      #bugbusters-p4-quantum .hex-badge:nth-child(3){animation-delay:1s}
+      #bugbusters-p4-quantum .hex-badge:nth-child(4){animation-delay:1.5s}
+
+      /* Apply parallax via container around the existing float animation */
+      #bugbusters-p4-quantum .tech-column .hex-badge{
+        translate:var(--mx) var(--my);
+      }
+
+      #bugbusters-p4-quantum .hex-badge:hover{
+        transform:scale(1.12) translateZ(20px) rotateY(-8deg);
+        filter:brightness(1.25) drop-shadow(0 12px 24px rgba(122,242,255,.4));
+        z-index:5;
+      }
+
+      #bugbusters-p4-quantum .tech-column.tech-right .hex-badge:hover{
+        transform:scale(1.12) translateZ(20px) rotateY(8deg);
+      }
+
+      /* Neon glow ring around hexagon */
+      #bugbusters-p4-quantum .hex-badge::before{
+        content:"";
+        position:absolute;
+        inset:-4px;
+        clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        background:conic-gradient(from 0deg,
+          rgba(122,242,255,.9),
+          rgba(58,143,255,.5),
+          rgba(255,228,160,.7),
+          rgba(122,242,255,.9),
+          rgba(58,143,255,.5),
+          rgba(122,242,255,.9));
+        filter:blur(8px);
+        opacity:.45;
+        z-index:-1;
+        animation:bbP4PrismShift 8s linear infinite;
+      }
+
+      #bugbusters-p4-quantum .hex-outer,
+      #bugbusters-p4-quantum .hex-inner{
+        position:absolute;
+        inset:0;
+        clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+
+      #bugbusters-p4-quantum .hex-outer{
+        background:linear-gradient(135deg,
+          rgba(122,242,255,.95),
+          rgba(58,143,255,.85),
+          rgba(122,242,255,.95));
+        filter:drop-shadow(0 0 12px rgba(122,242,255,.55)) drop-shadow(0 0 24px rgba(58,143,255,.35));
+      }
+
+      #bugbusters-p4-quantum .hex-inner{
+        inset:3px;
+        background:
+          radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), transparent 50%),
+          linear-gradient(135deg, #051226 0%, #0a1f3d 50%, #061c39 100%);
+      }
+
+      #bugbusters-p4-quantum .hex-content{
+        position:relative;
+        z-index:2;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        padding:14px 8px;
+      }
+
+      #bugbusters-p4-quantum .hex-icon{
+        width:34px;
+        height:34px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:var(--cyan2);
+        filter:drop-shadow(0 0 8px rgba(122,242,255,.6));
+      }
+
+      #bugbusters-p4-quantum .hex-icon svg{
+        width:30px;
+        height:30px;
+      }
+
+      #bugbusters-p4-quantum .hex-label{
+        font-size:10.5px;
+        font-weight:800;
+        color:#eef8ff;
+        letter-spacing:.06em;
+        text-transform:uppercase;
+        text-shadow:0 0 10px rgba(122,242,255,.5);
+        text-align:center;
+        line-height:1;
+      }
+
+      /* Center display */
+      #bugbusters-p4-quantum .center-display{
+        position:relative;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:0;
+        min-width:0;
+      }
+
+      /* GOLD PLAQUE - the centerpiece, now with rotating neon border */
+      #bugbusters-p4-quantum .gold-plaque-wrap{
+        position:relative;
+        width:100%;
+        max-width:680px;
+        padding:6px;
+        clip-path:polygon(
+          24px 0%, calc(100% - 24px) 0%, 100% 24px,
+          100% calc(100% - 24px), calc(100% - 24px) 100%,
+          24px 100%, 0% calc(100% - 24px), 0% 24px
+        );
+        background:linear-gradient(135deg,
+          rgba(122,242,255,.95) 0%,
+          rgba(58,143,255,.85) 20%,
+          rgba(255,217,120,.65) 40%,
+          rgba(255,255,255,.9) 50%,
+          rgba(255,217,120,.65) 60%,
+          rgba(58,143,255,.85) 80%,
+          rgba(122,242,255,.95) 100%);
+        background-size:300% 100%;
+        animation:bbP4NeonBorder 8s linear infinite, bbP4PlaqueGlow 5s ease-in-out infinite alternate;
+        filter:drop-shadow(0 0 24px rgba(122,242,255,.5)) drop-shadow(0 0 50px rgba(255,217,120,.35));
+        transform-style:preserve-3d;
+      }
+
+      #bugbusters-p4-quantum .gold-plaque{
+        position:relative;
+        clip-path:polygon(
+          22px 0%, calc(100% - 22px) 0%, 100% 22px,
+          100% calc(100% - 22px), calc(100% - 22px) 100%,
+          22px 100%, 0% calc(100% - 22px), 0% 22px
+        );
+        padding:34px 32px 32px;
+        background:
+          radial-gradient(ellipse at 50% 100%, rgba(255,217,120,.15), transparent 60%),
+          radial-gradient(ellipse at top, rgba(122,242,255,.10), transparent 50%),
+          linear-gradient(180deg, #03091b 0%, #050e22 50%, #020715 100%);
+        text-align:center;
+        overflow:hidden;
+      }
+
+      /* Inner gold frame */
+      #bugbusters-p4-quantum .gold-plaque:before{
+        content:"";
+        position:absolute;
+        inset:10px;
+        clip-path:polygon(
+          16px 0%, calc(100% - 16px) 0%, 100% 16px,
+          100% calc(100% - 16px), calc(100% - 16px) 100%,
+          16px 100%, 0% calc(100% - 16px), 0% 16px
+        );
+        border:1px solid rgba(255,217,120,.30);
+        background:linear-gradient(135deg,
+          rgba(255,228,160,.06) 0%,
+          transparent 30%,
+          transparent 70%,
+          rgba(255,228,160,.06) 100%);
+        pointer-events:none;
+      }
+
+      /* Decorative corner brackets */
+      #bugbusters-p4-quantum .gold-plaque:after{
+        content:"";
+        position:absolute;
+        left:16px; right:16px;
+        top:50%;
+        height:1px;
+        background:linear-gradient(90deg, transparent, rgba(255,217,120,.3), transparent);
+        opacity:.6;
+        pointer-events:none;
+      }
+
+      #bugbusters-p4-quantum .plaque-corners{
+        position:absolute;
+        inset:14px;
+        pointer-events:none;
+        z-index:2;
+      }
+      #bugbusters-p4-quantum .plaque-corners:before,
+      #bugbusters-p4-quantum .plaque-corners:after{
+        content:"";
+        position:absolute;
+        width:24px;height:24px;
+        border:2px solid rgba(255,217,120,.55);
+        filter:drop-shadow(0 0 6px rgba(255,217,120,.4));
+      }
+      #bugbusters-p4-quantum .plaque-corners:before{
+        top:0; left:0;
+        border-right:none; border-bottom:none;
+        border-top-left-radius:4px;
+      }
+      #bugbusters-p4-quantum .plaque-corners:after{
+        bottom:0; right:0;
+        border-left:none; border-top:none;
+        border-bottom-right-radius:4px;
+      }
+
+      #bugbusters-p4-quantum .plaque-corners-2{
+        position:absolute;
+        inset:14px;
+        pointer-events:none;
+        z-index:2;
+      }
+      #bugbusters-p4-quantum .plaque-corners-2:before,
+      #bugbusters-p4-quantum .plaque-corners-2:after{
+        content:"";
+        position:absolute;
+        width:24px;height:24px;
+        border:2px solid rgba(255,217,120,.55);
+        filter:drop-shadow(0 0 6px rgba(255,217,120,.4));
+      }
+      #bugbusters-p4-quantum .plaque-corners-2:before{
+        top:0; right:0;
+        border-left:none; border-bottom:none;
+        border-top-right-radius:4px;
+      }
+      #bugbusters-p4-quantum .plaque-corners-2:after{
+        bottom:0; left:0;
+        border-right:none; border-top:none;
+        border-bottom-left-radius:4px;
+      }
+
+      #bugbusters-p4-quantum .hero-title{
+        position:relative;
+        z-index:3;
+        margin:0;
+        font-size:clamp(34px, 5vw, 64px);
+        line-height:1;
+        letter-spacing:-.025em;
+        font-weight:900;
+        text-align:center;
+        font-family:'Inter','Segoe UI',Roboto,Arial,sans-serif;
+      }
+
+      #bugbusters-p4-quantum .title-line{
+        display:block;
+        background:linear-gradient(180deg,
+          #fff8e2 0%,
+          #ffe4a0 22%,
+          #ffd978 50%,
+          #d9a43a 78%,
+          #ffe4a0 100%);
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        filter:
+          drop-shadow(0 1px 0 rgba(184,130,30,.35))
+          drop-shadow(0 0 12px rgba(255,217,120,.45))
+          drop-shadow(0 0 28px rgba(255,217,120,.30))
+          drop-shadow(0 0 44px rgba(122,242,255,.20));
+        text-shadow:0 0 1px rgba(255,228,160,.6);
+        animation:bbP4GoldShimmer 6s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .title-line:nth-child(1){font-size:.92em; margin-bottom:6px}
+      #bugbusters-p4-quantum .title-line:nth-child(2){animation-delay:.3s}
+
+      /* Glow background behind title */
+      #bugbusters-p4-quantum .title-glow{
+        position:absolute;
+        left:50%; top:50%;
+        transform:translate(-50%,-50%);
+        width:80%; height:60%;
+        background:radial-gradient(ellipse at center, rgba(255,217,120,.20), transparent 60%);
+        filter:blur(20px);
+        z-index:1;
+        pointer-events:none;
+        animation:bbP4Pulse 4s ease-in-out infinite;
+      }
+
+      /* ============================================
+         TESSERACT 3D HOLOGRAPHIC STAGE
+         ============================================ */
+      #bugbusters-p4-quantum .tesseract-stage{
+        position:relative;
+        margin:24px auto 4px;
+        width:340px;
+        height:280px;
+        perspective:1400px;
+        perspective-origin:50% 45%;
+        transform-style:preserve-3d;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      /* Ambient glow behind tesseract */
+      #bugbusters-p4-quantum .tess-glow{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(122,242,255,.32), transparent 38%),
+          radial-gradient(circle at 50% 50%, rgba(255,217,120,.18), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(58,143,255,.16), transparent 65%);
+        filter:blur(18px);
+        animation:bbP4TessGlow 4s ease-in-out infinite alternate;
+        z-index:0;
+      }
+
+      /* Lens flare crosshair */
+      #bugbusters-p4-quantum .tess-flare{
+        position:absolute;
+        left:50%; top:50%;
+        transform:translate(-50%,-50%);
+        width:340px;
+        height:340px;
+        pointer-events:none;
+        z-index:7;
+        mix-blend-mode:screen;
+      }
+      #bugbusters-p4-quantum .tess-flare:before,
+      #bugbusters-p4-quantum .tess-flare:after{
+        content:"";
+        position:absolute;
+        left:50%; top:50%;
+        transform:translate(-50%,-50%);
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.6) 45%, rgba(255,255,255,.95) 50%, rgba(212,251,255,.6) 55%, transparent);
+        filter:blur(1.2px);
+      }
+      #bugbusters-p4-quantum .tess-flare:before{
+        width:240px;
+        height:1.5px;
+        animation:bbP4FlarePulse 3.5s ease-in-out infinite;
+      }
+      #bugbusters-p4-quantum .tess-flare:after{
+        width:1.5px;
+        height:240px;
+        background:linear-gradient(180deg, transparent, rgba(255,228,160,.5) 45%, rgba(255,255,255,.95) 50%, rgba(255,228,160,.5) 55%, transparent);
+        animation:bbP4FlarePulse 3.5s ease-in-out infinite .8s;
+      }
+
+      /* The tesseract itself */
+      #bugbusters-p4-quantum .tesseract{
+        position:relative;
+        width:140px;
+        height:140px;
+        transform-style:preserve-3d;
+        animation:bbP4TessRotate 22s linear infinite;
+        z-index:3;
+      }
+
+      /* Outer cube */
+      #bugbusters-p4-quantum .cube-outer,
+      #bugbusters-p4-quantum .cube-inner{
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform-style:preserve-3d;
+      }
+
+      #bugbusters-p4-quantum .cube-outer{
+        width:140px;
+        height:140px;
+        margin-left:-70px;
+        margin-top:-70px;
+        animation:bbP4CubeOuter 14s linear infinite;
+      }
+
+      #bugbusters-p4-quantum .cube-inner{
+        width:64px;
+        height:64px;
+        margin-left:-32px;
+        margin-top:-32px;
+        animation:bbP4CubeInner 10s linear infinite reverse;
+      }
+
+      /* Faces */
+      #bugbusters-p4-quantum .face{
+        position:absolute;
+        inset:0;
+        background:
+          linear-gradient(135deg, rgba(122,242,255,.04), rgba(58,143,255,.02) 50%, rgba(255,217,120,.04));
+        border:1.5px solid rgba(122,242,255,.55);
+        box-shadow:
+          inset 0 0 24px rgba(122,242,255,.18),
+          inset 0 0 0 1px rgba(212,251,255,.10),
+          0 0 20px rgba(122,242,255,.45),
+          0 0 40px rgba(58,143,255,.22);
+        backdrop-filter:blur(2px);
+      }
+
+      /* Outer cube faces - large */
+      #bugbusters-p4-quantum .cube-outer .face.fr{transform:translateZ(70px)}
+      #bugbusters-p4-quantum .cube-outer .face.bk{transform:translateZ(-70px) rotateY(180deg)}
+      #bugbusters-p4-quantum .cube-outer .face.rt{transform:rotateY(90deg) translateZ(70px)}
+      #bugbusters-p4-quantum .cube-outer .face.lf{transform:rotateY(-90deg) translateZ(70px)}
+      #bugbusters-p4-quantum .cube-outer .face.tp{transform:rotateX(90deg) translateZ(70px)}
+      #bugbusters-p4-quantum .cube-outer .face.bt{transform:rotateX(-90deg) translateZ(70px)}
+
+      /* Inner cube faces - small with golden tint */
+      #bugbusters-p4-quantum .cube-inner .face{
+        background:
+          linear-gradient(135deg, rgba(255,228,160,.06), rgba(255,217,120,.02) 50%, rgba(122,242,255,.04));
+        border:1.5px solid rgba(255,217,120,.65);
+        box-shadow:
+          inset 0 0 22px rgba(255,217,120,.20),
+          inset 0 0 0 1px rgba(255,228,160,.12),
+          0 0 18px rgba(255,217,120,.50),
+          0 0 36px rgba(255,217,120,.20);
+      }
+
+      #bugbusters-p4-quantum .cube-inner .face.fr{transform:translateZ(32px)}
+      #bugbusters-p4-quantum .cube-inner .face.bk{transform:translateZ(-32px) rotateY(180deg)}
+      #bugbusters-p4-quantum .cube-inner .face.rt{transform:rotateY(90deg) translateZ(32px)}
+      #bugbusters-p4-quantum .cube-inner .face.lf{transform:rotateY(-90deg) translateZ(32px)}
+      #bugbusters-p4-quantum .cube-inner .face.tp{transform:rotateX(90deg) translateZ(32px)}
+      #bugbusters-p4-quantum .cube-inner .face.bt{transform:rotateX(-90deg) translateZ(32px)}
+
+      /* Animated scan line on each face */
+      #bugbusters-p4-quantum .face::before{
+        content:"";
+        position:absolute;
+        left:0; right:0;
+        height:2px;
+        top:0;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.95), rgba(255,255,255,1), rgba(212,251,255,.95), transparent);
+        box-shadow:0 0 12px rgba(212,251,255,.8), 0 0 24px rgba(122,242,255,.5);
+        opacity:.7;
+        animation:bbP4FaceScan 3s linear infinite;
+      }
+
+      /* Corner accents on faces */
+      #bugbusters-p4-quantum .face::after{
+        content:"";
+        position:absolute;
+        inset:6px;
+        border:1px solid transparent;
+        background:
+          linear-gradient(135deg, rgba(212,251,255,.4), transparent 30%, transparent 70%, rgba(255,228,160,.4)) border-box;
+        -webkit-mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;
+        mask-composite:exclude;
+        opacity:.55;
+        pointer-events:none;
+      }
+
+      /* Connecting wireframe lines between cubes (4D projection) */
+      #bugbusters-p4-quantum .tess-link{
+        position:absolute;
+        left:50%; top:50%;
+        width:2px;
+        height:60px;
+        background:linear-gradient(180deg, rgba(255,217,120,.85), rgba(122,242,255,.85));
+        box-shadow:0 0 8px rgba(212,251,255,.7), 0 0 16px rgba(122,242,255,.5);
+        transform-origin:center top;
+        transform-style:preserve-3d;
+        opacity:.7;
+      }
+      /* 8 corners of cube → 8 corners of inner cube */
+      #bugbusters-p4-quantum .tess-link.l1{transform:translate(-1px,-1px) translate3d(-70px,-70px,70px) rotateX(-45deg) rotateZ(-45deg)}
+      #bugbusters-p4-quantum .tess-link.l2{transform:translate(-1px,-1px) translate3d(70px,-70px,70px) rotateX(-45deg) rotateZ(45deg)}
+      #bugbusters-p4-quantum .tess-link.l3{transform:translate(-1px,-1px) translate3d(70px,70px,70px) rotateX(45deg) rotateZ(45deg)}
+      #bugbusters-p4-quantum .tess-link.l4{transform:translate(-1px,-1px) translate3d(-70px,70px,70px) rotateX(45deg) rotateZ(-45deg)}
+
+      /* Energy core in the very center */
+      #bugbusters-p4-quantum .tess-core{
+        position:absolute;
+        left:50%; top:50%;
+        width:24px;
+        height:24px;
+        margin-left:-12px;
+        margin-top:-12px;
+        border-radius:50%;
+        background:
+          radial-gradient(circle at 30% 30%, #ffffff 0%, #fff8e2 25%, #ffd978 55%, #d9a43a 80%);
+        box-shadow:
+          0 0 16px #fff8e2,
+          0 0 28px rgba(255,217,120,1),
+          0 0 50px rgba(255,217,120,.7),
+          0 0 90px rgba(255,217,120,.4);
+        animation:bbP4CorePulse 2.5s ease-in-out infinite;
+        z-index:5;
+      }
+
+      /* Orbital rings around the tesseract (HUD-style) */
+      #bugbusters-p4-quantum .tess-orbit{
+        position:absolute;
+        left:50%; top:50%;
+        border-radius:50%;
+        border:1px solid rgba(122,242,255,.30);
+        transform-style:preserve-3d;
+        pointer-events:none;
+      }
+      #bugbusters-p4-quantum .tess-orbit.o1{
+        width:220px; height:220px;
+        margin-left:-110px;
+        margin-top:-110px;
+        transform:rotateX(72deg);
+        animation:bbP4OrbitSpin 14s linear infinite;
+        border-color:rgba(122,242,255,.40);
+        box-shadow:0 0 22px rgba(122,242,255,.20), inset 0 0 22px rgba(122,242,255,.10);
+      }
+      #bugbusters-p4-quantum .tess-orbit.o2{
+        width:280px; height:280px;
+        margin-left:-140px;
+        margin-top:-140px;
+        transform:rotateY(72deg) rotateX(15deg);
+        animation:bbP4OrbitSpin 18s linear infinite reverse;
+        border-color:rgba(255,217,120,.30);
+        box-shadow:0 0 22px rgba(255,217,120,.16), inset 0 0 22px rgba(255,217,120,.08);
+      }
+      #bugbusters-p4-quantum .tess-orbit.o3{
+        width:200px; height:200px;
+        margin-left:-100px;
+        margin-top:-100px;
+        transform:rotateX(45deg) rotateY(45deg);
+        animation:bbP4OrbitSpin 11s linear infinite;
+        border-color:rgba(212,251,255,.40);
+        border-style:dashed;
+        box-shadow:0 0 18px rgba(212,251,255,.16);
+      }
+
+      /* Orbiting nodes */
+      #bugbusters-p4-quantum .tess-orbit::before{
+        content:"";
+        position:absolute;
+        left:50%; top:0;
+        width:8px; height:8px;
+        margin-left:-4px;
+        margin-top:-4px;
+        border-radius:50%;
+        background:radial-gradient(circle, #fff 0%, #d4fbff 44%, #7af2ff 72%, transparent 76%);
+        box-shadow:0 0 14px #7af2ff, 0 0 24px rgba(122,242,255,.6);
+      }
+      #bugbusters-p4-quantum .tess-orbit.o2::before{
+        background:radial-gradient(circle, #fff 0%, #ffe4a0 44%, #ffd978 72%, transparent 76%);
+        box-shadow:0 0 14px #ffd978, 0 0 24px rgba(255,217,120,.7);
+      }
+
+      /* HUD labels around tesseract */
+      #bugbusters-p4-quantum .tess-hud{
+        position:absolute;
+        font-family:'JetBrains Mono','Courier New',monospace;
+        font-size:9px;
+        font-weight:700;
+        letter-spacing:.18em;
+        color:rgba(212,251,255,.85);
+        text-transform:uppercase;
+        text-shadow:0 0 8px rgba(122,242,255,.7);
+        white-space:nowrap;
+        z-index:6;
+        pointer-events:none;
+      }
+      #bugbusters-p4-quantum .tess-hud.gold{color:rgba(255,228,160,.95);text-shadow:0 0 8px rgba(255,217,120,.7)}
+      #bugbusters-p4-quantum .tess-hud.h1{top:8px;left:50%;transform:translateX(-50%);animation:bbP4HudFlick 2.6s ease-in-out infinite}
+      #bugbusters-p4-quantum .tess-hud.h2{bottom:8px;left:50%;transform:translateX(-50%);animation:bbP4HudFlick 2.6s ease-in-out infinite .5s}
+      #bugbusters-p4-quantum .tess-hud.h3{top:50%;left:6px;transform:translateY(-50%) rotate(-90deg);transform-origin:left center;animation:bbP4HudFlick 2.6s ease-in-out infinite 1s}
+      #bugbusters-p4-quantum .tess-hud.h4{top:50%;right:6px;transform:translateY(-50%) rotate(90deg);transform-origin:right center;animation:bbP4HudFlick 2.6s ease-in-out infinite 1.5s}
+
+      /* Corner brackets framing the tesseract stage */
+      #bugbusters-p4-quantum .tess-frame{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+        z-index:6;
+      }
+      #bugbusters-p4-quantum .tess-frame::before,
+      #bugbusters-p4-quantum .tess-frame::after{
+        content:"";
+        position:absolute;
+        width:30px;
+        height:30px;
+      }
+      #bugbusters-p4-quantum .tess-frame::before{
+        top:0; left:0;
+        border-top:1.5px solid rgba(255,217,120,.55);
+        border-left:1.5px solid rgba(255,217,120,.55);
+        filter:drop-shadow(0 0 4px rgba(255,217,120,.5));
+      }
+      #bugbusters-p4-quantum .tess-frame::after{
+        bottom:0; right:0;
+        border-bottom:1.5px solid rgba(255,217,120,.55);
+        border-right:1.5px solid rgba(255,217,120,.55);
+        filter:drop-shadow(0 0 4px rgba(255,217,120,.5));
+      }
+
+      #bugbusters-p4-quantum .tess-frame-2{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+        z-index:6;
+      }
+      #bugbusters-p4-quantum .tess-frame-2::before,
+      #bugbusters-p4-quantum .tess-frame-2::after{
+        content:"";
+        position:absolute;
+        width:30px;
+        height:30px;
+      }
+      #bugbusters-p4-quantum .tess-frame-2::before{
+        top:0; right:0;
+        border-top:1.5px solid rgba(122,242,255,.55);
+        border-right:1.5px solid rgba(122,242,255,.55);
+        filter:drop-shadow(0 0 4px rgba(122,242,255,.5));
+      }
+      #bugbusters-p4-quantum .tess-frame-2::after{
+        bottom:0; left:0;
+        border-bottom:1.5px solid rgba(122,242,255,.55);
+        border-left:1.5px solid rgba(122,242,255,.55);
+        filter:drop-shadow(0 0 4px rgba(122,242,255,.5));
+      }
+
+      /* Energy flow lines from hexagons to center */
+      #bugbusters-p4-quantum .energy-flow{
+        position:absolute;
+        top:0; left:0;
+        width:100%; height:100%;
+        pointer-events:none;
+        z-index:1;
+        opacity:.5;
+      }
+
+      /* ===== SUBTITLE / TEXT ===== */
+      #bugbusters-p4-quantum .hero-subtitle{
+        margin:0 auto 16px;
+        max-width:880px;
+        color:#e6f1fc;
+        font-size:clamp(16px, 1.6vw, 21px);
+        line-height:1.45;
+        font-weight:500;
+        text-align:center;
+      }
+
+      #bugbusters-p4-quantum .hero-subtitle strong{
+        color:var(--gold-3);
+        font-weight:700;
+        text-shadow:0 0 12px rgba(255,217,120,.3);
+      }
+
+      #bugbusters-p4-quantum .hero-text{
+        margin:0 auto 28px;
+        max-width:840px;
+        color:var(--muted);
+        font-size:clamp(13.5px, 1vw, 15.5px);
+        line-height:1.78;
+        text-align:center;
+      }
+
+      /* MÉTRICAS */
+      #bugbusters-p4-quantum .hero-metrics{
+        display:grid;
+        grid-template-columns:repeat(4, minmax(0,1fr));
+        gap:12px;
+        width:100%;
+        max-width:1100px;
+        margin:0 auto;
+      }
+
+      #bugbusters-p4-quantum .metric{
+        position:relative;
+        overflow:hidden;
+        min-width:0;
+        padding:20px 16px 16px;
+        border-radius:20px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.025)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 50%);
+        border:1px solid rgba(196,223,255,.12);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          inset 0 0 22px rgba(122,242,255,.04),
+          0 12px 30px rgba(0,0,0,.22);
+        transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      }
+
+      #bugbusters-p4-quantum .metric:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.30);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.04),
+          inset 0 0 26px rgba(122,242,255,.08),
+          0 18px 40px rgba(0,0,0,.28),
+          0 0 30px rgba(255,217,120,.10);
+      }
+
+      #bugbusters-p4-quantum .metric:before{
+        content:"";
+        position:absolute;
+        inset:0 auto auto 0;
+        width:100%;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.85), rgba(255,228,160,.4), rgba(212,251,255,.85), transparent);
+        opacity:.7;
+      }
+
+      #bugbusters-p4-quantum .metric-icon{
+        width:36px;height:36px;
+        border-radius:11px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:11px;
+        background:linear-gradient(135deg, rgba(122,242,255,.18), rgba(124,174,255,.10));
+        border:1px solid rgba(122,242,255,.24);
+        color:var(--cyan2);
+        box-shadow:0 0 16px rgba(122,242,255,.16);
+      }
+
+      #bugbusters-p4-quantum .metric-icon svg{width:18px;height:18px}
+
+      #bugbusters-p4-quantum .metric b{
+        display:block;
+        font-size:28px;
+        font-weight:800;
+        margin-bottom:4px;
+        letter-spacing:-.02em;
+        background:linear-gradient(180deg, #fff8e2, #ffe4a0 50%, #d9a43a);
+        -webkit-background-clip:text;
+        background-clip:text;
+        -webkit-text-fill-color:transparent;
+        filter:drop-shadow(0 0 8px rgba(255,217,120,.3));
+      }
+
+      #bugbusters-p4-quantum .metric span{
+        display:block;
+        color:var(--muted);
+        font-size:12px;
+        line-height:1.5;
+      }
+
+      /* STATUS BAR */
+      #bugbusters-p4-quantum .status-bar{
+        margin:24px auto 0;
+        max-width:1100px;
+        width:100%;
+        padding:14px 18px;
+        border-radius:18px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(circle at top right, rgba(122,242,255,.10), transparent 50%);
+        border:1px solid rgba(196,223,255,.10);
+        box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+      }
+
+      #bugbusters-p4-quantum .status-item{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        font-size:12px;
+        color:var(--muted);
+        font-weight:600;
+        letter-spacing:.04em;
+      }
+
+      #bugbusters-p4-quantum .status-item strong{
+        color:#fff;
+        font-weight:700;
+      }
+
+      #bugbusters-p4-quantum .status-pulse{
+        width:9px;height:9px;border-radius:50%;
+        background:radial-gradient(circle, #fff 0%, #d4fbff 44%, #7af2ff 72%, transparent 76%);
+        box-shadow:0 0 12px #d4fbff, 0 0 22px rgba(122,242,255,.5);
+        animation:bbP4Blink 2.4s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .status-pulse.gold{
+        background:radial-gradient(circle, #fff 0%, #ffe4a0 44%, #ffd978 72%, transparent 76%);
+        box-shadow:0 0 12px #ffd978, 0 0 22px rgba(255,217,120,.5);
+      }
+
+      /* TABS */
+      #bugbusters-p4-quantum .tabs-wrap{
+        margin-top:30px;
+        display:flex;
+        justify-content:center;
+        position:relative;
+        z-index:5;
+      }
+
+      #bugbusters-p4-quantum .tabs{
+        display:inline-flex;
+        gap:6px;
+        flex-wrap:wrap;
+        padding:7px;
+        border-radius:999px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.025)),
+          radial-gradient(circle at top, rgba(122,242,255,.10), transparent 60%);
+        border:1px solid rgba(196,223,255,.12);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          0 12px 30px rgba(0,0,0,.22),
+          0 0 30px rgba(122,242,255,.08);
+        backdrop-filter:blur(12px);
+        max-width:100%;
+        justify-content:center;
+      }
+
+      #bugbusters-p4-quantum .tab-btn{
+        appearance:none;
+        border:none;
+        cursor:pointer;
+        border-radius:999px;
+        padding:11px 18px;
+        color:#dceaff;
+        background:transparent;
+        font-size:12px;
+        font-weight:700;
+        letter-spacing:.06em;
+        text-transform:uppercase;
+        transition:transform .2s ease, color .2s ease, background .25s ease, box-shadow .2s ease;
+        position:relative;
+        z-index:20;
+        pointer-events:auto;
+        white-space:nowrap;
+        font-family:inherit;
+      }
+
+      #bugbusters-p4-quantum .tab-btn:hover:not(.active){
+        color:#fff;
+        background:rgba(255,255,255,.04);
+      }
+
+      #bugbusters-p4-quantum .tab-btn.active{
+        color:#1a1208;
+        background:linear-gradient(180deg, #fff8e2 0%, #ffe4a0 50%, #ffd978 100%);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,.18) inset,
+          0 4px 14px rgba(0,0,0,.18),
+          0 0 22px rgba(255,217,120,.40),
+          0 0 50px rgba(255,217,120,.22);
+      }
+
+      /* ============== PANELS ============== */
+      #bugbusters-p4-quantum .panel-stack{
+        margin-top:32px;
+        display:grid;
+        gap:22px;
+        perspective:1800px;
+        perspective-origin:50% 30%;
+      }
+
+      #bugbusters-p4-quantum .tab-panel{
+        display:none;
+        opacity:0;
+        transform:translateY(12px) scale(.99);
+        pointer-events:none;
+      }
+
+      #bugbusters-p4-quantum .tab-panel.active{
+        display:block;
+        pointer-events:auto;
+        animation:bbP4PanelIn .48s cubic-bezier(.2,.8,.18,1) forwards;
+      }
+
+      #bugbusters-p4-quantum .section-shell{
+        position:relative;
+        padding:1.5px;
+        border-radius:32px;
+        background:linear-gradient(135deg,
+          rgba(212,251,255,.30) 0%,
+          rgba(122,242,255,.10) 18%,
+          rgba(255,228,160,.20) 36%,
+          rgba(255,255,255,.32) 50%,
+          rgba(255,217,120,.18) 64%,
+          rgba(124,174,255,.10) 82%,
+          rgba(212,251,255,.26) 100%);
+        background-size:300% 100%;
+        animation:bbP4NeonBorder 12s linear infinite;
+        box-shadow:0 0 32px rgba(122,242,255,.10), 0 0 60px rgba(255,217,120,.06);
+        transform-style:preserve-3d;
+        transition:transform .35s cubic-bezier(.2,.8,.18,1);
+      }
+
+      #bugbusters-p4-quantum .section-card{
+        position:relative;
+        overflow:hidden;
+        border-radius:30px;
+        padding:28px 26px;
+        border:1px solid rgba(196,223,255,.12);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(ellipse at top right, rgba(122,242,255,.10), transparent 38%),
+          linear-gradient(135deg, rgba(5,14,36,.92), rgba(4,11,29,.82));
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          inset 0 0 38px rgba(122,242,255,.05),
+          0 16px 42px rgba(0,0,0,.24);
+      }
+
+      #bugbusters-p4-quantum .section-card:before{
+        content:"";
+        position:absolute;
+        right:-32px;top:-32px;
+        width:160px;height:160px;
+        border-radius:36px;
+        background:conic-gradient(from 140deg, rgba(122,242,255,.36), rgba(255,217,120,.16), transparent, rgba(214,226,243,.18), rgba(124,174,255,.22), rgba(122,242,255,.32));
+        filter:blur(14px);
+        opacity:.5;
+      }
+
+      #bugbusters-p4-quantum .section-card:after{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.6), rgba(255,228,160,.5), rgba(212,251,255,.6), transparent);
+        opacity:.7;
+      }
+
+      #bugbusters-p4-quantum .section-head{
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:18px;
+        margin-bottom:20px;
+        position:relative;
+        z-index:1;
+      }
+
+      #bugbusters-p4-quantum .title-wrap{
+        display:flex;
+        gap:16px;
+        align-items:flex-start;
+        min-width:0;
+        flex:1;
+      }
+
+      #bugbusters-p4-quantum .icon{
+        flex:0 0 auto;
+        width:54px;height:54px;
+        border-radius:16px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:var(--cyan2);
+        border:1px solid rgba(122,242,255,.32);
+        background:
+          linear-gradient(135deg, rgba(255,255,255,.10), rgba(122,242,255,.10)),
+          radial-gradient(circle at top left, rgba(122,242,255,.18), transparent 70%);
+        box-shadow:
+          0 0 22px rgba(122,242,255,.18),
+          inset 0 0 0 1px rgba(255,255,255,.04);
+      }
+
+      #bugbusters-p4-quantum .icon svg{width:24px;height:24px}
+
+      #bugbusters-p4-quantum .section-card h2,
+      #bugbusters-p4-quantum .section-card h3{
+        margin:0;
+        color:#f5fbff;
+        line-height:1.16;
+        letter-spacing:-.02em;
+        font-weight:700;
+      }
+
+      #bugbusters-p4-quantum .section-card h2{font-size:28px}
+      #bugbusters-p4-quantum .section-card h3{font-size:22px}
+
+      #bugbusters-p4-quantum .section-card .lead{
+        margin:10px 0 0;
+        color:var(--muted);
+        font-size:14.5px;
+        line-height:1.78;
+        position:relative;
+        z-index:1;
+      }
+
+      #bugbusters-p4-quantum .mini-badge{
+        flex:0 0 auto;
+        padding:8px 13px;
+        border-radius:999px;
+        border:1px solid rgba(255,228,160,.28);
+        background:
+          linear-gradient(180deg, rgba(255,217,120,.10), rgba(255,217,120,.04)),
+          radial-gradient(circle at center, rgba(255,217,120,.06), transparent 80%);
+        color:var(--gold-3);
+        font-size:10.5px;
+        text-transform:uppercase;
+        letter-spacing:.18em;
+        white-space:nowrap;
+        font-weight:700;
+        box-shadow:0 0 14px rgba(255,217,120,.10);
+        text-shadow:0 0 8px rgba(255,217,120,.25);
+      }
+
+      /* GRIDS */
+      #bugbusters-p4-quantum .dual-grid{
+        display:grid;
+        grid-template-columns:1.05fr .95fr;
+        gap:22px;
+      }
+
+      #bugbusters-p4-quantum .feature-grid{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:14px;
+        margin-top:20px;
+      }
+
+      #bugbusters-p4-quantum .feature{
+        position:relative;
+        overflow:hidden;
+        border-radius:20px;
+        padding:18px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 45%);
+        min-width:0;
+        transition:transform .26s ease, box-shadow .26s ease, border-color .26s ease;
+      }
+
+      #bugbusters-p4-quantum .feature:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.26);
+        box-shadow:
+          0 18px 32px rgba(0,0,0,.20),
+          0 0 26px rgba(255,217,120,.10);
+      }
+
+      #bugbusters-p4-quantum .feature:before{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.7), transparent);
+        opacity:.55;
+      }
+
+      #bugbusters-p4-quantum .feature-icon{
+        width:34px;height:34px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:12px;
+        background:linear-gradient(135deg, rgba(122,242,255,.16), rgba(124,174,255,.08));
+        border:1px solid rgba(122,242,255,.22);
+        color:var(--cyan2);
+      }
+
+      #bugbusters-p4-quantum .feature-icon svg{width:16px;height:16px}
+
+      #bugbusters-p4-quantum .feature strong{
+        display:block;
+        color:#f4fbff;
+        font-size:15.5px;
+        margin-bottom:8px;
+        font-weight:700;
+        letter-spacing:-.005em;
+      }
+
+      #bugbusters-p4-quantum .feature span{
+        display:block;
+        color:var(--muted);
+        font-size:13.5px;
+        line-height:1.66;
+      }
+
+      /* TIMELINE */
+      #bugbusters-p4-quantum .timeline{
+        display:grid;
+        gap:12px;
+        margin-top:20px;
+      }
+
+      #bugbusters-p4-quantum .step{
+        position:relative;
+        padding:18px 18px 18px 64px;
+        border-radius:20px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.06), transparent 38%);
+        transition:transform .25s ease, border-color .25s ease;
+      }
+
+      #bugbusters-p4-quantum .step:hover{
+        transform:translateX(3px);
+        border-color:rgba(255,228,160,.22);
+      }
+
+      #bugbusters-p4-quantum .step:before{
+        content:attr(data-step);
+        position:absolute;
+        left:16px; top:50%;
+        transform:translateY(-50%);
+        width:32px;height:32px;
+        border-radius:11px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#1a1208;
+        font-size:13px;
+        font-weight:900;
+        background:linear-gradient(180deg, #fff8e2 0%, #ffe4a0 48%, #ffd978 100%);
+        box-shadow:
+          0 0 18px rgba(255,217,120,.32),
+          inset 0 0 0 1px rgba(255,255,255,.18);
+      }
+
+      #bugbusters-p4-quantum .step strong{
+        display:block;
+        color:#f4fbff;
+        margin-bottom:5px;
+        font-size:15.5px;
+        font-weight:700;
+      }
+
+      #bugbusters-p4-quantum .step span{
+        color:var(--muted);
+        font-size:13.5px;
+        line-height:1.66;
+        display:block;
+      }
+
+      /* VIDEO GRID */
+      #bugbusters-p4-quantum .video-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:22px;
+        margin-top:20px;
+      }
+
+      #bugbusters-p4-quantum .media-frame{
+        position:relative;
+        z-index:1;
+        border-radius:24px;
+        padding:14px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 40%);
+        border:1px solid rgba(196,223,255,.12);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.025),
+          0 16px 36px rgba(0,0,0,.22);
+      }
+
+      #bugbusters-p4-quantum .holo-bar{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        margin-bottom:12px;
+        padding:11px 14px;
+        border-radius:14px;
+        border:1px solid rgba(212,251,255,.14);
+        background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+        box-shadow:0 0 20px rgba(212,251,255,.07);
+      }
+
+      #bugbusters-p4-quantum .holo-label{
+        color:#edf7ff;
+        font-size:11.5px;
+        letter-spacing:.16em;
+        text-transform:uppercase;
+        font-weight:800;
+        display:flex;
+        align-items:center;
+        gap:8px;
+      }
+
+      #bugbusters-p4-quantum .holo-label svg{width:14px;height:14px;color:var(--cyan2)}
+
+      #bugbusters-p4-quantum .holo-dot{
+        width:9px;height:9px;border-radius:50%;
+        background:radial-gradient(circle, #fff 0%, #d4fbff 44%, #7af2ff 72%, transparent 76%);
+        box-shadow:0 0 12px #d4fbff, 0 0 22px rgba(122,242,255,.5);
+        animation:bbP4Blink 2.6s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .iframe-wrap{
+        position:relative;
+        width:100%;
+        padding-top:56.25%;
+        border-radius:16px;
+        overflow:hidden;
+        background:rgba(0,0,0,.32);
+        border:1px solid rgba(196,223,255,.10);
+        box-shadow:inset 0 0 22px rgba(0,0,0,.22);
+      }
+
+      #bugbusters-p4-quantum .iframe-wrap iframe{
+        position:absolute;
+        inset:0;
+        width:100%;
+        height:100%;
+        border:0;
+      }
+
+      #bugbusters-p4-quantum .video-note{
+        margin-top:14px;
+        padding:0 4px;
+        color:var(--muted);
+        font-size:13px;
+        line-height:1.7;
+      }
+
+      #bugbusters-p4-quantum .placeholder{
+        position:relative;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+        gap:14px;
+        width:100%;
+        aspect-ratio:16/9;
+        border-radius:16px;
+        border:1px dashed rgba(255,228,160,.30);
+        background:
+          radial-gradient(ellipse at center, rgba(255,217,120,.10), transparent 50%),
+          linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+        color:#fff8e2;
+        text-align:center;
+        padding:28px;
+      }
+
+      #bugbusters-p4-quantum .placeholder svg{
+        width:42px;height:42px;
+        color:var(--gold-3);
+        opacity:.85;
+        filter:drop-shadow(0 0 10px rgba(255,217,120,.4));
+        animation:bbP4Pulse 3.5s ease-in-out infinite;
+      }
+
+      #bugbusters-p4-quantum .placeholder b{
+        font-size:22px;
+        letter-spacing:-.015em;
+        font-weight:700;
+        background:linear-gradient(180deg, #fff8e2, #ffd978);
+        -webkit-background-clip:text;
+        background-clip:text;
+        -webkit-text-fill-color:transparent;
+      }
+
+      #bugbusters-p4-quantum .placeholder span{
+        color:var(--muted);
+        font-size:13.5px;
+        line-height:1.7;
+        max-width:420px;
+      }
+
+      /* ARQUITECTURA FLOW */
+      #bugbusters-p4-quantum .arch-flow{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:repeat(5, minmax(0,1fr));
+        gap:12px;
+        align-items:stretch;
+      }
+
+      #bugbusters-p4-quantum .arch-node{
+        position:relative;
+        overflow:hidden;
+        border-radius:20px;
+        padding:20px 16px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.10), transparent 46%);
+        min-height:140px;
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      }
+
+      #bugbusters-p4-quantum .arch-node:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.26);
+        box-shadow:0 16px 32px rgba(0,0,0,.20), 0 0 24px rgba(255,217,120,.12);
+      }
+
+      #bugbusters-p4-quantum .arch-node:before{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.7), transparent);
+        opacity:.55;
+      }
+
+      #bugbusters-p4-quantum .arch-node-icon{
+        width:32px;height:32px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(122,242,255,.18), rgba(124,174,255,.10));
+        border:1px solid rgba(122,242,255,.24);
+        color:var(--cyan2);
+      }
+
+      #bugbusters-p4-quantum .arch-node-icon svg{width:16px;height:16px}
+
+      #bugbusters-p4-quantum .arch-node strong{
+        display:block;
+        color:#f4fbff;
+        font-size:15px;
+        font-weight:700;
+        letter-spacing:-.005em;
+      }
+
+      #bugbusters-p4-quantum .arch-node span{
+        color:var(--muted);
+        font-size:13px;
+        line-height:1.62;
+      }
+
+      #bugbusters-p4-quantum .arch-arrow{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:var(--gold-3);
+        font-size:24px;
+        text-shadow:0 0 16px rgba(255,217,120,.4);
+        animation:bbP4ArrowPulse 2.4s ease-in-out infinite;
+      }
+
+      /* SCHEMA */
+      #bugbusters-p4-quantum .schema-grid{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+        gap:18px;
+      }
+
+      #bugbusters-p4-quantum .table-card{
+        position:relative;
+        overflow:hidden;
+        border-radius:22px;
+        padding:20px 18px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.10), transparent 46%);
+        min-width:0;
+        transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      }
+
+      #bugbusters-p4-quantum .table-card:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.24);
+        box-shadow:0 16px 32px rgba(0,0,0,.22), 0 0 24px rgba(255,217,120,.10);
+      }
+
+      #bugbusters-p4-quantum .table-card:before{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.7), transparent);
+        opacity:.6;
+      }
+
+      #bugbusters-p4-quantum .table-head{
+        display:flex;
+        align-items:center;
+        gap:11px;
+        margin-bottom:14px;
+        padding-bottom:12px;
+        border-bottom:1px solid rgba(196,223,255,.08);
+      }
+
+      #bugbusters-p4-quantum .table-icon{
+        width:32px;height:32px;
+        border-radius:9px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(122,242,255,.18), rgba(124,174,255,.10));
+        border:1px solid rgba(122,242,255,.24);
+        color:var(--cyan2);
+      }
+
+      #bugbusters-p4-quantum .table-icon svg{width:16px;height:16px}
+
+      #bugbusters-p4-quantum .table-card h4{
+        margin:0;
+        color:#f5fbff;
+        font-size:18px;
+        font-weight:700;
+        letter-spacing:-.015em;
+      }
+
+      #bugbusters-p4-quantum .field-list{
+        display:grid;
+        gap:8px;
+      }
+
+      #bugbusters-p4-quantum .field{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:10px 12px;
+        border-radius:12px;
+        background:rgba(255,255,255,.035);
+        border:1px solid rgba(255,255,255,.04);
+        color:var(--muted);
+        font-size:12.5px;
+        transition:background .2s ease, border-color .2s ease;
+      }
+
+      #bugbusters-p4-quantum .field:hover{
+        background:rgba(255,255,255,.05);
+        border-color:rgba(212,251,255,.14);
+      }
+
+      #bugbusters-p4-quantum .field b{
+        color:#eef8ff;
+        font-size:13px;
+        font-weight:600;
+        font-family:'JetBrains Mono','Courier New',monospace;
+      }
+
+      #bugbusters-p4-quantum .field em{
+        font-style:normal;
+        color:var(--gold-3);
+        font-size:9.5px;
+        letter-spacing:.16em;
+        text-transform:uppercase;
+        margin-left:auto;
+        font-weight:700;
+        padding:3px 8px;
+        border-radius:999px;
+        background:rgba(255,217,120,.08);
+        border:1px solid rgba(255,217,120,.18);
+      }
+
+      /* RULES */
+      #bugbusters-p4-quantum .rule-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:14px;
+        margin-top:20px;
+      }
+
+      #bugbusters-p4-quantum .rule{
+        border-radius:20px;
+        padding:18px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 45%);
+        transition:transform .25s ease, border-color .25s ease;
+      }
+
+      #bugbusters-p4-quantum .rule:hover{
+        transform:translateY(-2px);
+        border-color:rgba(255,228,160,.22);
+      }
+
+      #bugbusters-p4-quantum .rule strong{
+        display:block;
+        color:#f4fbff;
+        font-size:15.5px;
+        margin-bottom:7px;
+        font-weight:700;
+        letter-spacing:-.005em;
+      }
+
+      #bugbusters-p4-quantum .rule span{
+        display:block;
+        color:var(--muted);
+        font-size:13.5px;
+        line-height:1.66;
+      }
+
+      /* RESOURCES */
+      #bugbusters-p4-quantum .resource-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:16px;
+        margin-top:20px;
+        position:relative;
+        z-index:1;
+      }
+
+      #bugbusters-p4-quantum .resource{
+        position:relative;
+        overflow:hidden;
+        border-radius:22px;
+        padding:20px 18px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 45%);
+        min-width:0;
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      }
+
+      #bugbusters-p4-quantum .resource:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.26);
+        box-shadow:0 18px 36px rgba(0,0,0,.22), 0 0 26px rgba(255,217,120,.12);
+      }
+
+      #bugbusters-p4-quantum .resource:before{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.7), transparent);
+        opacity:.55;
+      }
+
+      #bugbusters-p4-quantum .resource-icon{
+        width:42px;height:42px;
+        border-radius:13px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg, rgba(122,242,255,.18), rgba(124,174,255,.10));
+        border:1px solid rgba(122,242,255,.24);
+        color:var(--cyan2);
+      }
+
+      #bugbusters-p4-quantum .resource-icon svg{width:20px;height:20px}
+
+      #bugbusters-p4-quantum .resource strong{
+        display:block;
+        color:#f4fbff;
+        font-size:16px;
+        font-weight:700;
+        letter-spacing:-.005em;
+      }
+
+      #bugbusters-p4-quantum .resource span{
+        display:block;
+        color:var(--muted);
+        font-size:13.5px;
+        line-height:1.65;
+        flex:1;
+      }
+
+      /* BUTTONS */
+      #bugbusters-p4-quantum .actions{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:8px;
+        position:relative;
+        z-index:10;
+      }
+
+      #bugbusters-p4-quantum .actions.actions-center{
+        justify-content:center;
+      }
+
+      #bugbusters-p4-quantum .btn{
+        appearance:none;
+        border:none;
+        border-radius:14px;
+        padding:11px 16px;
+        font-weight:700;
+        font-size:13px;
+        cursor:pointer;
+        text-decoration:none;
+        text-align:center;
+        transition:transform .22s ease, box-shadow .22s ease, opacity .22s ease, border-color .22s ease, filter .22s ease;
+        min-width:0;
+        position:relative;
+        z-index:10;
+        pointer-events:auto;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        font-family:inherit;
+        letter-spacing:.01em;
+      }
+
+      #bugbusters-p4-quantum .btn svg{width:15px;height:15px}
+
+      #bugbusters-p4-quantum .btn:hover{
+        transform:translateY(-2px);
+        filter:brightness(1.08);
+      }
+
+      #bugbusters-p4-quantum .btn-main{
+        color:#1a1208;
+        background:linear-gradient(180deg, #fff8e2 0%, #ffe4a0 48%, #ffd978 100%);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,.18) inset,
+          0 6px 16px rgba(0,0,0,.20),
+          0 0 22px rgba(255,217,120,.36),
+          0 0 50px rgba(255,217,120,.18);
+      }
+
+      #bugbusters-p4-quantum .btn-alt{
+        color:#eef6ff;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)),
+          radial-gradient(circle at top left, rgba(212,251,255,.10), transparent 40%);
+        border:1px solid rgba(196,223,255,.16);
+      }
+
+      #bugbusters-p4-quantum .btn-alt:hover{
+        border-color:rgba(212,251,255,.30);
+      }
+
+      #bugbusters-p4-quantum .btn-holo{
+        color:#fff8e2;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03)),
+          radial-gradient(circle at top left, rgba(255,228,160,.16), transparent 44%);
+        border:1px solid rgba(255,228,160,.22);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.035),
+          0 0 22px rgba(255,217,120,.16),
+          0 0 48px rgba(255,217,120,.10);
+      }
+
+      #bugbusters-p4-quantum .btn-holo:hover{
+        border-color:rgba(255,228,160,.40);
+        box-shadow:
+          inset 0 0 0 1px rgba(255,255,255,.06),
+          0 0 28px rgba(255,217,120,.26),
+          0 0 60px rgba(255,217,120,.18);
+      }
+
+      /* SUMMARY */
+      #bugbusters-p4-quantum .summary-grid{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:14px;
+      }
+
+      #bugbusters-p4-quantum .summary-card{
+        position:relative;
+        overflow:hidden;
+        border-radius:20px;
+        padding:20px 18px;
+        border:1px solid rgba(196,223,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+          radial-gradient(circle at top left, rgba(212,251,255,.08), transparent 45%);
+        transition:transform .25s ease, border-color .25s ease;
+      }
+
+      #bugbusters-p4-quantum .summary-card:hover{
+        transform:translateY(-3px);
+        border-color:rgba(255,228,160,.24);
+      }
+
+      #bugbusters-p4-quantum .summary-card:before{
+        content:"";
+        position:absolute;
+        left:0; right:0; top:0;
+        height:1.5px;
+        background:linear-gradient(90deg, transparent, rgba(212,251,255,.7), transparent);
+        opacity:.55;
+      }
+
+      #bugbusters-p4-quantum .summary-icon{
+        width:34px;height:34px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:12px;
+        background:linear-gradient(135deg, rgba(255,217,120,.18), rgba(255,228,160,.08));
+        border:1px solid rgba(255,228,160,.26);
+        color:var(--gold-3);
+      }
+
+      #bugbusters-p4-quantum .summary-icon svg{width:16px;height:16px}
+
+      #bugbusters-p4-quantum .summary-card strong{
+        display:block;
+        color:#f4fbff;
+        font-size:15px;
+        margin-bottom:7px;
+        font-weight:700;
+        letter-spacing:-.005em;
+      }
+
+      #bugbusters-p4-quantum .summary-card span{
+        display:block;
+        color:var(--muted);
+        font-size:13px;
+        line-height:1.66;
+      }
+
+      /* FOOTER */
+      #bugbusters-p4-quantum .footer-note{
+        text-align:center;
+        color:#9eb3cf;
+        font-size:12px;
+        line-height:1.7;
+        margin-top:14px;
+        padding:14px;
+        border-radius:14px;
+        background:rgba(255,255,255,.025);
+        border:1px solid rgba(196,223,255,.06);
+        letter-spacing:.04em;
+      }
+
+      /* ============ ANIMATIONS ============ */
+      @keyframes bbP4Grid{
+        from{transform:translate3d(0,0,0)}
+        to{transform:translate3d(48px,48px,0)}
+      }
+      @keyframes bbP4Sheen{
+        from{transform:translateX(-32%)}
+        to{transform:translateX(42%)}
+      }
+      @keyframes bbP4Spin{
+        from{transform:rotate(0deg)}
+        to{transform:rotate(360deg)}
+      }
+      @keyframes bbP4Pulse{
+        0%,100%{opacity:.42}
+        50%{opacity:1}
+      }
+      @keyframes bbP4Trace{
+        0%,100%{opacity:.46; transform:scaleX(.92)}
+        50%{opacity:.96; transform:scaleX(1.04)}
+      }
+      @keyframes bbP4Blink{
+        0%,100%{opacity:.55}
+        50%{opacity:1}
+      }
+      @keyframes bbP4Particle{
+        from{transform:translateY(0) translateX(0) scale(.8); opacity:0}
+        10%{opacity:.7}
+        90%{opacity:.55}
+        to{transform:translateY(-960px) translateX(48px) scale(1.3); opacity:0}
+      }
+      @keyframes bbP4Aurora{
+        0%{transform:rotate(0deg)}
+        100%{transform:rotate(360deg)}
+      }
+      @keyframes bbP4OrbPulse{
+        0%{opacity:.55}
+        100%{opacity:.9}
+      }
+      @keyframes bbP4PanelIn{
+        0%{opacity:0; transform:translateY(12px) scale(.99)}
+        100%{opacity:1; transform:translateY(0) scale(1)}
+      }
+      @keyframes bbP4Rain{
+        from{transform:translateY(-8%); opacity:0}
+        10%{opacity:.5}
+        90%{opacity:.24}
+        to{transform:translateY(132%); opacity:0}
+      }
+      @keyframes bbP4Beam{
+        0%,100%{opacity:.55; transform:scaleX(.95)}
+        50%{opacity:1; transform:scaleX(1.05)}
+      }
+      @keyframes bbP4StarBlink{
+        0%,100%{opacity:.18; transform:scale(.9)}
+        50%{opacity:.95; transform:scale(1.25)}
+      }
+      @keyframes bbP4ArrowPulse{
+        0%,100%{opacity:.6; transform:translateX(0)}
+        50%{opacity:1; transform:translateX(3px)}
+      }
+      @keyframes bbP4HexFloat{
+        0%,100%{transform:translateY(0)}
+        50%{transform:translateY(-6px)}
+      }
+      @keyframes bbP4PlaqueGlow{
+        0%{filter:drop-shadow(0 0 18px rgba(122,242,255,.34)) drop-shadow(0 0 36px rgba(255,217,120,.20))}
+        100%{filter:drop-shadow(0 0 26px rgba(122,242,255,.50)) drop-shadow(0 0 50px rgba(255,217,120,.32))}
+      }
+      @keyframes bbP4GoldShimmer{
+        0%,100%{
+          filter:
+            drop-shadow(0 1px 0 rgba(184,130,30,.35))
+            drop-shadow(0 0 12px rgba(255,217,120,.45))
+            drop-shadow(0 0 28px rgba(255,217,120,.30))
+            drop-shadow(0 0 44px rgba(122,242,255,.20));
+        }
+        50%{
+          filter:
+            drop-shadow(0 1px 0 rgba(184,130,30,.35))
+            drop-shadow(0 0 16px rgba(255,228,160,.65))
+            drop-shadow(0 0 36px rgba(255,217,120,.45))
+            drop-shadow(0 0 60px rgba(122,242,255,.30));
+        }
+      }
+      @keyframes bbP4TessRotate{
+        0%{transform:rotateX(-25deg) rotateY(0deg) rotateZ(0deg)}
+        100%{transform:rotateX(-25deg) rotateY(360deg) rotateZ(0deg)}
+      }
+      @keyframes bbP4CubeOuter{
+        0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg)}
+        100%{transform:rotateX(360deg) rotateY(360deg) rotateZ(0deg)}
+      }
+      @keyframes bbP4CubeInner{
+        0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg)}
+        100%{transform:rotateX(-360deg) rotateY(360deg) rotateZ(360deg)}
+      }
+      @keyframes bbP4TessGlow{
+        0%{opacity:.7;filter:blur(18px)}
+        100%{opacity:1;filter:blur(26px)}
+      }
+      @keyframes bbP4CorePulse{
+        0%,100%{
+          transform:scale(1);
+          box-shadow:
+            0 0 16px #fff8e2,
+            0 0 28px rgba(255,217,120,1),
+            0 0 50px rgba(255,217,120,.7),
+            0 0 90px rgba(255,217,120,.4);
+        }
+        50%{
+          transform:scale(1.18);
+          box-shadow:
+            0 0 24px #fff8e2,
+            0 0 44px rgba(255,217,120,1),
+            0 0 80px rgba(255,217,120,.85),
+            0 0 130px rgba(255,217,120,.55),
+            0 0 180px rgba(122,242,255,.3);
+        }
+      }
+      @keyframes bbP4OrbitSpin{
+        from{transform:rotateX(72deg) rotateZ(0deg)}
+        to{transform:rotateX(72deg) rotateZ(360deg)}
+      }
+      @keyframes bbP4FaceScan{
+        0%{top:0; opacity:0}
+        10%{opacity:1}
+        90%{opacity:1}
+        100%{top:100%; opacity:0}
+      }
+      @keyframes bbP4FlarePulse{
+        0%,100%{opacity:0; transform:translate(-50%,-50%) scale(.7)}
+        50%{opacity:.85; transform:translate(-50%,-50%) scale(1)}
+      }
+      @keyframes bbP4HudFlick{
+        0%,100%{opacity:.4}
+        50%{opacity:1}
+      }
+      @keyframes bbP4HexFloat3D{
+        0%,100%{transform:translateY(0) rotateY(0deg)}
+        50%{transform:translateY(-8px) rotateY(8deg)}
+      }
+      @keyframes bbP4NeonBorder{
+        0%{background-position:0% 50%}
+        100%{background-position:300% 50%}
+      }
+      @keyframes bbP4Glitch{
+        0%,100%{transform:translate(0)}
+        20%{transform:translate(-1px, 1px)}
+        40%{transform:translate(-1px, -1px)}
+        60%{transform:translate(1px, 1px)}
+        80%{transform:translate(1px, -1px)}
+      }
+      @keyframes bbP4PrismShift{
+        0%{filter:hue-rotate(0deg)}
+        100%{filter:hue-rotate(360deg)}
+      }
+      @keyframes bbP4CircuitPulse{
+        0%,100%{opacity:.10}
+        50%{opacity:.20}
+      }
+      @keyframes bbP4Scan{
+        0%,100%{background-position:0 -100%; opacity:0}
+        45%{opacity:1}
+        50%{background-position:0 100%; opacity:1}
+        55%{opacity:0}
+      }
+
+      /* ============ RESPONSIVE ============ */
+      @media (max-width:1180px){
+        #bugbusters-p4-quantum .dual-grid{
+          grid-template-columns:1fr;
+        }
+        #bugbusters-p4-quantum .arch-flow{
+          grid-template-columns:1fr 1fr;
+        }
+        #bugbusters-p4-quantum .arch-arrow{display:none}
+        #bugbusters-p4-quantum .hero-metrics{
+          grid-template-columns:repeat(2,1fr);
+        }
+        #bugbusters-p4-quantum .hex-badge{
+          width:92px; height:106px;
+        }
+        #bugbusters-p4-quantum .hex-icon svg{width:24px;height:24px}
+        #bugbusters-p4-quantum .hex-label{font-size:9.5px}
+      }
+
+      @media (max-width:980px){
+        #bugbusters-p4-quantum{
+          width:min(100%, calc(100% - 8px));
+          padding:18px 14px;
+          border-radius:30px;
+        }
+        #bugbusters-p4-quantum .hero{
+          padding:34px 20px 28px;
+          border-radius:30px;
+        }
+        #bugbusters-p4-quantum .showcase-stage{
+          grid-template-columns:1fr;
+          gap:24px;
+        }
+        #bugbusters-p4-quantum .tech-column{
+          flex-direction:row;
+          flex-wrap:wrap;
+          justify-content:center;
+        }
+        #bugbusters-p4-quantum .tech-column .hex-badge,
+        #bugbusters-p4-quantum .tech-column.tech-right .hex-badge{
+          margin-left:0;
+          margin-right:0;
+        }
+        #bugbusters-p4-quantum .feature-grid,
+        #bugbusters-p4-quantum .video-grid,
+        #bugbusters-p4-quantum .schema-grid,
+        #bugbusters-p4-quantum .resource-grid,
+        #bugbusters-p4-quantum .rule-grid{
+          grid-template-columns:1fr;
+        }
+        #bugbusters-p4-quantum .summary-grid{
+          grid-template-columns:repeat(2,1fr);
+        }
+        #bugbusters-p4-quantum .section-card{
+          padding:22px 18px;
+          border-radius:24px;
+        }
+      }
+
+      @media (max-width:820px){
+        #bugbusters-p4-quantum .section-head{
+          flex-direction:column;
+          align-items:flex-start;
+        }
+        #bugbusters-p4-quantum .cursor-light{display:none}
+        #bugbusters-p4-quantum .status-bar{
+          justify-content:flex-start;
+        }
+      }
+
+      @media (max-width:560px){
+        #bugbusters-p4-quantum .hero-metrics,
+        #bugbusters-p4-quantum .summary-grid{
+          grid-template-columns:1fr;
+        }
+        #bugbusters-p4-quantum .arch-flow{
+          grid-template-columns:1fr;
+        }
+        #bugbusters-p4-quantum .ringscape .t1{left:20px; top:26px; width:140px}
+        #bugbusters-p4-quantum .ringscape .t2{right:16px; bottom:58px; width:150px}
+        #bugbusters-p4-quantum .ringscape .r1{width:160px;height:160px;right:-22px;top:-24px}
+        #bugbusters-p4-quantum .ringscape .r2{width:96px;height:96px;left:-16px;bottom:82px}
+        #bugbusters-p4-quantum .ringscape .r3{width:60px;height:60px;right:10px;bottom:10px}
+        #bugbusters-p4-quantum .tabs{padding:5px;gap:3px}
+        #bugbusters-p4-quantum .tab-btn{padding:9px 12px;font-size:11px}
+        #bugbusters-p4-quantum .hero-title{font-size:30px}
+        #bugbusters-p4-quantum .hex-badge{width:78px;height:90px}
+        #bugbusters-p4-quantum .hex-icon svg{width:20px;height:20px}
+        #bugbusters-p4-quantum .tesseract-stage{width:280px;height:240px}
+      }
+    </style>
+
+    <!-- Background layers -->
+    <div class="aurora"></div>
+    <div class="glow-orb"></div>
+    <div class="circuit"></div>
+    <div class="grid"></div>
+    <div class="scanlines"></div>
+    <div class="scanner"></div>
+    <div class="beams"></div>
+    <div class="stars" id="bbP4Stars"></div>
+    <div class="code-rain" id="bbP4CodeRain"></div>
+
+    <div class="ringscape">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="orbit o1"></div>
+      <div class="orbit o2"></div>
+      <div class="diamond d1"></div>
+      <div class="diamond d2 gold"></div>
+      <div class="diamond d3"></div>
+      <div class="diamond d4 gold"></div>
+      <div class="trace t1"></div>
+      <div class="trace t2"></div>
+      <div class="node n1"></div>
+      <div class="node n2 gold"></div>
+      <div class="node n3"></div>
+      <div class="node n4 gold"></div>
+    </div>
+
+    <div class="particles" id="bbP4Particles"></div>
+    <div class="cursor-light" id="bbP4Cursor"></div>
+    <div class="vignette"></div>
+
+    <div class="content">
+
+      <!-- HERO APOTEÓSICO -->
+      <section class="hero-shell">
+        <section class="hero">
+          <div class="hero-inner">
+
+            <div class="eyebrow">
+              BUG BUSTERS · PRODUCTO 4
+            </div>
+
+            <!-- SHOWCASE STAGE: hexágonos + plaque dorada + base de datos -->
+            <div class="showcase-stage">
+
+              <!-- Columna izquierda de hexágonos -->
+              <div class="tech-column tech-left">
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.85 18.56s-.92.54.66.71c1.91.22 2.89.19 5-.21 0 0 .55.35 1.32.65-4.74 2.03-10.74-.12-6.98-1.15M8.27 15.9s-1.03.76.55.92c2.05.21 3.66.23 6.46-.31 0 0 .39.39.99.61-5.74 1.68-12.14.13-8-1.22M13.16 11.39c1.16 1.34-.31 2.55-.31 2.55s2.96-1.53 1.6-3.44c-1.27-1.78-2.25-2.66 3.04-5.73 0 0-8.27 2.07-4.33 6.62M19.93 20.5s.68.56-.75.99c-2.71.82-11.28 1.07-13.66.03-.86-.37.75-.89 1.26-1 .53-.11.83-.09.83-.09-.95-.67-6.16 1.32-2.64 1.89 9.6 1.56 17.5-.7 14.96-1.82M9.29 13.13s-4.37 1.04-1.55 1.42c1.19.16 3.56.12 5.77-.06 1.81-.15 3.62-.48 3.62-.48s-.64.27-1.1.59c-4.43 1.16-13 .62-10.53-.57 2.09-1.01 3.79-.9 3.79-.9M17.13 17.51c4.51-2.34 2.43-4.59.97-4.28-.36.07-.51.13-.51.13s.13-.21.38-.3c2.85-1 5.04 2.96-.93 4.56 0 .01.07-.06.09-.11M14.5 0s2.49 2.5-2.36 6.32c-3.89 3.07-.89 4.83 0 6.83-2.27-2.05-3.94-3.85-2.82-5.53C10.97 5.16 15.5 3.95 14.5 0M9.74 23.92c4.32.28 10.96-.15 11.12-2.2 0 0-.31.79-3.58 1.41-3.69.7-8.24.62-10.94.17 0 0 .57.47 3.4.62"/></svg>
+                    </div>
+                    <div class="hex-label">Java</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6l8 4 8-4V6l-8-4z"/><path d="M4 12v6l8 4 8-4v-6"/><path d="M4 6l8 4 8-4"/><path d="M12 10v12"/></svg>
+                    </div>
+                    <div class="hex-label">Hibernate</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7"/><path d="M15 7v6a4 4 0 0 1-4 4"/></svg>
+                    </div>
+                    <div class="hex-label">JPA</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h2v8a3 3 0 0 1-3 3H6"/><path d="M14 6h4v4h-4z"/><path d="M14 14h4v4h-4z"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    </div>
+                    <div class="hex-label">IntelliJ</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Centro: plaque dorada + escenario con base de datos -->
+              <div class="center-display">
+
+                <div class="gold-plaque-wrap">
+                  <div class="gold-plaque">
+                    <div class="title-glow"></div>
+                    <div class="plaque-corners"></div>
+                    <div class="plaque-corners-2"></div>
+
+                    <h1 class="hero-title">
+                      <span class="title-line">Donde el Modelo</span>
+                      <span class="title-line">Cobra Vida</span>
+                    </h1>
+                  </div>
+                </div>
+
+                <div class="tesseract-stage">
+                  <div class="tess-glow"></div>
+                  <div class="tess-frame"></div>
+                  <div class="tess-frame-2"></div>
+
+                  <span class="tess-hud h1">// CORE.JPA · ORM ACTIVE</span>
+                  <span class="tess-hud h2 gold">▲ HIBERNATE 6 · MYSQL · RAILWAY</span>
+                  <span class="tess-hud h3">ENTITY MANAGER</span>
+                  <span class="tess-hud h4 gold">PERSISTENCE LAYER</span>
+
+                  <div class="tess-flare"></div>
+
+                  <div class="tess-orbit o1"></div>
+                  <div class="tess-orbit o2"></div>
+                  <div class="tess-orbit o3"></div>
+
+                  <div class="tesseract">
+                    <div class="cube-outer">
+                      <div class="face fr"></div>
+                      <div class="face bk"></div>
+                      <div class="face rt"></div>
+                      <div class="face lf"></div>
+                      <div class="face tp"></div>
+                      <div class="face bt"></div>
+                    </div>
+                    <div class="cube-inner">
+                      <div class="face fr"></div>
+                      <div class="face bk"></div>
+                      <div class="face rt"></div>
+                      <div class="face lf"></div>
+                      <div class="face tp"></div>
+                      <div class="face bt"></div>
+                    </div>
+                    <span class="tess-link l1"></span>
+                    <span class="tess-link l2"></span>
+                    <span class="tess-link l3"></span>
+                    <span class="tess-link l4"></span>
+                    <div class="tess-core"></div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Columna derecha de hexágonos -->
+              <div class="tech-column tech-right">
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                    </div>
+                    <div class="hex-label">MySQL</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-5 9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5"/><path d="M12 22V12"/><path d="M7.5 4.5l9 5"/></svg>
+                    </div>
+                    <div class="hex-label">Maven</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+                    </div>
+                    <div class="hex-label">Railway</div>
+                  </div>
+                </div>
+                <div class="hex-badge">
+                  <div class="hex-outer"></div>
+                  <div class="hex-inner"></div>
+                  <div class="hex-content">
+                    <div class="hex-icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    </div>
+                    <div class="hex-label">GitHub</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <p class="hero-subtitle">
+              Evolución del sistema hacia una persistencia avanzada basada en <strong>JPA + Hibernate</strong>,
+              integración con <strong>MySQL</strong>, conexión remota mediante <strong>Railway</strong>
+              y consolidación de una arquitectura estructurada sobre <strong>MVC</strong>, <strong>DAO</strong> y <strong>Factory</strong>.
+            </p>
+
+            <p class="hero-text">
+              En esta fase del proyecto, la aplicación deja atrás la persistencia tradicional basada en acceso manual a datos
+              para adoptar un modelo de trabajo mucho más moderno, desacoplado y mantenible. La capa ORM permite trasladar
+              el modelo orientado a objetos al plano relacional con una mayor coherencia técnica, apoyándose en entidades,
+              relaciones, herencia, factorías, utilidades de persistencia y un entorno preparado para compilar, conectar y
+              ejecutar el sistema sobre una base de datos real.
+            </p>
+
+            <!-- MÉTRICAS -->
+            <div class="hero-metrics">
+              <div class="metric">
+                <div class="metric-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                </div>
+                <b>5</b>
+                <span>Entidades principales gestionadas por la capa ORM</span>
+              </div>
+              <div class="metric">
+                <div class="metric-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </div>
+                <b>MVC</b>
+                <span>Arquitectura reforzada con DAO, Factory y JPAUtil</span>
+              </div>
+              <div class="metric">
+                <div class="metric-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                </div>
+                <b>JPA</b>
+                <span>Especificación de persistencia adoptada como base</span>
+              </div>
+              <div class="metric">
+                <div class="metric-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <b>100%</b>
+                <span>Desacoplamiento, mantenibilidad y consistencia</span>
+              </div>
+            </div>
+
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+              <div class="status-item">
+                <span class="status-pulse"></span>
+                <strong>Persistencia:</strong>&nbsp;JPA + Hibernate
+              </div>
+              <div class="status-item">
+                <span class="status-pulse gold"></span>
+                <strong>Base de datos:</strong>&nbsp;MySQL
+              </div>
+              <div class="status-item">
+                <span class="status-pulse"></span>
+                <strong>Entorno remoto:</strong>&nbsp;Railway
+              </div>
+              <div class="status-item">
+                <span class="status-pulse gold"></span>
+                <strong>Estado:</strong>&nbsp;ORM Online
+              </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs-wrap">
+              <div class="tabs" id="bbP4Tabs" role="tablist">
+                <button class="tab-btn active" type="button" data-tab="vision" role="tab">Visión</button>
+                <button class="tab-btn" type="button" data-tab="videos" role="tab">Vídeos</button>
+                <button class="tab-btn" type="button" data-tab="arquitectura" role="tab">Arquitectura</button>
+                <button class="tab-btn" type="button" data-tab="persistencia" role="tab">Persistencia</button>
+                <button class="tab-btn" type="button" data-tab="modelo" role="tab">Modelo</button>
+                <button class="tab-btn" type="button" data-tab="recursos" role="tab">Recursos</button>
+                <button class="tab-btn" type="button" data-tab="cierre" role="tab">Cierre</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </section>
+
+      <!-- PANELES -->
+      <section class="panel-stack">
+
+        <!-- VISIÓN -->
+        <div class="tab-panel active" data-panel="vision">
+          <div class="dual-grid">
+
+            <div class="section-shell">
+              <article class="section-card">
+                <div class="section-head">
+                  <div class="title-wrap">
+                    <div class="icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>
+                    </div>
+                    <div>
+                      <h2>Objetivo y sentido del Producto 4</h2>
+                      <p class="lead">
+                        El objetivo principal de esta entrega consiste en trasladar la persistencia del sistema a una solución basada
+                        en <strong>ORM</strong>, manteniendo la estructura general del proyecto y sustituyendo el acceso tradicional a datos
+                        por un modelo más moderno, expresivo y cercano al dominio. Esta fase no supone solo guardar información en una base
+                        relacional, sino definir una infraestructura de persistencia coherente, desacoplada y preparada para sostener el
+                        funcionamiento completo de la aplicación.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mini-badge">Base conceptual</div>
+                </div>
+
+                <div class="feature-grid">
+                  <div class="feature">
+                    <div class="feature-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                    <strong>Persistencia orientada a objetos</strong>
+                    <span>Las entidades del dominio se conectan con el modelo relacional mediante una capa ORM gestionada por JPA e Hibernate.</span>
+                  </div>
+                  <div class="feature">
+                    <div class="feature-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+                    </div>
+                    <strong>Evolución arquitectónica</strong>
+                    <span>La aplicación conserva MVC e integra una persistencia desacoplada apoyada en DAOs, factorías y utilidades de acceso.</span>
+                  </div>
+                  <div class="feature">
+                    <div class="feature-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                    </div>
+                    <strong>Entorno técnico real</strong>
+                    <span>El sistema trabaja sobre MySQL y una infraestructura remota mediante Railway, reforzando el valor profesional del proyecto.</span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-holo" type="button" data-goto="videos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Ver vídeos
+                  </button>
+                  <button class="btn btn-holo" type="button" data-goto="persistencia">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>
+                    Persistencia
+                  </button>
+                  <button class="btn btn-holo" type="button" data-goto="recursos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Recursos
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <div class="section-shell">
+              <article class="section-card">
+                <div class="section-head">
+                  <div class="title-wrap">
+                    <div class="icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div>
+                      <h3>Evolución técnica del producto</h3>
+                      <p class="lead">
+                        El Producto 4 representa una progresión clara dentro del proyecto: pasar de una capa de persistencia tradicional
+                        a una solución estructurada mediante entidades JPA, relaciones ORM y un sistema de acceso a datos más robusto.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mini-badge">Proceso</div>
+                </div>
+
+                <div class="timeline">
+                  <div class="step" data-step="1">
+                    <strong>Integración de dependencias</strong>
+                    <span>Se prepara el proyecto Maven con Hibernate, Jakarta Persistence y MySQL Connector como base del nuevo entorno ORM.</span>
+                  </div>
+                  <div class="step" data-step="2">
+                    <strong>Configuración de persistence.xml</strong>
+                    <span>Se define la unidad de persistencia, la conexión JDBC, el provider de Hibernate y las clases gestionadas.</span>
+                  </div>
+                  <div class="step" data-step="3">
+                    <strong>Creación de la utilidad JPA</strong>
+                    <span>Se centraliza el EntityManagerFactory para que el resto del equipo disponga de getEntityManager() desde el primer momento.</span>
+                  </div>
+                  <div class="step" data-step="4">
+                    <strong>Mapeo del dominio</strong>
+                    <span>Las entidades principales se adaptan a ORM, incluyendo herencia en clientes y relaciones persistentes en pedidos.</span>
+                  </div>
+                  <div class="step" data-step="5">
+                    <strong>Consolidación del sistema</strong>
+                    <span>Se valida la compilación, la ejecución del programa y el funcionamiento global del proyecto tras la integración final.</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- VÍDEOS -->
+        <div class="tab-panel" data-panel="videos">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  </div>
+                  <div>
+                    <h2>Desarrollo audiovisual del Producto 4</h2>
+                    <p class="lead">
+                      La presentación audiovisual del producto se divide en dos bloques complementarios. El primero introduce el marco
+                      teórico, la arquitectura del sistema, la persistencia ORM y los fundamentos técnicos del proyecto. El segundo muestra
+                      la aplicación ejecutándose y demuestra el funcionamiento real del sistema construido sobre esta base de persistencia.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">Teoría + Práctica</div>
+              </div>
+
+              <div class="video-grid">
+                <div class="media-frame">
+                  <div class="holo-bar">
+                    <div class="holo-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                      Vídeo teórico
+                    </div>
+                    <div class="holo-dot"></div>
+                  </div>
+                  <div class="iframe-wrap">
+                    <iframe
+                      src="https://www.youtube.com/embed/YTGxPLIfzNg"
+                      title="Vídeo teórico Producto 4"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen>
+                    </iframe>
+                  </div>
+                  <div class="video-note">
+                    Exposición conceptual del Producto 4: explicación de ORM, JPA, Hibernate, arquitectura MVC, DAO, Factory,
+                    configuración de persistencia, entidades, relaciones y justificación técnica de la evolución del sistema.
+                  </div>
+                </div>
+
+                <div class="media-frame">
+                  <div class="holo-bar">
+                    <div class="holo-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      Vídeo práctico
+                    </div>
+                    <div class="holo-dot"></div>
+                  </div>
+                  <div class="iframe-wrap">
+                    <iframe
+                      src="https://www.youtube.com/embed/hhH3oA3k-jY"
+                      title="Vídeo práctico Producto 4"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen>
+                    </iframe>
+                  </div>
+                  <div class="video-note">
+                    Demostración práctica del Producto 4: ejecución de la aplicación, estructura real del proyecto y recorrido funcional del sistema.
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ARQUITECTURA -->
+        <div class="tab-panel" data-panel="arquitectura">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  </div>
+                  <div>
+                    <h2>Arquitectura del sistema y organización por capas</h2>
+                    <p class="lead">
+                      El Producto 4 conserva la organización general del proyecto y desplaza la evolución técnica hacia la capa
+                      de persistencia. El resultado es una arquitectura más madura, con responsabilidades bien separadas y una
+                      integración más profesional entre lógica de negocio, entidades y almacenamiento relacional.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">MVC + DAO + Factory</div>
+              </div>
+
+              <div class="arch-flow">
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                  <strong>Vista</strong>
+                  <span>Interfaz de consola, menús y presentación del sistema al usuario final mediante una terminal estructurada.</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </div>
+                  <strong>Controlador</strong>
+                  <span>Coordina la lógica del sistema, aplica reglas de negocio y comunica presentación, dominio y persistencia.</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  </div>
+                  <strong>Modelo</strong>
+                  <span>Representa el dominio mediante entidades persistentes, relaciones y jerarquías de herencia.</span>
+                </div>
+              </div>
+
+              <div class="arch-flow" style="margin-top:14px;">
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <strong>DAO</strong>
+                  <span>Encapsula las operaciones de persistencia y evita mezclar la lógica de negocio con detalles internos del acceso a datos.</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 9 12 2 21 9 21 20 12 20 12 13 12 20 3 20 3 9"/></svg>
+                  </div>
+                  <strong>DAOFactory</strong>
+                  <span>Centraliza la creación de DAOs y el acceso al contexto de persistencia necesario para trabajar con JPA.</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                  <div class="arch-node-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                  </div>
+                  <strong>MySQL + Railway</strong>
+                  <span>Base de datos relacional e infraestructura remota que sostienen la persistencia real del proyecto.</span>
+                </div>
+              </div>
+
+              <div class="feature-grid">
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                  </div>
+                  <strong>Separación de responsabilidades</strong>
+                  <span>La estructura del proyecto evita mezclar presentación, lógica funcional y persistencia dentro de un mismo bloque de código.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  </div>
+                  <strong>Reutilización</strong>
+                  <span>La factoría y la utilidad JPA permiten que distintas partes del sistema trabajen sobre una base común y homogénea.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </div>
+                  <strong>Mantenibilidad</strong>
+                  <span>Las operaciones del sistema quedan mejor organizadas y son más fáciles de revisar, ampliar y corregir.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <strong>Orientación profesional</strong>
+                  <span>El producto se aproxima a prácticas reales de ingeniería del software mediante ORM, arquitectura y persistencia desacoplada.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  </div>
+                  <strong>Coherencia técnica</strong>
+                  <span>Las capas del sistema se relacionan de forma clara, reforzando la comprensión del proyecto y su defensa académica.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                  </div>
+                  <strong>Base para crecimiento</strong>
+                  <span>El resultado final deja una estructura preparada para nuevas ampliaciones sin necesidad de rehacer la base técnica.</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- PERSISTENCIA -->
+        <div class="tab-panel" data-panel="persistencia">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                  </div>
+                  <div>
+                    <h2>Persistencia ORM, configuración y fundamentos técnicos</h2>
+                    <p class="lead">
+                      La base técnica del Producto 4 se articula a partir de la configuración de una unidad de persistencia JPA,
+                      un proveedor ORM sólido como Hibernate y una utilidad centralizada para gestionar el EntityManagerFactory
+                      y generar EntityManager reutilizables desde cualquier parte del sistema.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">JPA · Hibernate · EntityManager</div>
+              </div>
+
+              <div class="feature-grid">
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                  </div>
+                  <strong>Unidad de persistencia</strong>
+                  <span>Producto4PU define el núcleo de configuración sobre el que se construye toda la interacción entre Java y MySQL.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </div>
+                  <strong>Provider ORM</strong>
+                  <span>Hibernate actúa como implementación principal de JPA, traduciendo operaciones del modelo a persistencia relacional.</span>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  </div>
+                  <strong>Registro explícito de entidades</strong>
+                  <span>Las clases del dominio se declaran manualmente en persistence.xml al mantener exclude-unlisted-classes=true.</span>
+                </div>
+              </div>
+
+              <div class="rule-grid">
+                <div class="rule">
+                  <strong>Conexión JDBC</strong>
+                  <span>El archivo persistence.xml define driver, URL, usuario y credenciales necesarias para enlazar el proyecto con MySQL.</span>
+                </div>
+                <div class="rule">
+                  <strong>Estrategia de esquema</strong>
+                  <span>La configuración final se mantuvo estable para evitar roturas innecesarias una vez validado el funcionamiento del sistema.</span>
+                </div>
+                <div class="rule">
+                  <strong>EntityManagerFactory</strong>
+                  <span>Se centraliza mediante una clase de utilidad para evitar duplicidades y dejar al equipo un getEntityManager() funcional desde el inicio.</span>
+                </div>
+                <div class="rule">
+                  <strong>Transacciones</strong>
+                  <span>La integración con DAOFactory y MySQLDAOFactory permite iniciar, confirmar o cancelar operaciones sobre la persistencia.</span>
+                </div>
+              </div>
+
+              <div class="timeline">
+                <div class="step" data-step="1">
+                  <strong>Preparación de Maven</strong>
+                  <span>Integración de Hibernate, Jakarta Persistence y MySQL Connector dentro del pom.xml del proyecto.</span>
+                </div>
+                <div class="step" data-step="2">
+                  <strong>Configuración de persistence.xml</strong>
+                  <span>Definición de la unidad de persistencia, propiedades JDBC y registro de entidades del dominio.</span>
+                </div>
+                <div class="step" data-step="3">
+                  <strong>Construcción de JPAUtil</strong>
+                  <span>Implementación de la clase de utilidad tipo Singleton que proporciona EntityManagerFactory y EntityManager.</span>
+                </div>
+                <div class="step" data-step="4">
+                  <strong>Integración con la factoría</strong>
+                  <span>Enlace entre DAOFactory, MySQLDAOFactory y la utilidad JPA para conectar persistencia y arquitectura.</span>
+                </div>
+                <div class="step" data-step="5">
+                  <strong>Validación funcional</strong>
+                  <span>Compilación con Maven, restauración de la ejecución y comprobación completa del sistema sobre la base ORM consolidada.</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- MODELO -->
+        <div class="tab-panel" data-panel="modelo">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  </div>
+                  <div>
+                    <h2>Entidades, herencia y relaciones del modelo</h2>
+                    <p class="lead">
+                      La persistencia del Producto 4 se apoya en un modelo de dominio que ya no se limita a clases aisladas, sino
+                      que representa entidades reales con atributos, herencia y relaciones expresadas mediante anotaciones JPA y
+                      gestionadas por la capa ORM.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">Articulo · Cliente · Pedido</div>
+              </div>
+
+              <div class="schema-grid">
+                <div class="table-card">
+                  <div class="table-head">
+                    <div class="table-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h4>Cliente</h4>
+                  </div>
+                  <div class="field-list">
+                    <div class="field"><b>idCliente</b><em>ID</em></div>
+                    <div class="field"><b>email</b><em>dato</em></div>
+                    <div class="field"><b>nombre</b><em>dato</em></div>
+                    <div class="field"><b>domicilio</b><em>dato</em></div>
+                    <div class="field"><b>nif</b><em>dato</em></div>
+                    <div class="field"><b>tipo_cliente</b><em>herencia</em></div>
+                  </div>
+                </div>
+
+                <div class="table-card">
+                  <div class="table-head">
+                    <div class="table-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <h4>Articulo</h4>
+                  </div>
+                  <div class="field-list">
+                    <div class="field"><b>codigo</b><em>ID</em></div>
+                    <div class="field"><b>descripcion</b><em>dato</em></div>
+                    <div class="field"><b>precioVenta</b><em>dato</em></div>
+                    <div class="field"><b>gastosEnvio</b><em>dato</em></div>
+                    <div class="field"><b>tiempoPreparacionMin</b><em>dato</em></div>
+                    <div class="field"><b>cantidadDisponible</b><em>dato</em></div>
+                  </div>
+                </div>
+
+                <div class="table-card">
+                  <div class="table-head">
+                    <div class="table-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
+                    <h4>Pedido</h4>
+                  </div>
+                  <div class="field-list">
+                    <div class="field"><b>idPedido</b><em>ID</em></div>
+                    <div class="field"><b>cliente</b><em>relación</em></div>
+                    <div class="field"><b>articulo</b><em>relación</em></div>
+                    <div class="field"><b>cantidad</b><em>dato</em></div>
+                    <div class="field"><b>fechaHora</b><em>dato</em></div>
+                    <div class="field"><b>estado</b><em>dato</em></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rule-grid">
+                <div class="rule">
+                  <strong>Herencia ORM en clientes</strong>
+                  <span>La clase abstracta Cliente se especializa en ClienteEstandar y ClientePremium mediante estrategia SINGLE_TABLE y discriminadores.</span>
+                </div>
+                <div class="rule">
+                  <strong>Relaciones persistentes</strong>
+                  <span>Pedido mantiene asociaciones ManyToOne con Cliente y Articulo, permitiendo modelar el dominio de forma más natural.</span>
+                </div>
+                <div class="rule">
+                  <strong>Dominio con comportamiento</strong>
+                  <span>Las entidades no son solo contenedores de datos, sino que incorporan reglas como cálculo de total, cancelación o descuento.</span>
+                </div>
+                <div class="rule">
+                  <strong>Puente objeto-relacional</strong>
+                  <span>ORM actúa como capa de traducción entre clases Java y tablas relacionales, alineando ambos modelos sin perder coherencia.</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- RECURSOS -->
+        <div class="tab-panel" data-panel="recursos">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <div>
+                    <h2>Repositorio y evidencias del Producto 4</h2>
+                    <p class="lead">
+                      El repositorio refleja el estado real del Producto 4, incluyendo estructura, código fuente,
+                      entidades, persistencia ORM y trazabilidad de integración. El vídeo completa la explicación
+                      conceptual del sistema y de las decisiones técnicas adoptadas.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">Código + vídeo</div>
+              </div>
+
+              <div class="resource-grid">
+                <div class="resource">
+                  <div class="resource-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  </div>
+                  <strong>Repositorio GitHub</strong>
+                  <span>
+                    Código fuente completo del Producto 4, con estructura MVC, entidades ORM, utilidades JPA, DAOs, factoría
+                    de persistencia y evolución real del sistema mediante Git y GitHub.
+                  </span>
+                  <div class="actions">
+                    <a class="btn btn-main" href="https://github.com/EricKColl/BugBustersProducto-4-.git" target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      Abrir repositorio
+                    </a>
+                  </div>
+                </div>
+
+                <div class="resource">
+                  <div class="resource-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  </div>
+                  <strong>Vídeo teórico</strong>
+                  <span>
+                    Introducción conceptual al Producto 4 con explicación de ORM, JPA, Hibernate, MySQL, Railway, arquitectura
+                    general del proyecto y justificación técnica de la persistencia aplicada.
+                  </span>
+                  <div class="actions">
+                    <a class="btn btn-alt" href="https://youtu.be/YTGxPLIfzNg" target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                      Abrir vídeo
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- CIERRE -->
+        <div class="tab-panel" data-panel="cierre">
+          <div class="section-shell">
+            <article class="section-card">
+              <div class="section-head">
+                <div class="title-wrap">
+                  <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <div>
+                    <h2>Síntesis final del Producto 4</h2>
+                    <p class="lead">
+                      Esta fase del proyecto consolida una transformación técnica importante: el sistema evoluciona hacia una persistencia
+                      basada en ORM, mejora su organización interna y se aproxima mucho más a un escenario profesional de desarrollo. La
+                      integración de Java, Maven, JPA, Hibernate, MySQL, Railway, DAO y Factory no solo aporta valor funcional, sino también
+                      un marco conceptual mucho más maduro para entender y defender el proyecto.
+                    </p>
+                  </div>
+                </div>
+                <div class="mini-badge">Resultado global</div>
+              </div>
+
+              <div class="summary-grid">
+                <div class="summary-card">
+                  <div class="summary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>
+                  </div>
+                  <strong>Persistencia moderna</strong>
+                  <span>La aplicación deja atrás un enfoque más manual y adopta una capa ORM mucho más expresiva y sostenible.</span>
+                </div>
+                <div class="summary-card">
+                  <div class="summary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                  </div>
+                  <strong>Modelo más rico</strong>
+                  <span>Las entidades incorporan relaciones, herencia y comportamiento, reforzando la coherencia entre dominio y base de datos.</span>
+                </div>
+                <div class="summary-card">
+                  <div class="summary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  </div>
+                  <strong>Arquitectura reforzada</strong>
+                  <span>La integración de DAO, Factory y JPAUtil mejora el desacoplamiento y la claridad de responsabilidades.</span>
+                </div>
+                <div class="summary-card">
+                  <div class="summary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <strong>Valor académico completo</strong>
+                  <span>El producto integra teoría, práctica, documentación, vídeo y trazabilidad dentro de una entrega sólida y defendible.</span>
+                </div>
+              </div>
+
+              <div class="actions actions-center">
+                <button class="btn btn-holo" type="button" data-goto="vision">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 0 0 1 1h3m10-11l2 2m-2-2v10a1 1 0 0 1-1 1h-3m-6 0a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1m-6 0h6"/></svg>
+                  Volver al inicio
+                </button>
+                <button class="btn btn-holo" type="button" data-goto="videos">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Ver vídeos
+                </button>
+                <button class="btn btn-holo" type="button" data-goto="recursos">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Recursos
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <div class="footer-note">
+            BUG BUSTERS · Producto 4 · Java · JPA · Hibernate · MySQL · Railway · ORM · MVC · DAO · Factory
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <script>
+      (function(){
+        const root = document.getElementById('bugbusters-p4-quantum');
+        if(!root) return;
+
+        const cursor = root.querySelector('#bbP4Cursor');
+        const particlesWrap = root.querySelector('#bbP4Particles');
+        const rainWrap = root.querySelector('#bbP4CodeRain');
+        const starsWrap = root.querySelector('#bbP4Stars');
+
+        function activateTab(name){
+          const buttons = root.querySelectorAll('.tab-btn[data-tab]');
+          const panels = root.querySelectorAll('.tab-panel[data-panel]');
+
+          buttons.forEach(btn => {
+            const isActive = btn.getAttribute('data-tab') === name;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+
+          panels.forEach(panel => {
+            const isActive = panel.getAttribute('data-panel') === name;
+            panel.classList.toggle('active', isActive);
+            panel.style.display = isActive ? 'block' : 'none';
+            panel.style.pointerEvents = isActive ? 'auto' : 'none';
+          });
+        }
+
+        root.addEventListener('click', function(e){
+          const tabBtn = e.target.closest('.tab-btn[data-tab]');
+          if(tabBtn && root.contains(tabBtn)){
+            e.preventDefault();
+            e.stopPropagation();
+            activateTab(tabBtn.getAttribute('data-tab'));
+            return;
+          }
+
+          const gotoBtn = e.target.closest('[data-goto]');
+          if(gotoBtn && root.contains(gotoBtn)){
+            e.preventDefault();
+            e.stopPropagation();
+            const target = gotoBtn.getAttribute('data-goto');
+            activateTab(target);
+            const hero = root.querySelector('.hero-shell');
+            if(hero) hero.scrollIntoView({behavior:'smooth', block:'start'});
+          }
+        }, true);
+
+        activateTab('vision');
+
+        // Cursor light + parallax + tilt
+        const showcaseStage = root.querySelector('.showcase-stage');
+        const hexBadges = root.querySelectorAll('.hex-badge');
+        const sectionShells = root.querySelectorAll('.section-shell');
+
+        let mouseX = 0, mouseY = 0;
+
+        root.addEventListener('mousemove', function(e){
+          const rect = root.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
+          if(cursor){
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+          }
+
+          // Parallax on hexagons - subtle drift based on mouse position
+          if(showcaseStage){
+            const stageRect = showcaseStage.getBoundingClientRect();
+            const stageCenterX = stageRect.left + stageRect.width/2 - rect.left;
+            const stageCenterY = stageRect.top + stageRect.height/2 - rect.top;
+            const dx = (mouseX - stageCenterX) / stageRect.width;
+            const dy = (mouseY - stageCenterY) / stageRect.height;
+
+            hexBadges.forEach((hex, i) => {
+              const depth = 1 + (i % 4) * 0.4;
+              const tx = -dx * 14 * depth;
+              const ty = -dy * 10 * depth;
+              hex.style.setProperty('--mx', tx + 'px');
+              hex.style.setProperty('--my', ty + 'px');
+            });
+          }
+        });
+
+        // Tilt 3D on section-shells (the panel cards)
+        sectionShells.forEach(shell => {
+          let rafId = null;
+          shell.addEventListener('mousemove', function(e){
+            const rect = shell.getBoundingClientRect();
+            const px = (e.clientX - rect.left) / rect.width;
+            const py = (e.clientY - rect.top) / rect.height;
+            const rotY = (px - 0.5) * 8;
+            const rotX = (0.5 - py) * 6;
+            if(rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+              shell.style.transform = `perspective(1800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(4px)`;
+            });
+          });
+          shell.addEventListener('mouseleave', function(){
+            if(rafId) cancelAnimationFrame(rafId);
+            shell.style.transform = '';
+          });
+        });
+
+        root.addEventListener('mouseleave', function(){
+          if(cursor) cursor.style.opacity = '.28';
+          hexBadges.forEach(hex => {
+            hex.style.setProperty('--mx', '0px');
+            hex.style.setProperty('--my', '0px');
+          });
+        });
+
+        root.addEventListener('mouseenter', function(){
+          if(cursor) cursor.style.opacity = '1';
+        });
+
+        if(particlesWrap && !particlesWrap.dataset.ready){
+          particlesWrap.dataset.ready = '1';
+          for(let i=0;i<46;i++){
+            const p = document.createElement('span');
+            const size = 2 + Math.random()*4;
+            if(Math.random() > .65) p.classList.add('gold');
+            p.style.left = (Math.random()*100) + '%';
+            p.style.bottom = (-20 - Math.random()*200) + 'px';
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.animationDuration = (12 + Math.random()*18) + 's';
+            p.style.animationDelay = (-Math.random()*22) + 's';
+            particlesWrap.appendChild(p);
+          }
+        }
+
+        if(starsWrap && !starsWrap.dataset.ready){
+          starsWrap.dataset.ready = '1';
+          for(let i=0;i<70;i++){
+            const s = document.createElement('span');
+            if(Math.random() > .75) s.classList.add('gold');
+            s.style.left = (Math.random()*100) + '%';
+            s.style.top = (Math.random()*100) + '%';
+            const duration = (2 + Math.random()*4).toFixed(2) + 's';
+            s.style.animationDuration = duration;
+            s.style.animationDelay = (-Math.random()*6) + 's';
+            s.style.opacity = (.10 + Math.random()*.7).toFixed(2);
+            starsWrap.appendChild(s);
+          }
+        }
+
+        if(rainWrap && !rainWrap.dataset.ready){
+          rainWrap.dataset.ready = '1';
+          const rainTexts = [
+            "@Entity",
+            "@ManyToOne",
+            "@Inheritance",
+            "EntityManager em",
+            "EntityManagerFactory emf",
+            "JPA · Hibernate · ORM",
+            "persistence.xml",
+            "Producto4PU",
+            "DAOFactory factory",
+            "MySQLDAOFactory",
+            "class Pedido { }",
+            "class Articulo { }",
+            "class Cliente { }",
+            "ClientePremium",
+            "ClienteEstandar",
+            "ORM · MVC · DAO",
+            "Railway · MySQL",
+            "compile · run · persist"
+          ];
+
+          for(let i=0;i<22;i++){
+            const s = document.createElement('span');
+            s.textContent = rainTexts[i % rainTexts.length];
+            s.style.left = (Math.random()*100) + '%';
+            s.style.animationDuration = (12 + Math.random()*18) + 's';
+            s.style.animationDelay = (-Math.random()*22) + 's';
+            s.style.opacity = (.14 + Math.random()*.20).toFixed(2);
+            rainWrap.appendChild(s);
+          }
+        }
+      })();
+    </script>
+  </div>
+</div>
+</body>
+</html>

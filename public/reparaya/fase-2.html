@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReparaYa · Producto 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#D4AF37;
+  --gold-2:#F3D66A;
+  --gold-3:#9B7422;
+  --ink:#030303;
+  --line:rgba(212,175,55,.18);
+  --text:#EEE3CD;
+  --text-2:#D3B98B;
+  --text-3:#9C8258;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:radial-gradient(circle at top, #17120a 0%, #090705 30%, #020202 68%, #000 100%);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{
+  font:inherit;
+  border:none;
+  outline:none;
+  background:none;
+}
+
+#ry-p2{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(212,175,55,.12), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(212,175,55,.08), transparent 26%),
+    linear-gradient(180deg, #070707 0%, #020202 100%);
+}
+#ry-canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+}
+.ry-noise{
+  position:absolute;
+  inset:0;
+  opacity:.08;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size:38px 38px;
+  mask-image:radial-gradient(circle at center, black 45%, transparent 100%);
+  pointer-events:none;
+}
+.ry-shell{
+  width:min(1220px, calc(100% - 42px));
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+.ry-divider{
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(212,175,55,.14), transparent);
+}
+
+/* HERO */
+.ry-hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:88px 0 72px;
+  text-align:center;
+}
+.ry-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(212,175,55,.08), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,.01), transparent 35%);
+  pointer-events:none;
+}
+.ry-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(212,175,55,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.03) 1px, transparent 1px);
+  background-size:54px 54px;
+  animation:ry-grid 24s linear infinite;
+  pointer-events:none;
+}
+@keyframes ry-grid{to{background-position:54px 54px}}
+.ry-scan{
+  position:absolute;
+  left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, rgba(243,214,106,.9), rgba(212,175,55,.6), transparent);
+  filter:blur(.2px);
+  animation:ry-scan 7s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes ry-scan{
+  0%{top:0;opacity:0}
+  5%{opacity:.8}
+  95%{opacity:.6}
+  100%{top:100%;opacity:0}
+}
+.ry-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  border:1px solid rgba(212,175,55,.28);
+  border-radius:999px;
+  padding:10px 18px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;
+  letter-spacing:.2em;
+  color:var(--text-2);
+  background:rgba(255,255,255,.02);
+  box-shadow:0 0 0 1px rgba(255,255,255,.02) inset, 0 14px 34px rgba(0,0,0,.28);
+}
+.ry-badge-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold-2);
+  box-shadow:0 0 12px rgba(243,214,106,.8);
+}
+.ry-kicker{
+  margin:26px 0 10px;
+  font-family:'Orbitron',sans-serif;
+  letter-spacing:.42em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(212,175,55,.35);
+  font-size:clamp(.8rem, 1.6vw, 1.15rem);
+  text-transform:uppercase;
+}
+.ry-title{
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(3.4rem, 9vw, 7rem);
+  line-height:.88;
+  letter-spacing:.04em;
+  background:linear-gradient(180deg, #fff0ba 0%, #f3d66a 18%, #d4af37 46%, #9b7422 78%, #6b4e14 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 28px rgba(212,175,55,.22));
+}
+.ry-title span{display:block}
+.ry-subtitle{
+  width:min(950px, 100%);
+  margin:24px auto 0;
+  font-size:clamp(1rem, 1.8vw, 1.18rem);
+  line-height:1.85;
+  color:var(--text-2);
+}
+.ry-hero-actions{
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  max-width:1100px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.ry-btn{
+  min-height:50px;
+  padding:12px 20px;
+  border-radius:16px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:1px solid rgba(212,175,55,.22);
+  font-weight:700;
+  letter-spacing:.03em;
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  cursor:pointer;
+}
+.ry-btn:hover{
+  transform:translateY(-2px);
+  border-color:rgba(243,214,106,.58);
+  box-shadow:0 18px 36px rgba(0,0,0,.35), 0 0 24px rgba(212,175,55,.08);
+}
+.ry-btn-primary{
+  background:linear-gradient(135deg, rgba(212,175,55,.24), rgba(243,214,106,.12));
+  color:#fff2cf;
+}
+.ry-btn-secondary{
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+}
+.ry-btn-nav{
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+}
+.ry-team,
+.ry-stack{
+  margin-top:24px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.ry-chip{
+  padding:9px 15px;
+  border-radius:999px;
+  border:1px solid rgba(212,175,55,.14);
+  background:rgba(255,255,255,.02);
+  color:var(--text-2);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.68rem;
+  letter-spacing:.08em;
+}
+
+/* SECTIONS */
+.ry-section{
+  position:relative;
+  padding:86px 0;
+}
+.ry-section-head{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:18px;
+}
+.ry-sec-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  letter-spacing:.28em;
+  color:var(--text-3);
+}
+.ry-sec-line{
+  width:56px;
+  height:1px;
+  background:linear-gradient(90deg, var(--gold), transparent);
+}
+.ry-sec-title{
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  color:var(--gold-2);
+  font-size:clamp(1.2rem, 2.4vw, 1.9rem);
+  letter-spacing:.04em;
+}
+.ry-sec-lead{
+  margin:0 0 36px;
+  max-width:980px;
+  color:var(--text-2);
+  font-size:1.05rem;
+  line-height:1.85;
+}
+
+.ry-grid-6{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:14px;
+}
+.ry-grid-4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+.ry-grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.ry-grid-2{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:20px;
+}
+.ry-media-top{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+.ry-media-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+.ry-link-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:18px;
+}
+.ry-tutor-grid{
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:18px;
+}
+
+.ry-panel{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 20px 40px rgba(0,0,0,.24);
+}
+.ry-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(243,214,106,.11), transparent 42%);
+  opacity:0;
+  transition:opacity .35s ease;
+  pointer-events:none;
+}
+.ry-panel:hover::before{opacity:1}
+.ry-panel::after{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(243,214,106,.95), transparent);
+  transform:scaleX(.18);
+  transform-origin:center;
+  transition:transform .35s ease;
+}
+.ry-panel:hover::after{transform:scaleX(1)}
+
+.ry-stat{
+  text-align:center;
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.ry-stat-value{
+  font-family:'Orbitron',sans-serif;
+  font-size:2.5rem;
+  color:var(--gold-2);
+  text-shadow:0 0 20px rgba(212,175,55,.2);
+  margin-bottom:10px;
+}
+.ry-stat-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.66rem;
+  letter-spacing:.18em;
+  color:var(--text-2);
+  text-transform:uppercase;
+}
+.ry-stat-help{
+  margin-top:12px;
+  color:var(--text-3);
+  line-height:1.7;
+  font-size:.92rem;
+}
+
+.ry-flow{
+  display:grid;
+  gap:14px;
+}
+.ry-flow-step{
+  position:relative;
+  padding:18px 18px 18px 58px;
+  border:1px solid rgba(212,175,55,.12);
+  background:rgba(255,255,255,.02);
+  border-radius:20px;
+}
+.ry-flow-step b{
+  display:block;
+  color:var(--gold-2);
+  margin-bottom:6px;
+  font-size:1.02rem;
+}
+.ry-flow-step p{
+  margin:0;
+  line-height:1.75;
+  color:var(--text-2);
+}
+.ry-flow-index{
+  position:absolute;
+  left:18px;
+  top:18px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;
+  background:rgba(212,175,55,.14);
+  color:var(--gold-2);
+  border:1px solid rgba(212,175,55,.22);
+}
+.ry-list{
+  display:grid;
+  gap:14px;
+}
+.ry-list-item{
+  padding:16px 18px;
+  border-radius:18px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(212,175,55,.12);
+}
+.ry-list-item strong{
+  display:block;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.ry-list-item span{
+  color:var(--text-2);
+  line-height:1.75;
+}
+
+.ry-card-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:34px;
+  padding:7px 12px;
+  border-radius:999px;
+  border:1px solid rgba(212,175,55,.16);
+  color:var(--text-2);
+  background:rgba(255,255,255,.025);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.66rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.ry-card-title{
+  margin:0 0 12px;
+  color:var(--text);
+  font-size:1.45rem;
+}
+.ry-card-text{
+  margin:0;
+  color:var(--text-2);
+  line-height:1.82;
+  font-size:1rem;
+}
+.ry-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+.ry-tag{
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(212,175,55,.14);
+  color:var(--text-2);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.12em;
+}
+.ry-role-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.ry-role-title{
+  margin:0;
+  font-size:1.55rem;
+  color:var(--gold-2);
+}
+.ry-role-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.64rem;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(212,175,55,.16);
+  color:var(--text-2);
+}
+.ry-bullets{
+  display:grid;
+  gap:10px;
+  margin-top:16px;
+}
+.ry-bullet{
+  display:flex;
+  gap:10px;
+  color:var(--text-2);
+  line-height:1.72;
+}
+.ry-bullet i{
+  font-style:normal;
+  color:var(--gold-2);
+  margin-top:1px;
+}
+
+.ry-rule-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:12px;
+}
+.ry-rule-code{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.18em;
+  color:var(--text-3);
+}
+.ry-rule-value{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.35rem;
+  color:var(--gold-2);
+}
+
+.ry-mini-card{
+  border:1px solid rgba(212,175,55,.14);
+  border-radius:18px;
+  padding:16px;
+  background:rgba(255,255,255,.02);
+}
+.ry-mini-card strong{
+  display:block;
+  color:var(--text);
+  margin-bottom:8px;
+  font-size:1rem;
+}
+.ry-mini-card span{
+  display:block;
+  color:var(--text-2);
+  line-height:1.65;
+}
+.ry-mini-card a{
+  display:inline-flex;
+  margin-top:12px;
+  color:var(--gold-2);
+  font-weight:700;
+}
+
+.ry-video-slot{
+  margin-top:18px;
+  border:1px solid rgba(212,175,55,.14);
+  border-radius:20px;
+  overflow:hidden;
+  background:#050505;
+}
+.ry-video-slot iframe{
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  display:block;
+}
+.ry-placeholder{
+  aspect-ratio:16/9;
+  display:grid;
+  place-items:center;
+  padding:26px;
+  text-align:center;
+  color:var(--text-2);
+  line-height:1.75;
+  background:
+    radial-gradient(circle at center, rgba(212,175,55,.08), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+}
+.ry-placeholder b{
+  display:block;
+  color:var(--gold-2);
+  font-size:1.05rem;
+  margin-bottom:8px;
+}
+
+.ry-doc-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:100%;
+}
+.ry-doc-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.ry-doc-meta{
+  display:grid;
+  gap:10px;
+  margin-top:16px;
+}
+.ry-doc-meta div{
+  border-left:2px solid rgba(212,175,55,.24);
+  padding-left:12px;
+  color:var(--text-2);
+}
+
+.ry-data-box{
+  display:grid;
+  gap:14px;
+}
+.ry-data-line{
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:18px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.02);
+}
+.ry-data-line small{
+  display:block;
+  color:var(--text-3);
+  font-family:'Share Tech Mono',monospace;
+  letter-spacing:.12em;
+  font-size:.62rem;
+  margin-bottom:6px;
+}
+.ry-data-line strong{
+  display:block;
+  color:var(--text);
+  font-size:1rem;
+  word-break:break-word;
+}
+.ry-steps{
+  display:grid;
+  gap:12px;
+  margin-top:18px;
+}
+.ry-step{
+  display:flex;
+  gap:14px;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:18px;
+  padding:16px;
+  background:rgba(255,255,255,.02);
+}
+.ry-step-num{
+  width:30px;height:30px;border-radius:50%;
+  flex:0 0 30px;
+  display:grid;place-items:center;
+  background:rgba(212,175,55,.14);
+  border:1px solid rgba(212,175,55,.24);
+  color:var(--gold-2);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;
+}
+.ry-step p{
+  margin:0;
+  color:var(--text-2);
+  line-height:1.74;
+}
+
+/* FOOTER */
+.ry-footer{
+  padding:90px 0 100px;
+  text-align:center;
+  position:relative;
+}
+.ry-footer::before{
+  content:"";
+  position:absolute;
+  left:50%; top:50%;
+  width:620px; height:620px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(212,175,55,.09), transparent 55%);
+  pointer-events:none;
+}
+.ry-footer-content{position:relative; z-index:2}
+.ry-footer-line{
+  width:150px;height:1px;margin:0 auto 34px;
+  background:linear-gradient(90deg, transparent, rgba(243,214,106,.95), transparent);
+  animation:ry-pulse 2.8s ease-in-out infinite;
+}
+@keyframes ry-pulse{
+  0%,100%{opacity:.35; transform:scaleX(.8)}
+  50%{opacity:1; transform:scaleX(1.25)}
+}
+.ry-footer h2{
+  margin:0 0 14px;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.8rem, 4vw, 3.6rem);
+  color:var(--gold-2);
+}
+.ry-footer p{
+  margin:0 auto;
+  max-width:760px;
+  color:var(--text-2);
+  line-height:1.84;
+  font-size:1rem;
+}
+.ry-footer-tags{
+  margin-top:24px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+/* IMPORTANTE: visible por defecto */
+.ry-reveal{
+  opacity:1;
+  transform:none;
+}
+
+[id]{
+  scroll-margin-top:28px;
+}
+
+@media (max-width:1100px){
+  .ry-grid-6{grid-template-columns:repeat(3,1fr)}
+  .ry-grid-4{grid-template-columns:repeat(2,1fr)}
+  .ry-grid-3,.ry-grid-2,.ry-media-top,.ry-media-grid,.ry-tutor-grid{grid-template-columns:1fr}
+  .ry-link-grid{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .ry-shell{width:min(100% - 26px, 1220px)}
+  .ry-section{padding:64px 0}
+  .ry-grid-6,.ry-grid-4{grid-template-columns:1fr}
+  .ry-title{font-size:3rem}
+  .ry-subtitle,.ry-sec-lead,.ry-card-text,.ry-footer p{font-size:.98rem}
+  .ry-panel{padding:20px}
+}
+</style>
+</head>
+<body>
+<div id="ry-p2">
+  <canvas id="ry-canvas"></canvas>
+  <div class="ry-noise"></div>
+
+  <section class="ry-hero" id="ry-top">
+    <div class="ry-grid"></div>
+    <div class="ry-scan"></div>
+    <div class="ry-shell">
+      <div class="ry-badge"><span class="ry-badge-dot"></span>PRODUCTO 2 · REPARAYA · BACKEND PHP MVC</div>
+      <div class="ry-kicker">BACKLORD · UOC · 2025–2026</div>
+      <h1 class="ry-title"><span>REPARAYA</span></h1>
+      <p class="ry-subtitle">
+        Aplicación web de gestión de reparaciones desarrollada en <strong>PHP original, sin frameworks</strong>,
+        con <strong>arquitectura MVC propia</strong>, base de datos <strong>MySQL</strong>, entorno
+        <strong>Docker</strong>, autenticación por roles, panel administrativo de incidencias, maestros de
+        usuarios/técnicos/especialidades, agenda técnica y módulo cliente con <strong>regla de las 48 horas</strong>,
+        cancelación condicionada y calendarios integrados.
+      </p>
+
+      <div class="ry-hero-actions">
+        <button class="ry-btn ry-btn-primary ry-scroll-btn" type="button" data-target="ry-video-teorico">Vídeo teórico</button>
+        <button class="ry-btn ry-btn-primary ry-scroll-btn" type="button" data-target="ry-video-practico">Vídeo práctico</button>
+        <button class="ry-btn ry-btn-nav ry-scroll-btn" type="button" data-target="ry-entregables">Recursos y multimedia</button>
+      </div>
+
+      <div class="ry-team">
+        <span class="ry-chip">Erick Coll Rodríguez</span>
+        <span class="ry-chip">Carles Miguel Millán</span>
+        <span class="ry-chip">Miguel Alegre Zaragoza</span>
+      </div>
+
+      <div class="ry-stack">
+        <span class="ry-chip">PHP 8.4</span>
+        <span class="ry-chip">Apache</span>
+        <span class="ry-chip">MySQL 8</span>
+        <span class="ry-chip">PDO</span>
+        <span class="ry-chip">Docker Compose</span>
+        <span class="ry-chip">phpMyAdmin</span>
+        <span class="ry-chip">FullCalendar</span>
+        <span class="ry-chip">GitHub</span>
+        <span class="ry-chip">Servidor UOC</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">01</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Panorama técnico real del proyecto</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        El backend entregado se apoya en una base técnica clara y ampliable: <strong>entrada única en
+        <code>public/index.php</code></strong>, <strong>router manual</strong>, controladores específicos,
+        modelos con <strong>PDO centralizado</strong>, vistas reutilizables con layout común y navegación
+        dinámica según el rol autenticado. El proyecto diferencia tres perfiles operativos y articula los
+        cuatro bloques funcionales exigidos en el producto.
+      </p>
+
+      <div class="ry-grid-6">
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">3</div>
+          <div class="ry-stat-label">roles operativos</div>
+          <div class="ry-stat-help">Administrador, técnico y cliente particular.</div>
+        </article>
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">4</div>
+          <div class="ry-stat-label">crud evaluables</div>
+          <div class="ry-stat-help">Usuarios, incidencias cliente, gestión admin y maestro técnico/servicios.</div>
+        </article>
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">6</div>
+          <div class="ry-stat-label">controladores</div>
+          <div class="ry-stat-help">Home, Usuario, Técnico, Especialidad, Admin e Incidencias cliente.</div>
+        </article>
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">4</div>
+          <div class="ry-stat-label">modelos núcleo</div>
+          <div class="ry-stat-help">Usuario, Técnico, Especialidad e Incidencia.</div>
+        </article>
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">22</div>
+          <div class="ry-stat-label">vistas php</div>
+          <div class="ry-stat-help">Interfaz organizada por áreas, formularios y paneles por rol.</div>
+        </article>
+        <article class="ry-panel ry-stat ry-reveal">
+          <div class="ry-stat-value">3</div>
+          <div class="ry-stat-label">calendarios activos</div>
+          <div class="ry-stat-help">Calendario admin, calendario cliente y agenda técnica.</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">02</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Arquitectura y flujo del backend</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        La estructura está pensada para ser mantenible, clara y coherente con la restricción del enunciado:
+        <strong>sin Laravel y sin ningún framework</strong>. La lógica se reparte de forma ordenada entre enrutado,
+        control de acceso, operaciones de datos, renderizado y configuración multi-entorno.
+      </p>
+
+      <div class="ry-grid-2">
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">flujo mvc real</div>
+          <h3 class="ry-card-title">De la petición web al resultado visible</h3>
+          <div class="ry-flow">
+            <div class="ry-flow-step">
+              <span class="ry-flow-index">01</span>
+              <b>Entrada única pública</b>
+              <p><code>public/index.php</code> inicia sesión, carga la conexión, resuelve la URL base según entorno y delega la petición al router.</p>
+            </div>
+            <div class="ry-flow-step">
+              <span class="ry-flow-index">02</span>
+              <b>Router manual por rutas</b>
+              <p>El router dirige cada acción a su controlador: login, registro, perfil, panel admin, técnicos, especialidades, mis avisos, nueva solicitud y calendario.</p>
+            </div>
+            <div class="ry-flow-step">
+              <span class="ry-flow-index">03</span>
+              <b>Control de acceso por rol</b>
+              <p>La clase base del sistema protege cada zona con <code>requireLogin</code>, <code>requireAdmin</code>, <code>requireTecnico</code> y <code>requireParticular</code>.</p>
+            </div>
+            <div class="ry-flow-step">
+              <span class="ry-flow-index">04</span>
+              <b>Modelos PDO y reglas de negocio</b>
+              <p>Los modelos encapsulan consultas, joins, filtros por usuario, asignación de técnicos, generación de localizador y cambios de estado.</p>
+            </div>
+            <div class="ry-flow-step">
+              <span class="ry-flow-index">05</span>
+              <b>Vistas y layout compartido</b>
+              <p>La interfaz reutiliza un layout común y adapta menús, paneles y accesos según el usuario autenticado y el bloque funcional activo.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">fundación técnica</div>
+          <h3 class="ry-card-title">Pilares de implementación</h3>
+          <div class="ry-list">
+            <div class="ry-list-item">
+              <strong>Entorno local con Docker</strong>
+              <span>El proyecto arranca en local con servicios para web, base de datos y phpMyAdmin, facilitando pruebas reproducibles y entorno aislado.</span>
+            </div>
+            <div class="ry-list-item">
+              <strong>MySQL + conexión centralizada</strong>
+              <span>La conexión se resuelve en configuración central para separar credenciales, host, nombre de base y comportamiento entre local y servidor UOC.</span>
+            </div>
+            <div class="ry-list-item">
+              <strong>Autenticación y seguridad básica</strong>
+              <span>Registro y login con validación de email, sesiones PHP y contraseñas hasheadas mediante <code>password_hash</code> y <code>password_verify()</code>.</span>
+            </div>
+            <div class="ry-list-item">
+              <strong>Interfaz orientada a uso real</strong>
+              <span>La home y los paneles por rol no son pantallas de prueba: resumen estado, accesos directos, actividad reciente y calendario operativo.</span>
+            </div>
+            <div class="ry-list-item">
+              <strong>Despliegue dual</strong>
+              <span>El proyecto está preparado para funcionar tanto en <strong>localhost</strong> como en el <strong>servidor UOC</strong> con la misma lógica de rutas.</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">03</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Bloques funcionales evaluables</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        El producto queda organizado en los cuatro CRUDs marcados por el enunciado, conectados entre sí
+        dentro de una misma navegación y con reglas de negocio ya visibles desde la interfaz.
+      </p>
+
+      <div class="ry-grid-4">
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">crud 01 · usuarios</div>
+          <h3 class="ry-card-title">Registro, login y perfiles</h3>
+          <p class="ry-card-text">
+            Alta de usuarios, inicio de sesión, edición desde administración, modificación del propio perfil,
+            validación de correo, control de duplicados y mantenimiento del rol dentro del sistema.
+          </p>
+          <div class="ry-tags">
+            <span class="ry-tag">registro</span>
+            <span class="ry-tag">login</span>
+            <span class="ry-tag">perfil</span>
+            <span class="ry-tag">hash</span>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">crud 02 · cliente</div>
+          <h3 class="ry-card-title">Incidencias del cliente</h3>
+          <p class="ry-card-text">
+            Nueva solicitud, listado “Mis avisos”, filtrado exclusivo por cliente autenticado, mensajes de
+            validación, cancelación condicionada y calendario personal de servicios no cancelados.
+          </p>
+          <div class="ry-tags">
+            <span class="ry-tag">mis avisos</span>
+            <span class="ry-tag">48 horas</span>
+            <span class="ry-tag">cancelación</span>
+            <span class="ry-tag">calendario</span>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">crud 03 · admin</div>
+          <h3 class="ry-card-title">Gestión central de incidencias</h3>
+          <p class="ry-card-text">
+            Alta manual de avisos, edición, cancelación, eliminación definitiva, asignación de técnicos por
+            especialidad y calendario operativo con vistas mensual, semanal y diaria.
+          </p>
+          <div class="ry-tags">
+            <span class="ry-tag">panel admin</span>
+            <span class="ry-tag">asignación</span>
+            <span class="ry-tag">estados</span>
+            <span class="ry-tag">fullcalendar</span>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">crud 04 · maestro</div>
+          <h3 class="ry-card-title">Técnicos y especialidades</h3>
+          <p class="ry-card-text">
+            Administración de técnicos disponibles, relación con usuarios de rol técnico, catálogo de
+            especialidades y control del borrado respetando la integridad referencial en base de datos.
+          </p>
+          <div class="ry-tags">
+            <span class="ry-tag">técnicos</span>
+            <span class="ry-tag">especialidades</span>
+            <span class="ry-tag">disponibilidad</span>
+            <span class="ry-tag">integridad</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">04</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Perfiles y operación por rol</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        La navegación cambia según el usuario autenticado. Esto no es solo un detalle visual: forma parte
+        del comportamiento real del backend y del modelo de permisos implementado.
+      </p>
+
+      <div class="ry-grid-3">
+        <article class="ry-panel ry-role ry-reveal">
+          <div class="ry-role-head">
+            <h3 class="ry-role-title">Administrador</h3>
+            <span class="ry-role-badge">control global</span>
+          </div>
+          <p class="ry-card-text">Perfil con visión total del sistema y capacidad de coordinación operativa.</p>
+          <div class="ry-bullets">
+            <div class="ry-bullet"><i>◆</i><span>Gestiona incidencias, usuarios, técnicos y especialidades desde la misma navegación.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Crea avisos manualmente, modifica estados, cancela o elimina registros y asigna técnicos disponibles.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Consulta el calendario general con diferenciación visual por urgencia y detalle del servicio.</span></div>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-role ry-reveal">
+          <div class="ry-role-head">
+            <h3 class="ry-role-title">Cliente particular</h3>
+            <span class="ry-role-badge">seguimiento propio</span>
+          </div>
+          <p class="ry-card-text">Área orientada a solicitud, consulta y control de sus propios avisos.</p>
+          <div class="ry-bullets">
+            <div class="ry-bullet"><i>◆</i><span>Registra nuevas incidencias con especialidad, fecha, dirección, teléfono, descripción y tipo de urgencia.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Ve solo sus avisos, nunca los de otros clientes, gracias al filtrado por sesión activa.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Puede cancelar únicamente cuando la incidencia está en plazo y en un estado compatible.</span></div>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-role ry-reveal">
+          <div class="ry-role-head">
+            <h3 class="ry-role-title">Técnico</h3>
+            <span class="ry-role-badge">consulta operativa</span>
+          </div>
+          <p class="ry-card-text">Perfil de consulta, centrado en agenda, citas y contexto de intervención.</p>
+          <div class="ry-bullets">
+            <div class="ry-bullet"><i>◆</i><span>Accede a una agenda propia con servicios asignados, cliente, dirección, teléfono, descripción y prioridad.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>No modifica la operativa del sistema: su papel en este producto es visualizar y preparar su jornada.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Dispone de calendario visual para ordenar próximas intervenciones y urgencias.</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">05</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Reglas de negocio críticas del producto</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        Estas reglas no son decorativas: están implementadas dentro del backend y condicionan la inserción,
+        la cancelación, la visibilidad de datos y la coordinación del servicio.
+      </p>
+
+      <div class="ry-grid-4">
+        <article class="ry-panel ry-rule-box ry-reveal">
+          <div class="ry-rule-top">
+            <div class="ry-rule-code">RB-01</div>
+            <div class="ry-rule-value">48h</div>
+          </div>
+          <h3 class="ry-card-title">Antelación mínima para estándar</h3>
+          <p class="ry-card-text">Las solicitudes <strong>estándar</strong> deben pedirse con un mínimo de 48 horas de antelación. Si no se cumple, el sistema bloquea el alta y muestra el error correspondiente.</p>
+        </article>
+
+        <article class="ry-panel ry-rule-box ry-reveal">
+          <div class="ry-rule-top">
+            <div class="ry-rule-code">RB-02</div>
+            <div class="ry-rule-value">INC</div>
+          </div>
+          <h3 class="ry-card-title">Localizador automático único</h3>
+          <p class="ry-card-text">Cada aviso genera un código propio tipo <strong>INC-XXXXXX</strong>, lo que permite identificar y rastrear incidencias de forma clara dentro de todos los paneles.</p>
+        </article>
+
+        <article class="ry-panel ry-rule-box ry-reveal">
+          <div class="ry-rule-top">
+            <div class="ry-rule-code">RB-03</div>
+            <div class="ry-rule-value">ROL</div>
+          </div>
+          <h3 class="ry-card-title">Datos visibles según sesión</h3>
+          <p class="ry-card-text">Los clientes solo ven sus propias incidencias; el menú y las rutas cambian según el rol autenticado para respetar permisos y contexto operativo.</p>
+        </article>
+
+        <article class="ry-panel ry-rule-box ry-reveal">
+          <div class="ry-rule-top">
+            <div class="ry-rule-code">RB-04</div>
+            <div class="ry-rule-value">ESP</div>
+          </div>
+          <h3 class="ry-card-title">Asignación por especialidad</h3>
+          <p class="ry-card-text">El panel admin ofrece técnicos <strong>disponibles</strong> y filtrados por especialidad, reforzando la coherencia entre incidencia, recurso y servicio.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section" id="ry-entregables">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">06</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Centro de recursos y multimedia</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        Esta zona reúne los accesos reales del producto y los dos vídeos de la entrega final.
+      </p>
+
+      <div class="ry-media-top">
+        <article class="ry-panel ry-reveal" id="ry-accesos">
+          <div class="ry-card-kicker">hub técnico</div>
+          <h3 class="ry-card-title">Accesos principales del proyecto</h3>
+          <p class="ry-card-text">
+            Desde aquí se centraliza el acceso al repositorio, a la aplicación desplegada y a la referencia local.
+            El objetivo es que el profesor o cualquier revisor pueda localizar rápidamente código, entorno y
+            resultado funcional.
+          </p>
+          <div class="ry-link-grid">
+            <div class="ry-mini-card">
+              <strong>Repositorio GitHub</strong>
+              <span>Código fuente del backend y control de versiones del producto.</span>
+              <a id="github-link" href="#" target="_blank" rel="noopener">Abrir repositorio →</a>
+            </div>
+            <div class="ry-mini-card">
+              <strong>Aplicación UOC</strong>
+              <span>Versión desplegada para corrección y validación funcional.</span>
+              <a id="public-link" href="#" target="_blank" rel="noopener">Abrir entorno UOC →</a>
+            </div>
+            <div class="ry-mini-card">
+              <strong>Referencia local</strong>
+              <span>Ruta prevista para ejecución en Docker durante pruebas locales.</span>
+              <a id="local-link" href="#" target="_blank" rel="noopener">Abrir URL local →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">puntos fuertes</div>
+          <h3 class="ry-card-title">Qué debe quedar claro al presentar este producto</h3>
+          <div class="ry-bullets">
+            <div class="ry-bullet"><i>◆</i><span>Backend real en PHP sin framework, con MVC propia y lógica de negocio visible.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Separación por roles, menús dinámicos y flujo completo de acceso/autenticación.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>CRUDs ya conectados entre sí y preparados para corrección funcional académica.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Calendarios integrados como capa visual de seguimiento operativo.</span></div>
+            <div class="ry-bullet"><i>◆</i><span>Accesos directos al código, al despliegue y a las evidencias audiovisuales.</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="ry-media-grid">
+        <article class="ry-panel ry-media-box ry-reveal" id="ry-video-teorico">
+          <div class="ry-card-kicker">vídeo teórico</div>
+          <h3 class="ry-card-title">Explicación técnica del Producto 2</h3>
+          <p class="ry-card-text">
+            Vídeo explicativo centrado en la arquitectura del backend, las tecnologías realmente utilizadas,
+            la organización del código, la lógica de negocio implementada y los elementos clave que dan forma
+            al funcionamiento completo de ReparaYa.
+          </p>
+          <div class="ry-video-slot" id="theory-slot">
+            <iframe src="https://www.youtube.com/embed/kor3mp2zWic" title="Vídeo teórico ReparaYa" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-media-box ry-reveal" id="ry-video-practico">
+          <div class="ry-card-kicker">vídeo práctico</div>
+          <h3 class="ry-card-title">Demostración funcional del sistema</h3>
+          <p class="ry-card-text">
+            Vídeo grabado por el equipo mostrando el funcionamiento del backend y su relación con los bloques evaluables del enunciado.
+          </p>
+          <div class="ry-video-slot" id="practice-slot">
+            <iframe src="https://www.youtube.com/embed/sWyskeJJIDA" title="Vídeo práctico ReparaYa" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-section" id="ry-tutor">
+    <div class="ry-shell">
+      <div class="ry-section-head ry-reveal">
+        <span class="ry-sec-num">07</span>
+        <div class="ry-sec-line"></div>
+        <h2 class="ry-sec-title">Configuración rápida para la corrección</h2>
+      </div>
+      <p class="ry-sec-lead ry-reveal">
+        Esta sección deja visible la información mínima que necesita el profesor para revisar el producto con
+        rapidez: dónde está desplegado, cómo entrar y qué recorrido funcional conviene seguir.
+      </p>
+
+      <div class="ry-tutor-grid">
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">datos esenciales</div>
+          <h3 class="ry-card-title">Acceso inmediato</h3>
+          <div class="ry-data-box">
+            <div class="ry-data-line">
+              <small>URL pública UOC</small>
+              <strong>https://fp064.techlab.uoc.edu/~uocx3/Producto2/public/</strong>
+            </div>
+            <div class="ry-data-line">
+              <small>URL local de referencia</small>
+              <strong>http://localhost:8080/public/</strong>
+            </div>
+            <div class="ry-data-line">
+              <small>correo administrador</small>
+              <strong>admin@gmail.com</strong>
+            </div>
+            <div class="ry-data-line">
+              <small>contraseña administrador</small>
+              <strong>admin</strong>
+            </div>
+            <div class="ry-data-line">
+              <small>entorno recomendado de prueba</small>
+              <strong>Perfil Administrador · Revisión global del sistema</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="ry-panel ry-reveal">
+          <div class="ry-card-kicker">secuencia recomendada</div>
+          <h3 class="ry-card-title">Ruta de validación funcional</h3>
+          <div class="ry-steps">
+            <div class="ry-step">
+              <div class="ry-step-num">1</div>
+              <p>Entrar en la URL pública del servidor UOC y autenticar con el perfil administrador para acceder al conjunto completo de módulos.</p>
+            </div>
+            <div class="ry-step">
+              <div class="ry-step-num">2</div>
+              <p>Revisar el panel de incidencias, crear o editar un aviso, comprobar estados y validar la asignación de técnicos disponibles.</p>
+            </div>
+            <div class="ry-step">
+              <div class="ry-step-num">3</div>
+              <p>Acceder a Usuarios, Técnicos y Especialidades para comprobar los maestros, los formularios y la coherencia de navegación.</p>
+            </div>
+            <div class="ry-step">
+              <div class="ry-step-num">4</div>
+              <p>Consultar el calendario operativo y verificar la diferenciación visual por tipo de servicio y el acceso al detalle del evento.</p>
+            </div>
+            <div class="ry-step">
+              <div class="ry-step-num">5</div>
+              <p>Completar la revisión comprobando el despliegue, la estructura del repositorio y la lógica del sistema mediante los vídeos y accesos disponibles.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="ry-divider"></div>
+
+  <section class="ry-footer">
+    <div class="ry-footer-content ry-shell">
+      <div class="ry-footer-line"></div>
+      <h2>Producto 2 listo para presentación</h2>
+      <p>
+        ReparaYa queda presentado como un backend académico sólido, visualmente potente y técnicamente coherente:
+        <strong>PHP sin framework</strong>, <strong>MVC propia</strong>, <strong>Docker</strong>, <strong>MySQL</strong>,
+        <strong>autenticación por roles</strong>, <strong>CRUDs conectados</strong>, <strong>calendarios integrados</strong>
+        y <strong>recursos preparados para una corrección clara y reproducible</strong>.
+      </p>
+      <div class="ry-footer-tags">
+        <span class="ry-tag">PHP</span>
+        <span class="ry-tag">MVC</span>
+        <span class="ry-tag">Docker</span>
+        <span class="ry-tag">MySQL</span>
+        <span class="ry-tag">PDO</span>
+        <span class="ry-tag">FullCalendar</span>
+        <span class="ry-tag">GitHub</span>
+        <span class="ry-tag">UOC</span>
+        <span class="ry-tag">ReparaYa</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  function initPanelsGlow(){
+    document.querySelectorAll('.ry-panel').forEach(function(card){
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+        card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+      });
+    });
+  }
+
+  function initCanvas(){
+    var cvs = document.getElementById('ry-canvas');
+    if(!cvs) return;
+    var ctx = cvs.getContext('2d');
+    var w,h,parts=[];
+
+    function resize(){
+      w = cvs.width = window.innerWidth;
+      h = cvs.height = window.innerHeight;
+      parts = Array.from({length:55}, function(){
+        return {
+          x: Math.random()*w,
+          y: Math.random()*h,
+          vx: (Math.random()-.5)*.18,
+          vy: Math.random()*.22 + .05,
+          r: Math.random()*1.7 + .4,
+          a: Math.random()*.45 + .08
+        };
+      });
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for(var i=0;i<parts.length;i++){
+        var p = parts[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if(p.x < -20) p.x = w+20;
+        if(p.x > w+20) p.x = -20;
+        if(p.y > h+20) p.y = -20;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = 'rgba(212,175,55,' + p.a + ')';
+        ctx.fill();
+
+        for(var j=i+1;j<parts.length;j++){
+          var q = parts[j];
+          var dx = p.x-q.x, dy = p.y-q.y;
+          var dist = Math.sqrt(dx*dx+dy*dy);
+          if(dist < 120){
+            ctx.beginPath();
+            ctx.moveTo(p.x,p.y);
+            ctx.lineTo(q.x,q.y);
+            ctx.strokeStyle = 'rgba(212,175,55,' + (0.08*(1-dist/120)) + ')';
+            ctx.lineWidth = .6;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    draw();
+    window.addEventListener('resize', resize);
+  }
+
+  function initInternalScroll(){
+    document.querySelectorAll('.ry-scroll-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var targetId = this.getAttribute('data-target');
+        var target = document.getElementById(targetId);
+        if(target){
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+  }
+
+  function hydrateLinks(){
+    var github = document.getElementById('github-link');
+    var publicLink = document.getElementById('public-link');
+    var localLink = document.getElementById('local-link');
+
+    if(github) github.href = 'https://github.com/EricKColl/ReparaYa-Producto2.git';
+    if(publicLink) publicLink.href = 'https://fp064.techlab.uoc.edu/~uocx3/Producto2/public/';
+    if(localLink) localLink.href = 'http://localhost:8080/public/';
+  }
+
+  hydrateLinks();
+  initPanelsGlow();
+  initCanvas();
+  initInternalScroll();
+})();
+</script>
+</body>
+</html>

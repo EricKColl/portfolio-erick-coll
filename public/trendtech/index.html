@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrendTech | Neural Immersive Experience 2026</title>
+  <meta name="description" content="Experiencia 3D holográfica de próxima generación — TrendTech Immersive Neural Platform con navegación inmersiva, paneles vivos y un núcleo visual futurista de máxima calidad.">
+  <meta name="theme-color" content="#020610">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="index, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css?v=27">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.183.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.183.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- =============================================
+       LOADING SCREEN
+  ============================================== -->
+  <div id="loading-screen" class="loading-screen" aria-live="polite">
+    <div class="loading-bg-fx">
+      <div class="loading-grid"></div>
+      <div class="loading-scan"></div>
+    </div>
+
+    <div class="loading-inner">
+      <div class="loading-ring-outer"></div>
+      <div class="loading-ring-inner"></div>
+
+      <div class="loading-logo">TRENDTECH</div>
+      <div class="loading-sub">PORTAL DE INNOVACIÓN Y NOTICIAS TECNOLÓGICAS</div>
+
+      <p class="loading-copy">
+        Estamos preparando el entorno inmersivo de TrendTech para presentar una experiencia
+        visual avanzada, profesional y alineada con nuestra identidad tecnológica.
+      </p>
+
+      <div class="loading-meta">
+        <span class="loading-chip">Entorno corporativo</span>
+        <span class="loading-chip">Visualización inmersiva</span>
+        <span class="loading-chip">Innovación digital</span>
+      </div>
+
+      <div class="loading-bar-wrap">
+        <div class="loading-bar" id="loading-bar"></div>
+        <div class="loading-bar-glow"></div>
+      </div>
+
+      <div class="loading-status" id="loading-status">PREPARANDO ENTORNO INMERSIVO TRENDTECH…</div>
+
+      <div class="loading-ticks">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       MAIN APP
+  ============================================== -->
+  <div id="app-3d" class="app-3d">
+    <div id="webgl-view" class="webgl-view" aria-hidden="true"></div>
+
+    <div id="ui-overlay" class="ui-overlay">
+
+      <!-- INTRO OVERLAY -->
+      <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-ambient-layer">
+          <div class="intro-glow-a"></div>
+          <div class="intro-glow-b"></div>
+          <div class="intro-glow-c"></div>
+        </div>
+
+        <div class="intro-panel">
+          <div class="holo-border">
+            <div class="holo-border-inner"></div>
+          </div>
+
+          <span class="corner c-tl"></span>
+          <span class="corner c-tr"></span>
+          <span class="corner c-bl"></span>
+          <span class="corner c-br"></span>
+
+          <div class="intro-top-strip">
+            <span class="strip-dot"></span>
+            <span class="strip-text">TRENDTECH ONLINE</span>
+            <span class="strip-divider"></span>
+            <span class="strip-text-mini">PORTAL INMERSIVO · NEWSROOM TECH</span>
+          </div>
+
+          <p class="intro-kicker">ENTORNO CORPORATIVO INTERACTIVO</p>
+          <h1 class="intro-title">BIENVENIDO AL ESPACIO INMERSIVO DE TRENDTECH</h1>
+
+          <p class="intro-text">
+            Accede al entorno visual de TrendTech y recorre una experiencia 3D diseñada para
+            presentar innovación, actualidad tecnológica y comunicación digital con una estética
+            profesional, clara y orientada a un contexto empresarial real.
+          </p>
+
+          <div class="intro-controls">
+            <div class="control-item">
+              <span class="control-icon">⌨</span>
+              <span class="control-key">W · A · S · D</span>
+              <span class="control-desc">Desplazamiento por la sala inmersiva</span>
+            </div>
+
+            <div class="control-item">
+              <span class="control-icon">◎</span>
+              <span class="control-key">CLIC + ARRASTRAR</span>
+              <span class="control-desc">Control de cámara y exploración del entorno</span>
+            </div>
+
+            <div class="control-item">
+              <span class="control-icon">⎋</span>
+              <span class="control-key">ESC</span>
+              <span class="control-desc">Salida del recorrido y retorno al panel inicial</span>
+            </div>
+          </div>
+
+          <div class="mode-actions">
+            <button id="enter-room-btn" class="enter-room-btn" type="button">
+              <span class="btn-glow-layer"></span>
+              <span class="btn-text">ACCEDER AL ENTORNO TRENDTECH</span>
+              <span class="btn-arrow">→</span>
+              <span class="btn-pulse"></span>
+              <span class="btn-scan"></span>
+            </button>
+          </div>
+
+          <div class="intro-hint">
+            <span class="hint-chip"><span class="chip-dot"></span>Experiencia corporativa</span>
+            <span class="hint-chip"><span class="chip-dot"></span>Innovación tecnológica</span>
+            <span class="hint-chip"><span class="chip-dot"></span>Visualización inmersiva</span>
+            <span class="hint-chip"><span class="chip-dot"></span>TrendTech Newsroom</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUD LAYER -->
+      <div class="hud-layer">
+        <div class="hud-top">
+          <div class="hud-brand">
+            <span class="status-dot"></span>
+            <span class="brand-text">TRENDTECH 3D ROOM</span>
+            <span class="brand-sub">// NEURAL CORE</span>
+          </div>
+
+          <div class="hud-right">
+            <span class="hud-chip"><span class="chip-dot"></span>IMMERSIVE WEB</span>
+            <span class="hud-chip"><span class="chip-dot"></span>NEON CORE</span>
+            <span class="hud-chip"><span class="chip-dot"></span>SYNAI 2026</span>
+          </div>
+        </div>
+
+        <div class="crosshair">
+          <span class="cross-core"></span>
+          <span class="cross-ring"></span>
+        </div>
+
+        <div class="hud-side hud-side-left">
+          <span>DEPTH</span>
+          <span>MOTION</span>
+          <span>LIGHT</span>
+        </div>
+
+        <div class="hud-side hud-side-right">
+          <span>ROOM</span>
+          <span>DATA</span>
+          <span>FLOW</span>
+        </div>
+
+        <div class="hud-bottom">
+          <div class="hud-bar-wrap">
+            <div class="hud-bar-label">NEURAL SYNC</div>
+            <div class="hud-bar-track">
+              <div class="hud-bar-fill"></div>
+            </div>
+          </div>
+
+          <div class="hud-coords" id="hud-coords">X: 0.00 &nbsp; Z: 0.00</div>
+
+          <div class="hud-bar-wrap hud-bar-right">
+            <div class="hud-bar-label">ENERGY FLUX</div>
+            <div class="hud-bar-track">
+              <div class="hud-bar-fill hud-bar-pink"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL STAGE -->
+      <div id="panel-stage" class="panel-stage">
+
+        <section id="panel-title" class="panel-window panel-title panel-title-logo">
+  <div class="holo-border"><div class="holo-border-inner"></div></div>
+  <span class="corner c-tl"></span>
+  <span class="corner c-tr"></span>
+  <span class="corner c-bl"></span>
+  <span class="corner c-br"></span>
+
+  <div class="panel-body panel-body-center title-logo-body">
+    <img
+      src="assets/img/logo-trendtech-transparente.png"
+      alt="Logo de TrendTech"
+      class="title-logo-image"
+    >
+  </div>
+</section>
+
+        <section id="panel-logo" class="panel-window">
+  <div class="holo-border"><div class="holo-border-inner"></div></div>
+  <span class="corner c-tl"></span>
+  <span class="corner c-tr"></span>
+  <span class="corner c-bl"></span>
+  <span class="corner c-br"></span>
+
+  <div class="panel-head panel-head-trends">
+    <span class="panel-label panel-label-trends">TENDENCIAS TECNOLÓGICAS</span>
+    <span class="panel-tag">TRENDS</span>
+  </div>
+
+  <div class="panel-body" id="logo-body"></div>
+</section>
+
+        <section id="panel-banner" class="panel-window">
+          <div class="holo-border"><div class="holo-border-inner"></div></div>
+          <span class="corner c-tl"></span>
+          <span class="corner c-tr"></span>
+          <span class="corner c-bl"></span>
+          <span class="corner c-br"></span>
+
+          <div class="panel-head panel-head-video">
+  <span class="panel-label panel-label-video">SPOT PUBLICITARIO</span>
+</div>
+
+          <div class="panel-body" id="banner-body"></div>
+        </section>
+
+        <section id="panel-video" class="panel-window">
+          <div class="holo-border"><div class="holo-border-inner"></div></div>
+          <span class="corner c-tl"></span>
+          <span class="corner c-tr"></span>
+          <span class="corner c-bl"></span>
+          <span class="corner c-br"></span>
+
+          <div class="panel-head panel-head-video">
+  <span class="panel-label panel-label-video">SPOT PUBLICITARIO</span>
+</div>
+
+          <div class="panel-body" id="video-body"></div>
+        </section>
+
+        <section id="panel-subscribe" class="panel-window">
+          <div class="holo-border"><div class="holo-border-inner"></div></div>
+          <span class="corner c-tl"></span>
+          <span class="corner c-tr"></span>
+          <span class="corner c-bl"></span>
+          <span class="corner c-br"></span>
+
+          <div class="panel-head">
+            <span class="panel-label"><span class="label-dot"></span>TERMINAL DE ACCESO</span>
+            <span class="panel-tag">CTA</span>
+          </div>
+
+          <div class="panel-body" id="subscribe-body">
+            <p class="subscribe-copy">
+              Introduce tu correo y activa el acceso anticipado a TrendTech.
+            </p>
+
+            <form class="subscribe-form" id="subscribe-form">
+              <input id="subscribe-input" type="email" placeholder="Correo electrónico">
+              <button type="submit">
+                <span>ACTIVAR ACCESO</span>
+                <span class="btn-arrow-sm">→</span>
+              </button>
+            </form>
+
+            <p id="subscribe-status" class="panel-status"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- MODAL -->
+      <div id="asset-modal" class="asset-modal" aria-hidden="true">
+        <div class="asset-modal-card">
+          <div class="holo-border"><div class="holo-border-inner"></div></div>
+          <span class="corner c-tl"></span>
+          <span class="corner c-tr"></span>
+          <span class="corner c-bl"></span>
+          <span class="corner c-br"></span>
+
+          <div class="asset-modal-top">
+            <div id="asset-modal-title" class="asset-modal-title">Vista ampliada</div>
+            <button id="asset-modal-close" type="button" class="asset-modal-close">Cerrar</button>
+          </div>
+
+          <div id="asset-modal-content" class="asset-modal-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js?v=27"></script>
+</body>
+</html>

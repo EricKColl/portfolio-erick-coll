@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReparaYa · Producto 1 · BackLord</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:   #D4AF37;
+  --gl:  #F0D060;
+  --gd:  #A07830;
+  --gg:  rgba(212,175,55,0.25);
+  --bk:  #030303;
+  --d1:  #070707;
+  --d2:  #0D0D0D;
+  --tx:  #EAE2D0;
+  --txd: #B09060;   /* was #5C5035 — now clearly readable */
+  --txm: #C8AA70;   /* was #9A8860 — boosted */
+  --txs: #7A6040;   /* purely decorative / ghost text */
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background:var(--bk);
+  color:var(--tx);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSOR ─────────────────────────────────────────── */
+#cur-dot  { position:fixed;width:9px;height:9px;background:var(--gl);border-radius:50%;pointer-events:none;z-index:9999;left:-20px;top:-20px;transform:translate(-50%,-50%);transition:transform .1s,width .25s,height .25s; }
+#cur-ring { position:fixed;width:34px;height:34px;border:1.5px solid var(--g);border-radius:50%;pointer-events:none;z-index:9998;left:-20px;top:-20px;transform:translate(-50%,-50%);transition:width .3s ease,height .3s ease,opacity .3s,border-color .3s;opacity:.5; }
+#trail-canvas { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997; }
+
+/* ── BOOT ────────────────────────────────────────────── */
+#boot { position:fixed;inset:0;background:#000;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .8s ease; }
+#boot.gone { opacity:0;pointer-events:none; }
+.b-logo { font-family:'Orbitron',monospace;font-size:clamp(2rem,6vw,4rem);font-weight:900;letter-spacing:.25em;color:var(--g);animation:bpulse 1.5s ease-in-out infinite; }
+@keyframes bpulse { 0%,100%{text-shadow:0 0 30px rgba(212,175,55,.4);opacity:.7}50%{text-shadow:0 0 60px rgba(212,175,55,.7),0 0 120px rgba(212,175,55,.2);opacity:1} }
+.b-track { width:260px;height:1px;background:rgba(212,175,55,.1);overflow:hidden; }
+.b-fill  { height:100%;width:0;background:linear-gradient(90deg,transparent,var(--g),var(--gl));transition:width 2.5s cubic-bezier(.4,0,.2,1); }
+.b-text  { font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.3em;color:var(--txm); }
+.blink   { animation:blink .6s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+/* ── LAYOUT ──────────────────────────────────────────── */
+.divider { height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.15),transparent); }
+.inner   { max-width:1060px;margin:0 auto;padding:0 40px; }
+@media (max-width:680px) { .inner { padding:0 20px; } }
+
+.sec-hdr   { display:flex;align-items:center;gap:16px;margin-bottom:18px; }
+.sec-num   { font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--gd); }
+.sec-line  { width:52px;height:1px;background:linear-gradient(90deg,var(--gd),transparent); }
+.sec-title { font-family:'Orbitron',monospace;font-size:clamp(1.1rem,2.4vw,1.85rem);font-weight:700;color:var(--gl);letter-spacing:.06em; }
+.sec-lead  { font-size:1rem;line-height:1.8;color:var(--txm);font-weight:400;max-width:820px;margin-bottom:44px;letter-spacing:.02em; }
+
+/* ── HERO ────────────────────────────────────────────── */
+#hero {
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 40px 80px;position:relative;background:var(--bk);overflow:hidden;
+}
+#hero-canvas { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none; }
+.hero-grid {
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+  background-image:linear-gradient(rgba(212,175,55,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.022) 1px,transparent 1px);
+  background-size:56px 56px;animation:grid-move 28s linear infinite;
+}
+@keyframes grid-move { to { background-position:56px 56px; } }
+.hero-scan {
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 5%,rgba(212,175,55,.55) 40%,rgba(255,240,100,.85) 50%,rgba(212,175,55,.55) 60%,transparent 95%);
+  pointer-events:none;z-index:2;animation:scanner 7s ease-in-out infinite;
+}
+@keyframes scanner { 0%{top:-2px;opacity:0}3%{opacity:1}97%{opacity:.7}100%{top:100%;opacity:0} }
+.hero-vignette { position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 35%,rgba(0,0,0,.75) 100%);pointer-events:none;z-index:2; }
+.hero-content  { position:relative;z-index:3; }
+
+.h-badge   { font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.36em;color:var(--txm);border:1px solid rgba(212,175,55,.28);padding:7px 22px;margin-bottom:28px;display:inline-block;position:relative;opacity:0;animation:fadeUp .8s ease 3.2s forwards; }
+.h-badge::before,.h-badge::after { content:'';position:absolute;top:50%;width:22px;height:1px;background:var(--gd); }
+.h-badge::before { right:100%;margin-right:8px; } .h-badge::after { left:100%;margin-left:8px; }
+.h-eyebrow { display:block;font-family:'Orbitron',monospace;font-size:clamp(.85rem,1.8vw,1.3rem);font-weight:400;letter-spacing:.45em;color:transparent;-webkit-text-stroke:1px rgba(212,175,55,.35);margin-bottom:6px;opacity:0;animation:fadeUp .9s ease 3.35s forwards; }
+.h-title   { font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(3rem,10vw,7rem);line-height:.9;background:linear-gradient(135deg,#F5E272 0%,#D4AF37 40%,#A0720A 70%,#6B4E10 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(212,175,55,.35));margin-bottom:6px;opacity:0;animation:fadeUp 1s ease 3.5s forwards,glitch-anim 7s ease 5s infinite;display:inline-block;position:relative; }
+@keyframes glitch-anim { 0%,90%,100%{transform:none;filter:drop-shadow(0 0 40px rgba(212,175,55,.35))}91%{transform:translate(-2px,1px) skewX(-1.5deg);filter:drop-shadow(-3px 0 rgba(0,240,255,.6)) drop-shadow(3px 0 rgba(212,175,55,.8))}92%{transform:translate(2px,-1px) skewX(1.5deg);filter:drop-shadow(3px 0 rgba(255,48,64,.6)) drop-shadow(-3px 0 rgba(212,175,55,.8))}93%{transform:none;filter:drop-shadow(0 0 40px rgba(212,175,55,.35))} }
+.h-sub { font-size:clamp(.78rem,1.4vw,1rem);letter-spacing:.18em;color:var(--txm);font-weight:400;margin-top:16px;margin-bottom:10px;opacity:0;animation:fadeUp 1s ease 3.65s forwards; }
+.h-sub2 { font-size:clamp(.7rem,1.1vw,.85rem);letter-spacing:.12em;color:var(--txd);font-weight:300;margin-bottom:32px;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.7;opacity:0;animation:fadeUp 1s ease 3.75s forwards; }
+.h-cursor { display:inline-block;width:7px;height:.9em;background:var(--g);vertical-align:middle;margin-left:3px;animation:blink 1s step-end infinite; }
+.members { display:flex;flex-wrap:wrap;gap:11px;justify-content:center;opacity:0;animation:fadeUp 1s ease 3.8s forwards; }
+.chip { font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.1em;color:var(--txm);border:1px solid rgba(212,175,55,.2);padding:9px 20px;transition:all .3s;position:relative;overflow:hidden; }
+.chip::before { content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,175,55,.07),transparent);opacity:0;transition:opacity .3s; }
+.chip:hover { border-color:var(--g);color:var(--gl);box-shadow:0 0 15px rgba(212,175,55,.15); }
+.chip:hover::before { opacity:1; }
+.h-scroll { margin-top:50px;display:flex;flex-direction:column;align-items:center;gap:9px;opacity:0;animation:fadeUp 1s ease 4.1s forwards; }
+.scroll-bar { width:1px;height:42px;background:linear-gradient(180deg,var(--g),transparent);animation:spulse 2.3s ease-in-out infinite; }
+@keyframes spulse { 0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1.2)} }
+.scroll-txt { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--txd); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)} }
+
+/* ── SECTION ─────────────────────────────────────────── */
+.section { padding:88px 0;background:var(--d1);position:relative;overflow:hidden; }
+.section.alt { background:var(--d2); }
+.section::before { content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.011) 1px,transparent 1px);background-size:58px 58px;pointer-events:none; }
+
+/* ── COUNTERS ────────────────────────────────────────── */
+.counters { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:44px; }
+.cbox { border:1px solid rgba(212,175,55,.12);padding:22px 14px;text-align:center;position:relative;overflow:hidden;background:rgba(0,0,0,.25);transition:border-color .4s,background .4s; }
+.cbox::after { content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);transform:scaleX(0);transition:transform .5s; }
+.cbox:hover { border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.025); }
+.cbox:hover::after { transform:scaleX(1); }
+.c-num { font-family:'Orbitron',monospace;font-size:1.85rem;font-weight:900;color:var(--g);text-shadow:0 0 18px rgba(212,175,55,.4);line-height:1;margin-bottom:7px; }
+.c-lbl { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.18em;color:var(--txm); }
+
+/* ── TERMINAL ────────────────────────────────────────── */
+.terminal { background:#020202;border:1px solid rgba(212,175,55,.14);margin-bottom:44px;overflow:hidden; }
+.t-bar { display:flex;align-items:center;gap:7px;padding:10px 16px;background:rgba(212,175,55,.025);border-bottom:1px solid rgba(212,175,55,.07); }
+.dot   { width:10px;height:10px;border-radius:50%; }
+.dot.r { background:#FF5F57; } .dot.y { background:#FEBC2E; } .dot.g { background:#28C840; }
+.t-label { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.16em;color:var(--txm);margin-left:6px; }
+.t-body  { padding:18px 20px;min-height:200px;max-height:200px;overflow:hidden; }
+.t-line  { font-family:'Share Tech Mono',monospace;font-size:.76rem;line-height:1.85; }
+.tp { color:var(--g); } .tc { color:var(--tx); } .to { color:var(--txm); } .ts { color:#5CD860; }
+
+/* ── INTRO GRID ──────────────────────────────────────── */
+.i-grid { display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start; }
+@media (max-width:680px) { .i-grid { grid-template-columns:1fr; } }
+.i-text p { font-size:1.02rem;line-height:1.92;color:var(--txm);margin-bottom:14px;font-weight:400; }
+.i-text strong { color:var(--gl);font-weight:700; }
+.i-text .note { font-size:.88rem;color:var(--txd);font-style:italic;border-left:2px solid rgba(212,175,55,.25);padding-left:12px;margin-top:6px;margin-bottom:16px; }
+
+.stat-list { display:flex;flex-direction:column;gap:10px; }
+.stat-row  { border:1px solid rgba(212,175,55,.12);padding:14px 18px;position:relative;background:rgba(0,0,0,.2);transition:all .3s; }
+.stat-row::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--g);box-shadow:0 0 6px rgba(212,175,55,.5); }
+.stat-row:hover { border-color:rgba(212,175,55,.28);transform:translateX(4px); }
+.s-lbl { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.22em;color:var(--gd);margin-bottom:4px; }
+.s-val { font-family:'Orbitron',monospace;font-size:.82rem;color:var(--tx);font-weight:600; }
+
+/* ── TIMELINE ────────────────────────────────────────── */
+.timeline { position:relative;padding-left:32px; }
+.timeline::before { content:'';position:absolute;left:7px;top:8px;bottom:0;width:1px;background:linear-gradient(180deg,var(--g) 0%,rgba(212,175,55,.06) 100%); }
+.t-step { position:relative;margin-bottom:24px;cursor:pointer; }
+.t-step::before { content:'';position:absolute;left:-27px;top:5px;width:13px;height:13px;border:2px solid var(--txd);background:var(--bk);border-radius:50%;transition:all .3s;z-index:1; }
+.t-step.on::before { background:var(--g);border-color:var(--g);box-shadow:0 0 10px rgba(212,175,55,.55); }
+.t-step:hover::before { border-color:var(--gl); }
+.t-tag  { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.22em;color:var(--gd);margin-bottom:3px; }
+.t-name { font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;color:var(--tx);letter-spacing:.04em;transition:color .3s; }
+.t-step:hover .t-name,.t-step.on .t-name { color:var(--gl); }
+.t-check { position:absolute;right:0;top:3px;font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--txd); }
+.t-step.on .t-check { color:#5CD860; }
+.t-desc { font-size:.85rem;color:var(--txm);line-height:1.72;overflow:hidden;max-height:0;transition:max-height .5s ease,margin-top .3s;font-weight:400; }
+.t-step.on .t-desc { max-height:140px;margin-top:7px; }
+
+/* ── DOCS GRID ───────────────────────────────────────── */
+.docs-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:17px; }
+.doc-card { border:1px solid rgba(212,175,55,.12);background:linear-gradient(135deg,rgba(212,175,55,.018),transparent);padding:28px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:border-color .4s,box-shadow .4s;transform-style:preserve-3d;will-change:transform; }
+.doc-card::before { content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);transform:scaleX(0);transition:transform .5s; }
+.doc-card::after  { content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),rgba(212,175,55,.07),transparent 55%);opacity:0;transition:opacity .4s;pointer-events:none; }
+.doc-card:hover   { border-color:rgba(212,175,55,.34);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 25px rgba(212,175,55,.08); }
+.doc-card:hover::before { transform:scaleX(1); } .doc-card:hover::after { opacity:1; }
+.doc-card .ca { position:absolute;width:12px;height:12px; }
+.doc-card .ca.tl { top:5px;left:5px;border-top:1px solid var(--g);border-left:1px solid var(--g); }
+.doc-card .ca.tr { top:5px;right:5px;border-top:1px solid var(--g);border-right:1px solid var(--g); }
+.doc-card .ca.bl { bottom:5px;left:5px;border-bottom:1px solid var(--g);border-left:1px solid var(--g); }
+.doc-card .ca.br { bottom:5px;right:5px;border-bottom:1px solid var(--g);border-right:1px solid var(--g); }
+.d-ico   { width:38px;height:38px;border:1px solid var(--gd);display:flex;align-items:center;justify-content:center;margin-bottom:14px; }
+.d-ico svg { width:17px;height:17px;fill:var(--g); }
+.d-step  { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.22em;color:var(--gd);margin-bottom:6px; }
+.d-title { font-family:'Rajdhani',sans-serif;font-size:1.06rem;font-weight:700;color:var(--tx);margin-bottom:10px;line-height:1.3; }
+.d-desc  { font-size:.88rem;color:var(--txm);line-height:1.72;font-weight:400; }
+.d-tags  { display:flex;flex-wrap:wrap;gap:6px;margin-top:12px; }
+.d-tag   { font-family:'Share Tech Mono',monospace;font-size:.54rem;letter-spacing:.12em;padding:3px 9px;border:1px solid rgba(212,175,55,.18);color:var(--txd); }
+.d-btn   { display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.18em;color:var(--g); }
+.d-btn svg { width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .3s; }
+.doc-card:hover .d-btn svg { transform:translateX(3px); }
+.doc-card.feat { grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;border-color:rgba(212,175,55,.2);background:linear-gradient(135deg,rgba(212,175,55,.04),transparent); }
+@media (max-width:680px) { .doc-card.feat { grid-template-columns:1fr; } }
+.doc-card.feat .d-title { font-size:1.45rem; }
+.doc-card.feat .d-desc  { font-size:.95rem;color:var(--txm); }
+.feat-tag { display:inline-block;font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.18em;padding:4px 12px;border:1px solid rgba(76,175,80,.4);color:#5CD860;margin-bottom:14px; }
+.feat-meta { display:flex;flex-direction:column;gap:11px;margin-top:6px; }
+.feat-meta .stat-row { margin-bottom:0; }
+
+/* ── VIDEO ───────────────────────────────────────────── */
+.v-frame { border:1px solid rgba(212,175,55,.2);overflow:hidden;background:#020202;position:relative; }
+.v-frame::before { content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);z-index:1;pointer-events:none; }
+.v-frame iframe { width:100%;aspect-ratio:16/9;display:block;border:none; }
+.v-hud { display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:13px 20px;background:rgba(0,0,0,.88);border:1px solid rgba(212,175,55,.1);border-top:none; }
+.v-hud-item { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.14em;color:var(--txd); }
+.v-hud-item span { color:var(--txm); } .v-hud-item .ok { color:#5CD860; }
+.v-desc { margin-top:26px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,55,.1);padding:24px 28px;border-left:3px solid var(--g); }
+.v-desc p { font-size:.95rem;line-height:1.82;color:var(--txm);font-weight:400; }
+.v-desc strong { color:var(--gl);font-weight:700; }
+
+/* ── CLOSING ─────────────────────────────────────────── */
+#cierre { padding:108px 40px;text-align:center;background:var(--bk);position:relative;overflow:hidden; }
+#cierre-canvas { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none; }
+.c-glow { position:absolute;top:50%;left:50%;width:600px;height:600px;background:radial-gradient(circle,rgba(212,175,55,.05) 0%,transparent 65%);transform:translate(-50%,-50%);pointer-events:none; }
+.c-content { position:relative;z-index:1; }
+.c-pulse  { width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);margin:0 auto 50px;animation:cpulse 3s ease-in-out infinite; }
+@keyframes cpulse { 0%,100%{opacity:.3;transform:scaleX(.65)}50%{opacity:1;transform:scaleX(1.35)} }
+.c-title  { font-family:'Orbitron',monospace;font-size:clamp(1.7rem,5vw,3.8rem);font-weight:900;background:linear-gradient(135deg,var(--gl),var(--g),#7A5C10);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;letter-spacing:.05em; }
+.c-sub    { font-size:1rem;color:var(--txm);letter-spacing:.12em;font-weight:400;margin-bottom:16px; }
+.c-body   { font-size:.9rem;color:var(--txd);line-height:1.82;max-width:680px;margin:0 auto 40px;font-weight:300; }
+.c-tags   { display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:760px;margin:0 auto; }
+.ctag { font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.18em;padding:9px 18px;border:1px solid rgba(212,175,55,.18);color:var(--txm);transition:all .3s; }
+.ctag:hover { border-color:var(--g);color:var(--gl);background:rgba(212,175,55,.05); }
+.c-sep    { width:100%;max-width:700px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.14),transparent);margin:46px auto 24px; }
+.c-foot   { font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:rgba(212,175,55,.25); }
+
+/* ── REVEAL ──────────────────────────────────────────── */
+.rv { opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease; }
+.rv.on { opacity:1;transform:none; }
+.rv.d1 { transition-delay:.1s; } .rv.d2 { transition-delay:.2s; }
+.rv.d3 { transition-delay:.3s; } .rv.d4 { transition-delay:.4s; }
+
+/* ── INFO CALLOUT ────────────────────────────────────── */
+.callout { border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.025);padding:20px 24px;margin-bottom:44px;position:relative; }
+.callout::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--g),transparent); }
+.callout p { font-size:.95rem;color:var(--txm);line-height:1.8;font-weight:400; }
+.callout strong { color:var(--gl); }
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<canvas id="trail-canvas"></canvas>
+
+<!-- ── BOOT SCREEN ──────────────────────────────────── -->
+<div id="boot">
+  <div class="b-logo">BACKLORD</div>
+  <div class="b-track"><div class="b-fill" id="b-fill"></div></div>
+  <div class="b-text" id="b-text">INITIALIZING<span class="blink">_</span></div>
+</div>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="h-badge">FP.448 &nbsp;·&nbsp; UOC &nbsp;·&nbsp; PRODUCTO 01</div>
+    <span class="h-eyebrow">EQUIPO</span>
+    <h1 class="h-title">BACKLORD</h1>
+    <p class="h-sub">
+      Desarrollo de Aplicaciones Web &nbsp;·&nbsp; Backend PHP &nbsp;·&nbsp; Framework MVC &nbsp;·&nbsp; Gestión de Contenidos
+      <span class="h-cursor"></span>
+    </p>
+    <p class="h-sub2">
+      Entorno web profesional completo sobre contenedores Docker — stack LAMP con PHP&nbsp;8.4, Laravel&nbsp;11,
+      WordPress&nbsp;6.9 y migración al servidor UOC mediante SSH/SFTP.
+    </p>
+    <div class="members">
+      <div class="chip">Erick Coll Rodríguez</div>
+      <div class="chip">Carles Miguel Millán</div>
+      <div class="chip">Eric Celeiro Garrido</div>
+      <div class="chip">Miguel Alegre Zaragoza</div>
+    </div>
+    <div class="h-scroll">
+      <div class="scroll-bar"></div>
+      <span class="scroll-txt">SCROLL</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECCIÓN 01 — INTRODUCCIÓN ────────────────────── -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">01</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Introducción al Proyecto</h2>
+    </div>
+    <p class="sec-lead rv">
+      El Producto&nbsp;1 de la asignatura <strong>FP.448 — Desarrollo de Aplicaciones Web</strong> tiene como objetivo
+      construir, documentar y desplegar un entorno web profesional completo. El equipo BackLord ha implementado
+      el ciclo completo desde la infraestructura local en Docker hasta la migración y verificación del servicio
+      en el servidor remoto de la UOC.
+    </p>
+
+    <div class="counters rv d1">
+      <div class="cbox"><div class="c-num" data-to="65" data-suf="+">0</div><div class="c-lbl">Figuras evidencia</div></div>
+      <div class="cbox"><div class="c-num" data-to="45" data-suf="">0</div><div class="c-lbl">Páginas doc.</div></div>
+      <div class="cbox"><div class="c-num" data-to="7"  data-suf="">0</div><div class="c-lbl">Servicios Docker</div></div>
+      <div class="cbox"><div class="c-num" data-to="12" data-suf="">0</div><div class="c-lbl">Tablas WordPress</div></div>
+      <div class="cbox"><div class="c-num" data-to="4"  data-suf="">0</div><div class="c-lbl">Miembros equipo</div></div>
+    </div>
+
+    <div class="terminal rv d2">
+      <div class="t-bar">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span class="t-label">backlord@fp064.techlab.uoc.edu — bash</span>
+      </div>
+      <div class="t-body" id="term-body"></div>
+    </div>
+
+    <div class="i-grid">
+      <div class="i-text rv d2">
+        <p>
+          Este proyecto construye un <strong>entorno web profesional completo</strong> usando contenedores Docker
+          orquestados con Docker Compose. El stack elegido cubre la totalidad del ciclo de despliegue moderno:
+          servidor web, motor de base de datos, herramienta de administración, framework MVC y CMS.
+        </p>
+        <p>
+          Se ha implementado <strong>PHP 8.4 + Apache 2.4</strong> como núcleo de ejecución, <strong>MySQL 8.0</strong>
+          como motor de base de datos relacional y <strong>phpMyAdmin</strong> para la administración visual
+          de esquemas y datos.
+        </p>
+        <p>
+          Sobre ese cimiento se despliegan <strong>Laravel 11.48</strong> — con Composer, migraciones y configuración
+          de entorno vía <code>.env</code> — y <strong>WordPress 6.9.1</strong> con base de datos propia, panel de
+          administración verificado y doce tablas correctamente creadas.
+        </p>
+        <p class="note">
+          Todo el entorno ha sido migrado al <strong>servidor UOC (fp064.techlab.uoc.edu)</strong> mediante SCP/SFTP
+          sobre SSH (puerto 55000), con respuesta <strong>HTTP/1.1 200 OK</strong> confirmada como evidencia final.
+        </p>
+        <div class="stat-list">
+          <div class="stat-row"><div class="s-lbl">Stack base</div><div class="s-val">PHP 8.4 · MySQL 8 · Apache 2.4</div></div>
+          <div class="stat-row"><div class="s-lbl">Framework MVC</div><div class="s-val">Laravel 11.48.0</div></div>
+          <div class="stat-row"><div class="s-lbl">CMS</div><div class="s-val">WordPress 6.9.1</div></div>
+          <div class="stat-row"><div class="s-lbl">Servidor remoto</div><div class="s-val">fp064.techlab.uoc.edu</div></div>
+          <div class="stat-row"><div class="s-lbl">Acceso remoto</div><div class="s-val">SSH · SCP · SFTP / Puerto 55000</div></div>
+        </div>
+      </div>
+
+      <div class="rv d3">
+        <div class="timeline" id="tl">
+          <div class="t-step on" onclick="tact(0)">
+            <div class="t-tag">FASE 01</div>
+            <div class="t-name">Entorno Docker local</div>
+            <div class="t-check">✓ COMPLETADO</div>
+            <div class="t-desc">Configuración de <code>docker-compose.yml</code> con PHP 8.4, Apache, MySQL 8 y phpMyAdmin. Verificación con "Hola Mundo!!" y pruebas de consulta SQL directa desde phpMyAdmin.</div>
+          </div>
+          <div class="t-step" onclick="tact(1)">
+            <div class="t-tag">FASE 02</div>
+            <div class="t-name">Laravel en Docker</div>
+            <div class="t-check">✓ COMPLETADO</div>
+            <div class="t-desc">Instalación de Laravel 11.48 con Composer. Configuración de PHP 8.4, extensión pdo_mysql, variables <code>.env</code> y ejecución exitosa de las migraciones sobre MySQL.</div>
+          </div>
+          <div class="t-step" onclick="tact(2)">
+            <div class="t-tag">FASE 03</div>
+            <div class="t-name">WordPress en Docker</div>
+            <div class="t-check">✓ COMPLETADO</div>
+            <div class="t-desc">Despliegue de WordPress 6.9.1 en puerto 8082, con base de datos dedicada en MySQL. Panel de administración funcional y doce tablas verificadas en phpMyAdmin.</div>
+          </div>
+          <div class="t-step" onclick="tact(3)">
+            <div class="t-tag">FASE 04</div>
+            <div class="t-name">Migración servidor UOC</div>
+            <div class="t-check">✓ COMPLETADO</div>
+            <div class="t-desc">Transferencia de Laravel y WordPress a fp064 via SFTP/FileZilla. SSH por puerto 55000. Respuesta <strong>HTTP/1.1 200 OK</strong> obtenida y documentada como evidencia final.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECCIÓN 02 — VÍDEO ────────────────────────────── -->
+<section class="section alt">
+  <div class="inner">
+    <div class="sec-hdr rv">
+      <span class="sec-num">02</span>
+      <div class="sec-line"></div>
+      <h2 class="sec-title">Vídeo de Instalación</h2>
+    </div>
+    <p class="sec-lead rv">
+      Demostración técnica en vídeo del proceso completo de despliegue, desde el arranque del entorno
+      Docker hasta la verificación del servicio en el servidor UOC. El vídeo completa el recorrido técnico
+      y permite seguir cada paso de forma visual y reproducible.
+    </p>
+    <div class="rv">
+      <div class="v-frame">
+        <iframe src="https://www.youtube.com/embed/mtcczEPUGaI"
+          title="BackLord — Instalación y despliegue"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="v-hud">
+        <div class="v-hud-item">CANAL: <span>BACKLORD / DAW FP.448</span></div>
+        <div class="v-hud-item">TIPO: <span>DEMO TÉCNICA</span></div>
+        <div class="v-hud-item">CONTENIDO: <span>Docker · Laravel · WordPress · UOC</span></div>
+        <div class="v-hud-item">ESTADO: <span class="ok">▶ ACTIVO</span></div>
+      </div>
+      <div class="v-desc rv d1">
+        <p>
+          El vídeo recorre de forma práctica las cuatro fases del proyecto: configuración del
+          <strong>entorno Docker</strong> con docker-compose, despliegue y verificación de
+          <strong>Laravel 11</strong>, instalación de <strong>WordPress 6.9</strong> con su base
+          de datos dedicada, y la <strong>migración al servidor remoto de la UOC</strong> con
+          comprobación del código HTTP&nbsp;200.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CIERRE ───────────────────────────────────────── -->
+<section id="cierre">
+  <canvas id="cierre-canvas"></canvas>
+  <div class="c-glow"></div>
+  <div class="c-content">
+    <div class="c-pulse rv"></div>
+    <h2 class="c-title rv">MISIÓN COMPLETADA</h2>
+    <p class="c-sub rv">
+      Entorno completo deployado &nbsp;·&nbsp; Laravel activo en UOC &nbsp;·&nbsp; WordPress migrado con éxito
+    </p>
+    <p class="c-body rv">
+      El equipo BackLord ha entregado todos los objetivos del Producto&nbsp;1 con documentación exhaustiva,
+      evidencias verificables y el entorno plenamente operativo en el servidor <strong>fp064.techlab.uoc.edu</strong>.
+      El stack LAMP orquestado con Docker Compose, el framework Laravel&nbsp;11 con migraciones funcionales
+      y el CMS WordPress&nbsp;6.9 con panel de administración activo constituyen la base técnica completa
+      requerida por la asignatura.
+    </p>
+    <div class="c-tags rv">
+      <div class="ctag">Docker</div><div class="ctag">PHP 8.4</div><div class="ctag">Apache 2.4</div>
+      <div class="ctag">MySQL 8.0</div><div class="ctag">phpMyAdmin</div><div class="ctag">Laravel 11</div>
+      <div class="ctag">WordPress 6.9</div><div class="ctag">FileZilla</div><div class="ctag">SSH / SFTP</div>
+      <div class="ctag">UOC Server</div><div class="ctag">Composer</div><div class="ctag">Docker Compose</div>
+      <div class="ctag">Artisan</div><div class="ctag">pdo_mysql</div><div class="ctag">HTTP 200 OK</div>
+    </div>
+    <div class="c-sep rv"></div>
+    <p class="c-foot rv">BACKLORD &nbsp;//&nbsp; FP.448 &nbsp;//&nbsp; UNIVERSITAT OBERTA DE CATALUNYA &nbsp;//&nbsp; 2025–2026</p>
+  </div>
+</section>
+
+<!-- ── SCRIPTS ───────────────────────────────────────── -->
+<script>
+/* BOOT */
+var BOOT=['INITIALIZING SYSTEM','LOADING KERNEL MODULES','MOUNTING DOCKER VOLUMES','STARTING PHP 8.4 RUNTIME','CONNECTING MYSQL 8.0','LARAVEL 11 READY','WORDPRESS CMS ONLINE','ALL SYSTEMS OPERATIONAL ✓'];
+var bootEl=document.getElementById('boot'),bFill=document.getElementById('b-fill'),bText=document.getElementById('b-text'),bootIdx=0;
+setTimeout(function(){bFill.style.width='100%'},60);
+var bootIv=setInterval(function(){bootIdx++;if(bootIdx<BOOT.length){bText.innerHTML=BOOT[bootIdx]+'<span class="blink">_</span>';}else{clearInterval(bootIv);setTimeout(function(){bootEl.classList.add('gone');setTimeout(function(){bootEl.style.display='none'},900)},300);}},320);
+
+/* CURSOR */
+var curDot=document.getElementById('cur-dot'),curRing=document.getElementById('cur-ring'),
+    trailCvs=document.getElementById('trail-canvas'),tctx=trailCvs.getContext('2d');
+var mouseX=window.innerWidth/2,mouseY=window.innerHeight/2,ringX=mouseX,ringY=mouseY,trailPts=[];
+function resizeTrail(){trailCvs.width=window.innerWidth;trailCvs.height=window.innerHeight;}
+resizeTrail();window.addEventListener('resize',resizeTrail);
+document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;curDot.style.left=mouseX+'px';curDot.style.top=mouseY+'px';trailPts.push({x:mouseX,y:mouseY});if(trailPts.length>22)trailPts.shift();});
+function animCursor(){ringX+=(mouseX-ringX)*0.13;ringY+=(mouseY-ringY)*0.13;curRing.style.left=ringX+'px';curRing.style.top=ringY+'px';tctx.clearRect(0,0,trailCvs.width,trailCvs.height);if(trailPts.length>1){for(var i=1;i<trailPts.length;i++){var ratio=i/trailPts.length;tctx.beginPath();tctx.moveTo(trailPts[i-1].x,trailPts[i-1].y);tctx.lineTo(trailPts[i].x,trailPts[i].y);tctx.strokeStyle='rgba(212,175,55,'+(ratio*0.5)+')';tctx.lineWidth=ratio*2.8;tctx.lineCap='round';tctx.stroke();}var last=trailPts[trailPts.length-1];tctx.beginPath();tctx.arc(last.x,last.y,3.5,0,Math.PI*2);tctx.fillStyle='rgba(245,226,114,0.7)';tctx.fill();}requestAnimationFrame(animCursor);}
+animCursor();
+document.querySelectorAll('a,.doc-card,.chip,.ctag,.t-step,.cbox').forEach(function(el){el.addEventListener('mouseenter',function(){curRing.style.width='52px';curRing.style.height='52px';curRing.style.opacity='0.85';curRing.style.borderColor='var(--gl)';curDot.style.transform='translate(-50%,-50%) scale(2)';});el.addEventListener('mouseleave',function(){curRing.style.width='34px';curRing.style.height='34px';curRing.style.opacity='0.5';curRing.style.borderColor='var(--g)';curDot.style.transform='translate(-50%,-50%) scale(1)';});});
+
+/* HERO CANVAS */
+(function(){var cvs=document.getElementById('hero-canvas');if(!cvs)return;var ctx=cvs.getContext('2d'),W,H,cols,drops,particles=[];var WORDS=['DOCKER','PHP','LARAVEL','MYSQL','BACKLORD','APACHE','COMPOSER','ARTISAN','NGINX','SSH','ENV','DB','01','10','WP','MVC'];function resize(){W=cvs.width=cvs.offsetWidth||window.innerWidth;H=cvs.height=cvs.offsetHeight||window.innerHeight;cols=Math.floor(W/22);drops=[];for(var i=0;i<cols;i++)drops.push(Math.random()*-(H/14));}resize();window.addEventListener('resize',resize);function mkPart(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.25,vy:-Math.random()*0.3-0.05,r:Math.random()*1.3+0.3,a:Math.random()*0.28+0.05,life:Math.random()*0.6+0.4};}for(var p=0;p<55;p++)particles.push(mkPart());var matTick=0;function draw(){ctx.fillStyle='rgba(3,3,3,0.08)';ctx.fillRect(0,0,W,H);matTick++;if(matTick%5===0){ctx.font='12px "Share Tech Mono",monospace';for(var i=0;i<cols;i++){var word=WORDS[Math.floor(Math.random()*WORDS.length)];ctx.fillStyle='rgba(212,175,55,'+(Math.random()*0.18+0.04)+')';ctx.fillText(word[0]||'0',i*22,drops[i]*14);if(drops[i]*14>H&&Math.random()>0.975)drops[i]=0;drops[i]+=0.5;}}for(var j=0;j<particles.length;j++){var pt=particles[j];pt.x+=pt.vx;pt.y+=pt.vy;pt.life-=0.0014;if(pt.life<=0||pt.y<-10){particles[j]=mkPart();particles[j].y=H+5;continue;}for(var k=j+1;k<particles.length;k++){var pt2=particles[k],dx=pt.x-pt2.x,dy=pt.y-pt2.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<80){ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(pt2.x,pt2.y);ctx.strokeStyle='rgba(212,175,55,'+(0.06*(1-dist/80)*pt.life)+')';ctx.lineWidth=0.5;ctx.stroke();}}ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle='rgba(212,175,55,'+(pt.a*pt.life)+')';ctx.fill();}requestAnimationFrame(draw);}draw();})();
+
+/* CIERRE CANVAS */
+(function(){var cvs=document.getElementById('cierre-canvas');if(!cvs)return;var ctx=cvs.getContext('2d'),W,H,sparks=[];function resize(){W=cvs.width=cvs.offsetWidth||window.innerWidth;H=cvs.height=cvs.offsetHeight||500;}resize();window.addEventListener('resize',resize);function mkSpark(){var angle=Math.random()*Math.PI*2,speed=Math.random()*0.55+0.1;return{x:(W||800)*0.5+(Math.random()-0.5)*300,y:(H||400)*0.5+(Math.random()-0.5)*120,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-0.12,r:Math.random()*1.2+0.3,a:Math.random()*0.38+0.08,life:Math.random()*0.7+0.3};}for(var i=0;i<70;i++)sparks.push(mkSpark());function drawC(){ctx.clearRect(0,0,W,H);for(var i=0;i<sparks.length;i++){var s=sparks[i];s.x+=s.vx;s.y+=s.vy;s.life-=0.007;if(s.life<=0){sparks[i]=mkSpark();continue;}ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(212,175,55,'+(s.a*Math.max(0,s.life))+')';ctx.fill();}requestAnimationFrame(drawC);}drawC();})();
+
+/* COUNTERS */
+function runCounter(el){var target=parseInt(el.getAttribute('data-to'),10),suf=el.getAttribute('data-suf')||'',n=0,step=Math.max(1,Math.ceil(target/50));var iv=setInterval(function(){n=Math.min(n+step,target);el.textContent=n+suf;if(n>=target)clearInterval(iv);},28);}
+
+/* REVEAL */
+var rvObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return;e.target.classList.add('on');e.target.querySelectorAll('.c-num[data-to]').forEach(runCounter);rvObs.unobserve(e.target);});},{threshold:0.1,rootMargin:'0px 0px -25px 0px'});
+document.querySelectorAll('.rv').forEach(function(el){rvObs.observe(el);});
+
+/* TIMELINE */
+function tact(i){document.querySelectorAll('.t-step').forEach(function(s,idx){s.classList.toggle('on',idx===i);});}
+
+/* CARD 3D TILT */
+document.querySelectorAll('.doc-card').forEach(function(card){card.addEventListener('mousemove',function(e){var r=card.getBoundingClientRect(),dx=(e.clientX-(r.left+r.width/2))/(r.width/2),dy=(e.clientY-(r.top+r.height/2))/(r.height/2);card.style.transform='perspective(900px) rotateY('+(dx*5)+'deg) rotateX('+(-dy*3.5)+'deg) translateZ(6px)';card.style.setProperty('--rx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');card.style.setProperty('--ry',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');});card.addEventListener('mouseleave',function(){card.style.transform='perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0)';});});
+
+/* TERMINAL */
+var TERM_LINES=[
+  {cls:'tp',text:'[backlord@fp064 ~]$ ',d:0},
+  {cls:'tc',text:'docker compose up -d',d:500},
+  {cls:'ts',text:'✓ Network daw-docker_default  Created',d:1100},
+  {cls:'ts',text:'✓ Container daw-db            Started',d:1500},
+  {cls:'ts',text:'✓ Container daw-web           Started',d:1900},
+  {cls:'ts',text:'✓ Container daw-laravel-web   Started',d:2300},
+  {cls:'ts',text:'✓ Container daw-wordpress     Started',d:2700},
+  {cls:'tp',text:'[backlord@fp064 ~]$ ',d:3300},
+  {cls:'tc',text:'docker exec -it daw-laravel-web php artisan migrate',d:3300},
+  {cls:'to',text:'INFO  Preparing database.',d:4100},
+  {cls:'ts',text:'0001_create_users_table ............ DONE',d:4500},
+  {cls:'ts',text:'0001_create_cache_table ............ DONE',d:4820},
+  {cls:'ts',text:'0001_create_jobs_table  ............ DONE',d:5140},
+  {cls:'tp',text:'[backlord@fp064 ~]$ ',d:5800},
+  {cls:'tc',text:'curl -I https://fp064.techlab.uoc.edu/~uocx3/',d:5800},
+  {cls:'ts',text:'HTTP/1.1 200 OK  ·  Sistema online ✓',d:6700}
+];
+function buildTerm(){var body=document.getElementById('term-body');if(!body)return;body.innerHTML='';var lastPrompt=null;TERM_LINES.forEach(function(line){setTimeout(function(){if(line.cls==='tp'){var div=document.createElement('div');div.className='t-line';div.innerHTML='<span class="tp">'+line.text+'</span>';body.appendChild(div);lastPrompt=div.querySelector('.tp');}else if(line.cls==='tc'&&lastPrompt){var span=document.createElement('span');span.className='tc';span.textContent=line.text;lastPrompt.appendChild(span);lastPrompt=null;}else{var div2=document.createElement('div');div2.className='t-line';div2.innerHTML='<span class="'+line.cls+'">'+line.text+'</span>';body.appendChild(div2);lastPrompt=null;}body.scrollTop=body.scrollHeight;},line.d);});setTimeout(buildTerm,9200);}
+setTimeout(buildTerm,300);
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}});});
+</script>
+</body>
+</html>

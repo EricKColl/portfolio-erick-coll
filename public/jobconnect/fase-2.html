@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobConnect — Full Stack Attack · Producto 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════════════ */
+:root {
+  --c:   #00f5ff;
+  --c2:  #00cfea;
+  --m:   #ff006e;
+  --g:   #00ff9f;
+  --y:   #ffe000;
+  --w:   #ffffff;
+  --bg:  #000408;
+  --bg1: #00080f;
+  --bg2: #000c18;
+  --panel: rgba(0,12,30,.88);
+  --border: rgba(0,245,255,.13);
+  --border-m: rgba(255,0,110,.12);
+  --text: #c5f0ff;
+  --muted: #3e7a90;
+  --mono: 'Share Tech Mono', monospace;
+  --head: 'Orbitron', monospace;
+  --body: 'Rajdhani', sans-serif;
+  --glow:   0 0 18px rgba(0,245,255,.55),0 0 50px rgba(0,245,255,.18);
+  --glow-m: 0 0 18px rgba(255,0,110,.55),0 0 50px rgba(255,0,110,.18);
+  --glow-g: 0 0 18px rgba(0,255,159,.55),0 0 50px rgba(0,255,159,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);font-family:var(--body);color:var(--text);overflow-x:hidden;cursor:none}
+
+/* ═══════════════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════════════ */
+#cursor-dot{position:fixed;width:7px;height:7px;background:var(--c);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:transform .1s;mix-blend-mode:screen}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid rgba(0,245,255,.6);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s,opacity .3s;opacity:.5}
+
+/* ═══════════════════════════════════════════════════════
+   BOOT SEQUENCE
+═══════════════════════════════════════════════════════ */
+#boot{position:fixed;inset:0;background:#000;z-index:99990;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .9s}
+#boot.gone{opacity:0;pointer-events:none}
+.boot-logo{font-family:var(--head);font-size:clamp(2.5rem,8vw,5.5rem);font-weight:900;letter-spacing:.25em;color:var(--c);text-shadow:var(--glow);animation:bootPulse 1.2s ease-in-out infinite}
+.boot-sub{font-family:var(--mono);font-size:.65rem;letter-spacing:.35em;color:rgba(0,245,255,.45);text-transform:uppercase}
+.boot-bar{width:280px;height:2px;background:rgba(0,245,255,.08);border-radius:2px;overflow:hidden}
+.boot-fill{height:100%;width:0;background:linear-gradient(90deg,var(--bg),var(--c),var(--g));transition:width 2.6s cubic-bezier(.4,0,.2,1)}
+.boot-msg{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;color:rgba(0,245,255,.4)}
+.blink{animation:blink .65s step-end infinite}
+@keyframes bootPulse{0%,100%{opacity:.6;text-shadow:0 0 30px rgba(0,245,255,.3)}50%{opacity:1;text-shadow:var(--glow)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ═══════════════════════════════════════════════════════
+   CANVAS LAYER
+═══════════════════════════════════════════════════════ */
+#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.18}
+
+/* ═══════════════════════════════════════════════════════
+   SCANLINES
+═══════════════════════════════════════════════════════ */
+#scanlines{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.11) 0px,rgba(0,0,0,.11) 1px,transparent 2px,transparent 4px);
+  animation:scan 10s linear infinite}
+@keyframes scan{from{background-position:0 0}to{background-position:0 10px}}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN WRAPPER
+═══════════════════════════════════════════════════════ */
+#app{position:relative;z-index:2;width:min(1320px,100%);margin:0 auto}
+
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:80px 40px 60px;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%,rgba(0,245,255,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 40% at 10% 60%,rgba(255,0,110,.05) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 40%,rgba(0,255,159,.04) 0%,transparent 50%),
+    var(--bg);
+}
+.hero::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,245,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.025) 1px,transparent 1px);
+  background-size:60px 60px;animation:gridMove 30s linear infinite;pointer-events:none}
+@keyframes gridMove{to{background-position:60px 60px}}
+
+/* Hex rings decoration */
+.hero-ring{position:absolute;border-radius:50%;pointer-events:none;border:1px solid rgba(0,245,255,.09);animation:ringFloat 8s ease-in-out infinite}
+.hero-ring:nth-child(1){width:500px;height:500px;top:-120px;right:-80px;border-color:rgba(0,245,255,.06);animation-delay:0s}
+.hero-ring:nth-child(2){width:300px;height:300px;bottom:-80px;left:-60px;border-color:rgba(255,0,110,.07);animation-delay:2s}
+.hero-ring:nth-child(3){width:200px;height:200px;top:15%;left:8%;border-color:rgba(0,255,159,.05);animation-delay:4s}
+@keyframes ringFloat{0%,100%{transform:rotate(0deg) scale(1)}50%{transform:rotate(12deg) scale(1.04)}}
+
+/* BADGE */
+.h-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--c);
+  padding:8px 20px;
+  border:1px solid rgba(0,245,255,.22);
+  background:rgba(0,245,255,.04);
+  margin-bottom:26px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--glow);
+}
+.h-badge::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(0,245,255,.12),transparent);transform:translateX(-100%);animation:shimmer 3.5s ease-in-out infinite}
+.h-badge .dot{width:6px;height:6px;background:var(--c);border-radius:50%;box-shadow:var(--glow);animation:blink 1.4s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* KICKER */
+.h-eyebrow{display:block;font-family:var(--head);font-size:clamp(.7rem,1.2vw,.95rem);letter-spacing:.4em;color:rgba(0,245,255,.4);-webkit-text-stroke:1px rgba(0,245,255,.25);margin-bottom:8px}
+
+/* MAIN TITLE */
+.h-title{
+  font-family:var(--head);font-weight:900;
+  font-size:clamp(2.8rem,8vw,7.5rem);
+  line-height:.92;letter-spacing:-.02em;
+  margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:14px;
+  position:relative;
+}
+.t-w{background:linear-gradient(180deg,#fff 0%,#9dd8e8 60%,#4a8fa8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.t-c{background:linear-gradient(180deg,#fff 0%,var(--c) 55%,#008fa8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(0,245,255,.7));animation:neonPulse 3s ease-in-out infinite}
+.t-m{background:linear-gradient(180deg,#ffb8d0 0%,var(--m) 60%,#800038 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(255,0,110,.5))}
+@keyframes neonPulse{0%,100%{filter:drop-shadow(0 0 24px rgba(0,245,255,.7))}50%{filter:drop-shadow(0 0 50px rgba(0,245,255,1)) drop-shadow(0 0 100px rgba(0,245,255,.35))}}
+
+/* Glitch */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;background:inherit;-webkit-background-clip:text;background-clip:text;color:transparent}
+.glitch::before{animation:glA 5s ease-in-out infinite;clip-path:polygon(0 0,100% 0,100% 35%,0 35%)}
+.glitch::after{animation:glB 5s ease-in-out infinite;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%)}
+@keyframes glA{0%,88%,100%{transform:none;opacity:0}90%{transform:translate(-4px,1px);opacity:.8;filter:drop-shadow(-3px 0 rgba(255,0,110,.9))}93%{transform:translate(3px,-1px);opacity:.5}}
+@keyframes glB{0%,88%,100%{transform:none;opacity:0}91%{transform:translate(4px,1px);opacity:.8;filter:drop-shadow(3px 0 rgba(0,255,159,.9))}94%{transform:translate(-3px,0);opacity:.5}}
+
+.h-sub{font-size:clamp(.85rem,1.5vw,1.05rem);color:#8ac8d8;line-height:1.6;max-width:800px;margin:0 auto 8px}
+.h-sub strong{color:var(--c)}
+.h-intro{font-family:var(--mono);font-size:clamp(.68rem,.85vw,.82rem);color:var(--muted);line-height:1.9;max-width:900px;margin:0 auto}
+.h-intro em{color:rgba(0,245,255,.65);font-style:normal}
+
+.h-accent{height:2px;width:360px;max-width:100%;margin:20px auto;background:linear-gradient(90deg,transparent,var(--c),var(--g),var(--m),transparent);box-shadow:0 0 18px rgba(0,245,255,.4);border-radius:2px;animation:accentPulse 4s ease-in-out infinite}
+@keyframes accentPulse{0%,100%{transform:scaleX(1);opacity:.8}50%{transform:scaleX(1.08);opacity:1}}
+
+/* HERO STATS */
+.h-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px;width:100%}
+.h-stat{padding:16px;border:1px solid rgba(0,245,255,.11);background:linear-gradient(135deg,rgba(0,245,255,.06),rgba(0,245,255,.02));border-radius:3px;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;cursor:default}
+.h-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.5}
+.h-stat::after{content:"";position:absolute;bottom:-20px;right:-20px;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(0,245,255,.12),transparent 70%)}
+.h-stat:hover{transform:translateY(-3px);border-color:rgba(0,245,255,.3);box-shadow:0 8px 30px rgba(0,245,255,.12)}
+.h-stat .num{font-family:var(--head);font-size:2rem;font-weight:900;background:linear-gradient(180deg,#fff,var(--c));-webkit-background-clip:text;background-clip:text;color:transparent;display:block;line-height:1}
+.h-stat b{display:block;font-family:var(--head);font-size:.7rem;color:#fff;letter-spacing:.1em;margin:6px 0 4px}
+.h-stat span{font-family:var(--mono);font-size:.68rem;color:var(--muted);line-height:1.5}
+
+/* SCROLL INDICATOR */
+.h-scroll{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-line{width:1px;height:40px;background:linear-gradient(180deg,var(--c),transparent);animation:scrollPulse 2s ease-in-out infinite}
+.scroll-txt{font-family:var(--mono);font-size:.58rem;letter-spacing:.3em;color:var(--muted)}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1.2)}}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION WRAPPER
+═══════════════════════════════════════════════════════ */
+.section{padding:80px 40px;position:relative;overflow:hidden}
+.section::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,245,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.012) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none}
+.section.alt{background:rgba(0,5,12,.5)}
+.s-inner{max-width:1240px;margin:0 auto;position:relative;z-index:1}
+
+.s-kicker{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.s-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.3em;color:var(--muted)}
+.s-line{width:44px;height:1px;background:linear-gradient(90deg,var(--c),transparent)}
+.s-title{font-family:var(--head);font-size:clamp(1rem,2.2vw,1.7rem);font-weight:700;color:#e8faff;letter-spacing:.04em}
+.s-lead{font-size:1rem;line-height:1.85;color:rgba(140,200,220,.7);max-width:820px;margin-bottom:36px;font-weight:400}
+.s-lead strong{color:var(--c)}
+
+/* ═══════════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════════ */
+.card{
+  position:relative;overflow:hidden;border-radius:4px;
+  padding:26px;
+  border:1px solid rgba(0,245,255,.11);
+  background:var(--panel);
+  backdrop-filter:blur(10px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 20px 60px rgba(0,0,0,.5);
+  transition:transform .4s ease,box-shadow .4s ease;
+  transform-style:preserve-3d;
+}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.7),rgba(0,255,159,.3),transparent);box-shadow:0 0 12px rgba(0,245,255,.3)}
+.card::after{content:"";position:absolute;bottom:0;right:0;width:180px;height:180px;background:conic-gradient(from 240deg,transparent 0%,rgba(0,245,255,.07) 30%,transparent 60%);pointer-events:none;filter:blur(18px)}
+.card-m::before{background:linear-gradient(90deg,transparent,rgba(255,0,110,.6),rgba(0,245,255,.3),transparent)}
+.card-m::after{background:conic-gradient(from 60deg,transparent 0%,rgba(255,0,110,.07) 30%,transparent 60%)}
+.card-g::before{background:linear-gradient(90deg,transparent,rgba(0,255,159,.5),rgba(0,245,255,.3),transparent)}
+
+/* corners */
+.card .co{position:absolute;width:12px;height:12px}
+.card .co.tl{top:0;left:0;border-top:2px solid var(--c);border-left:2px solid var(--c)}
+.card .co.tr{top:0;right:0;border-top:2px solid var(--c);border-right:2px solid var(--c)}
+.card .co.bl{bottom:0;left:0;border-bottom:2px solid rgba(0,245,255,.35);border-left:2px solid rgba(0,245,255,.35)}
+.card .co.br{bottom:0;right:0;border-bottom:2px solid rgba(0,245,255,.35);border-right:2px solid rgba(0,245,255,.35)}
+.card-m .co.tl,.card-m .co.tr{border-color:var(--m)}
+.card-g .co.tl,.card-g .co.tr{border-color:var(--g)}
+
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+.card-title-wrap{display:flex;gap:14px;align-items:flex-start}
+.c-ico{flex:0 0 auto;width:48px;height:48px;border-radius:3px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(0,245,255,.14),rgba(0,245,255,.04));border:1px solid rgba(0,245,255,.28);box-shadow:0 0 18px rgba(0,245,255,.12);font-family:var(--head);font-size:.7rem;font-weight:900;letter-spacing:.08em;color:var(--c);text-shadow:var(--glow);position:relative;overflow:hidden}
+.c-ico::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent)}
+.c-ico-m{background:linear-gradient(135deg,rgba(255,0,110,.14),rgba(255,0,110,.04));border-color:rgba(255,0,110,.28);box-shadow:0 0 18px rgba(255,0,110,.12);color:var(--m);text-shadow:var(--glow-m)}
+.c-ico-g{background:linear-gradient(135deg,rgba(0,255,159,.14),rgba(0,255,159,.04));border-color:rgba(0,255,159,.28);box-shadow:0 0 18px rgba(0,255,159,.12);color:var(--g);text-shadow:var(--glow-g)}
+.card h2{margin:0 0 6px;font-family:var(--head);font-size:clamp(1rem,1.8vw,1.4rem);font-weight:900;color:#eafaff;line-height:1.1;letter-spacing:-.01em}
+.card h3{margin:0 0 6px;font-family:var(--head);font-size:clamp(.9rem,1.5vw,1.2rem);font-weight:700;color:#eafaff;line-height:1.1}
+.card p{margin:8px 0 0;color:var(--muted);font-size:.9rem;line-height:1.82;position:relative;z-index:1}
+.card p strong{color:var(--c)}
+
+.badge{padding:6px 12px;border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);color:var(--c);font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.2em;border-radius:2px;white-space:nowrap;flex:0 0 auto}
+.badge-m{border-color:rgba(255,0,110,.2);background:rgba(255,0,110,.05);color:var(--m)}
+.badge-g{border-color:rgba(0,255,159,.2);background:rgba(0,255,159,.05);color:var(--g)}
+.badge-y{border-color:rgba(255,224,0,.2);background:rgba(255,224,0,.05);color:var(--y)}
+
+/* ═══════════════════════════════════════════════════════
+   GRIDS
+═══════════════════════════════════════════════════════ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+.feat{border-radius:3px;padding:16px;border:1px solid rgba(0,245,255,.09);background:linear-gradient(135deg,rgba(0,245,255,.04),rgba(0,245,255,.01));position:relative;overflow:hidden;transition:border-color .3s,transform .3s,box-shadow .3s}
+.feat::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),transparent);opacity:.4}
+.feat:hover{border-color:rgba(0,245,255,.26);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,245,255,.09)}
+.feat strong{display:block;font-family:var(--head);font-size:.7rem;font-weight:700;color:#d8f8ff;margin-bottom:8px;letter-spacing:.04em}
+.feat span{display:block;color:var(--muted);font-family:var(--mono);font-size:.7rem;line-height:1.65}
+.feat-m{border-color:rgba(255,0,110,.09);background:linear-gradient(135deg,rgba(255,0,110,.04),rgba(255,0,110,.01))}
+.feat-m::before{background:linear-gradient(90deg,transparent,rgba(255,0,110,.4),transparent)}
+.feat-m:hover{border-color:rgba(255,0,110,.25);box-shadow:0 8px 28px rgba(255,0,110,.09)}
+.feat-g{border-color:rgba(0,255,159,.09);background:linear-gradient(135deg,rgba(0,255,159,.04),rgba(0,255,159,.01))}
+.feat-g::before{background:linear-gradient(90deg,transparent,rgba(0,255,159,.4),transparent)}
+.feat-y{border-color:rgba(255,224,0,.09);background:linear-gradient(135deg,rgba(255,224,0,.04),rgba(255,224,0,.01))}
+.feat-y::before{background:linear-gradient(90deg,transparent,rgba(255,224,0,.4),transparent)}
+
+/* ═══════════════════════════════════════════════════════
+   TIMELINE
+═══════════════════════════════════════════════════════ */
+.timeline{position:relative;padding-left:28px;display:grid;gap:12px}
+.timeline::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--c),rgba(0,255,159,.5),rgba(255,0,110,.3));box-shadow:0 0 12px rgba(0,245,255,.4)}
+.tl-card{position:relative;border-radius:3px;padding:15px;border:1px solid rgba(0,245,255,.09);background:linear-gradient(135deg,rgba(0,245,255,.04),rgba(0,245,255,.01));transition:border-color .3s,transform .3s}
+.tl-card:hover{border-color:rgba(0,245,255,.24);transform:translateX(4px)}
+.tl-card::before{content:"";position:absolute;left:-24px;top:16px;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 12px rgba(0,245,255,.8);border:2px solid var(--bg)}
+.tl-card b{display:block;font-family:var(--head);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:6px}
+.tl-card span{display:block;color:var(--muted);font-family:var(--mono);font-size:.7rem;line-height:1.7}
+
+/* ═══════════════════════════════════════════════════════
+   TERMINAL
+═══════════════════════════════════════════════════════ */
+.terminal{background:#020508;border:1px solid rgba(0,245,255,.12);border-radius:3px;overflow:hidden;margin-top:18px;position:relative;z-index:1}
+.term-bar{display:flex;align-items:center;gap:7px;padding:9px 14px;background:rgba(0,245,255,.03);border-bottom:1px solid rgba(0,245,255,.07)}
+.tdot{width:9px;height:9px;border-radius:50%}
+.tdot.r{background:#FF5F57}.tdot.y{background:#FEBC2E}.tdot.g{background:#28C840}
+.term-lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.15em;color:var(--muted);margin-left:6px}
+.term-body{padding:16px 18px;min-height:180px;max-height:200px;overflow:hidden}
+.tl{font-family:var(--mono);font-size:.72rem;line-height:1.85}
+.tp{color:var(--c)}.tc{color:var(--text)}.to{color:rgba(140,200,220,.7)}.ts{color:#40e060}.te{color:rgba(255,0,110,.8)}.ty{color:var(--y)}
+
+/* ═══════════════════════════════════════════════════════
+   NAV TABS
+═══════════════════════════════════════════════════════ */
+.nav-tabs{display:flex;gap:2px;flex-wrap:wrap;padding:14px 40px 0;border-bottom:1px solid rgba(0,245,255,.09);background:rgba(0,3,10,.7);position:sticky;top:0;z-index:50}
+.nav-tabs::before{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.3),rgba(0,255,159,.2),rgba(255,0,110,.15),transparent)}
+.tab-btn{appearance:none;border:none;cursor:pointer;padding:10px 15px 12px;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);background:transparent;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;position:relative}
+.tab-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,245,255,.07),transparent);opacity:0;transition:opacity .2s}
+.tab-btn:hover{color:rgba(0,245,255,.7)}
+.tab-btn:hover::before{opacity:1}
+.tab-btn.active{color:var(--c);border-bottom-color:var(--c);text-shadow:0 0 12px rgba(0,245,255,.8)}
+.tab-btn.active::after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--c);box-shadow:var(--glow);border-radius:2px}
+
+/* ═══════════════════════════════════════════════════════
+   PANELS
+═══════════════════════════════════════════════════════ */
+.panel-wrap{padding:28px 40px 50px;display:grid;gap:20px}
+.tab-panel{display:none;opacity:0}
+.tab-panel.active{display:block;animation:panelIn .35s cubic-bezier(.2,.8,.18,1) forwards}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px) scale(.996)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════════════════════
+   VIDEO FACADES
+═══════════════════════════════════════════════════════ */
+.media-frame{position:relative;z-index:1;margin-top:16px;border-radius:4px;padding:12px;background:rgba(0,3,14,.6);border:1px solid rgba(0,245,255,.1);box-shadow:inset 0 0 25px rgba(0,0,0,.4)}
+.holo-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:8px 12px;border:1px solid rgba(0,245,255,.08);background:rgba(0,245,255,.03);border-radius:2px}
+.holo-lbl{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+.holo-dots{display:flex;align-items:center;gap:7px}
+.hdot{width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:var(--glow);animation:blink 1.4s ease-in-out infinite}
+.hdot.m{background:var(--m);box-shadow:var(--glow-m);animation-delay:.5s}
+.hdot.g{background:var(--g);box-shadow:var(--glow-g);animation-delay:1s}
+.holo-txt{font-family:var(--mono);font-size:.58rem;color:rgba(0,245,255,.3)}
+
+.yt-facade{position:relative;width:100%;padding-top:56.25%;cursor:pointer;border-radius:3px;overflow:hidden;background:#000}
+.yt-facade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,filter .4s;filter:saturate(1.06) contrast(1.03)}
+.yt-facade:hover img{transform:scale(1.03);filter:saturate(1.15) contrast(1.06) brightness(.85)}
+.yt-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.08) 0%,transparent 30%,transparent 60%,rgba(0,0,0,.5) 100%);transition:background .4s}
+.yt-facade:hover .yt-overlay{background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,transparent 30%,transparent 60%,rgba(0,0,0,.65) 100%)}
+.yt-scan{position:absolute;inset:0;z-index:2;background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,rgba(0,0,0,.04) 1px,transparent 2px,transparent 4px);pointer-events:none}
+.yt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);z-index:3;width:74px;height:74px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid rgba(0,245,255,.5);box-shadow:0 0 0 6px rgba(0,245,255,.06),0 0 28px rgba(0,245,255,.35);display:flex;align-items:center;justify-content:center;transition:transform .3s,box-shadow .3s,border-color .3s;backdrop-filter:blur(5px)}
+.yt-facade:hover .yt-play{transform:translate(-50%,-50%) scale(1.12);border-color:var(--c);box-shadow:0 0 0 12px rgba(0,245,255,.08),0 0 40px rgba(0,245,255,.55)}
+.yt-play svg{width:28px;height:28px;fill:var(--c);margin-left:4px;filter:drop-shadow(0 0 8px rgba(0,245,255,.8));transition:fill .3s}
+.yt-facade:hover .yt-play svg{fill:#fff}
+.yt-lbl{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:3;font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,245,255,.5);white-space:nowrap;transition:color .3s}
+.yt-facade:hover .yt-lbl{color:var(--c)}
+.yt-facade.loaded iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:3px}
+
+/* DOC EMBED */
+.doc-embed{position:relative;width:100%;height:640px;border-radius:3px;overflow:hidden;border:1px solid rgba(0,245,255,.08);background:rgba(0,0,0,.3)}
+.doc-embed::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--g),transparent);z-index:2}
+.doc-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* ═══════════════════════════════════════════════════════
+   API / MODULES SHOWCASE
+═══════════════════════════════════════════════════════ */
+.api-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px;position:relative;z-index:1}
+.api-card{border-radius:3px;padding:18px;border:1px solid rgba(0,245,255,.1);background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(0,245,255,.01));position:relative;overflow:hidden;transition:border-color .3s,transform .3s;cursor:default}
+.api-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.5),transparent)}
+.api-card:hover{border-color:rgba(0,245,255,.28);transform:translateY(-3px)}
+.api-icon{width:36px;height:36px;border:1px solid rgba(0,245,255,.25);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:.6rem;color:var(--c);margin-bottom:12px;background:rgba(0,245,255,.05)}
+.api-name{font-family:var(--head);font-size:.8rem;font-weight:700;color:#eafaff;letter-spacing:.05em;margin-bottom:7px}
+.api-desc{font-family:var(--mono);font-size:.7rem;color:var(--muted);line-height:1.6}
+.api-tag{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;padding:3px 8px;border:1px solid rgba(0,245,255,.15);color:rgba(0,245,255,.55)}
+.api-card.ac-m{border-color:rgba(255,0,110,.1);background:linear-gradient(135deg,rgba(255,0,110,.05),rgba(255,0,110,.01))}
+.api-card.ac-m::before{background:linear-gradient(90deg,transparent,rgba(255,0,110,.5),transparent)}
+.api-card.ac-m:hover{border-color:rgba(255,0,110,.28)}
+.api-card.ac-m .api-icon{border-color:rgba(255,0,110,.25);color:var(--m);background:rgba(255,0,110,.05)}
+.api-card.ac-m .api-tag{border-color:rgba(255,0,110,.2);color:rgba(255,0,110,.6)}
+.api-card.ac-g{border-color:rgba(0,255,159,.1);background:linear-gradient(135deg,rgba(0,255,159,.05),rgba(0,255,159,.01))}
+.api-card.ac-g::before{background:linear-gradient(90deg,transparent,rgba(0,255,159,.5),transparent)}
+.api-card.ac-g:hover{border-color:rgba(0,255,159,.28)}
+.api-card.ac-g .api-icon{border-color:rgba(0,255,159,.25);color:var(--g);background:rgba(0,255,159,.05)}
+.api-card.ac-g .api-tag{border-color:rgba(0,255,159,.2);color:rgba(0,255,159,.6)}
+.api-card.ac-y{border-color:rgba(255,224,0,.1);background:linear-gradient(135deg,rgba(255,224,0,.05),rgba(255,224,0,.01))}
+.api-card.ac-y::before{background:linear-gradient(90deg,transparent,rgba(255,224,0,.5),transparent)}
+.api-card.ac-y:hover{border-color:rgba(255,224,0,.28)}
+.api-card.ac-y .api-icon{border-color:rgba(255,224,0,.25);color:var(--y);background:rgba(255,224,0,.05)}
+
+/* ═══════════════════════════════════════════════════════
+   ARCHITECTURE DIAGRAM (SVG-like CSS)
+═══════════════════════════════════════════════════════ */
+.arch-flow{display:grid;gap:8px;margin-top:18px;position:relative;z-index:1}
+.arch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.arch-box{flex:1;min-width:140px;padding:12px 16px;border:1px solid rgba(0,245,255,.14);background:rgba(0,245,255,.04);border-radius:3px;text-align:center;position:relative;transition:border-color .3s}
+.arch-box:hover{border-color:rgba(0,245,255,.35)}
+.arch-box .ab-tag{font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px}
+.arch-box .ab-name{font-family:var(--head);font-size:.75rem;color:#d8f8ff;font-weight:700}
+.arch-box.ab-m{border-color:rgba(255,0,110,.14);background:rgba(255,0,110,.04)}
+.arch-box.ab-m:hover{border-color:rgba(255,0,110,.35)}
+.arch-box.ab-m .ab-name{color:rgba(255,150,180,1)}
+.arch-box.ab-g{border-color:rgba(0,255,159,.14);background:rgba(0,255,159,.04)}
+.arch-box.ab-g .ab-name{color:rgba(100,255,180,1)}
+.arch-arrow{color:rgba(0,245,255,.4);font-family:var(--mono);font-size:.8rem;flex:0 0 auto}
+.arch-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.15),transparent);margin:4px 0}
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════ */
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1}
+.btn{appearance:none;border:none;border-radius:3px;padding:10px 18px;font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;white-space:nowrap;display:inline-block;text-align:center}
+.btn::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);transform:translateX(-100%);transition:transform .4s}
+.btn:hover::before{transform:translateX(100%)}
+.btn:hover{transform:translateY(-2px)}
+.btn-c{color:#000a12;background:linear-gradient(180deg,rgba(180,252,255,1),var(--c),rgba(0,160,181,1));box-shadow:0 0 0 1px rgba(0,245,255,.3) inset,0 0 18px rgba(0,245,255,.3)}
+.btn-c:hover{box-shadow:0 0 0 1px rgba(0,245,255,.5) inset,0 0 28px rgba(0,245,255,.5)}
+.btn-outline{color:var(--c);background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.2);box-shadow:0 0 8px rgba(0,245,255,.04)}
+.btn-outline:hover{border-color:rgba(0,245,255,.45);box-shadow:0 0 18px rgba(0,245,255,.18)}
+.btn-m{color:var(--m);background:rgba(255,0,110,.04);border:1px solid rgba(255,0,110,.2)}
+.btn-m:hover{border-color:rgba(255,0,110,.45);box-shadow:0 0 18px rgba(255,0,110,.2)}
+.btn-g{color:var(--g);background:rgba(0,255,159,.04);border:1px solid rgba(0,255,159,.2)}
+.btn-g:hover{border-color:rgba(0,255,159,.45);box-shadow:0 0 18px rgba(0,255,159,.18)}
+
+/* ═══════════════════════════════════════════════════════
+   LIST CARDS
+═══════════════════════════════════════════════════════ */
+.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+.list-card{border-radius:3px;padding:18px;border:1px solid rgba(0,245,255,.09);background:linear-gradient(180deg,rgba(0,245,255,.04),rgba(0,245,255,.01));position:relative;overflow:hidden}
+.list-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.45),transparent)}
+.list-card h4{margin:0 0 10px;font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--c);text-shadow:0 0 8px rgba(0,245,255,.35)}
+.list-card ul{margin:0;padding-left:16px}
+.list-card li{color:var(--muted);font-family:var(--mono);font-size:.7rem;line-height:1.75;margin:0 0 3px}
+.list-card li::marker{color:var(--c)}
+
+/* ═══════════════════════════════════════════════════════
+   COUNTERS
+═══════════════════════════════════════════════════════ */
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:32px}
+.cbox{border:1px solid rgba(0,245,255,.11);padding:18px 12px;text-align:center;position:relative;overflow:hidden;background:rgba(0,0,0,.2);transition:border-color .4s}
+.cbox::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),transparent);transform:scaleX(0);transition:transform .5s}
+.cbox:hover{border-color:rgba(0,245,255,.28)}.cbox:hover::after{transform:scaleX(1)}
+.cbox .cn{font-family:var(--head);font-size:1.7rem;font-weight:900;color:var(--c);text-shadow:var(--glow);line-height:1;margin-bottom:6px}
+.cbox .cl{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--muted)}
+
+/* ═══════════════════════════════════════════════════════
+   DATA STREAM DECORATION
+═══════════════════════════════════════════════════════ */
+.data-stream{position:absolute;right:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(0,245,255,.5),transparent);animation:dataStream 3.5s ease-in-out infinite;pointer-events:none}
+@keyframes dataStream{0%{opacity:0;transform:scaleY(0) translateY(-100%)}30%{opacity:1}70%{opacity:1}100%{opacity:0;transform:scaleY(0) translateY(100%)}}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+.footer{padding:16px 40px;border-top:1px solid rgba(0,245,255,.07);background:rgba(0,2,8,.7);text-align:center;font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(60,120,140,.5)}
+.footer::before{content:"";display:block;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.18),rgba(255,0,110,.1),transparent);margin-bottom:14px}
+
+/* ═══════════════════════════════════════════════════════
+   REVEAL ANIMATION
+═══════════════════════════════════════════════════════ */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .75s ease,transform .75s ease}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}.rv.d4{transition-delay:.32s}
+
+/* ═══════════════════════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════════════════════ */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.12),rgba(0,255,159,.06),transparent)}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero,.section,.panel-wrap,.nav-tabs{padding-left:24px;padding-right:24px}
+  .h-stats,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:1fr 1fr}
+  .list-grid,.grid-2{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .hero,.section{padding-left:16px;padding-right:16px}
+  .panel-wrap{padding:18px 16px 36px}
+  .nav-tabs{padding-left:16px;padding-right:16px}
+  .h-stats,.counters{grid-template-columns:1fr 1fr}
+  .grid-3,.api-grid{grid-template-columns:1fr}
+  .h-title{font-size:clamp(2.2rem,7vw,3.5rem)}
+}
+</style>
+</head>
+<body>
+
+<!-- ── CURSOR ──────────────────────────────────────── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ── MATRIX CANVAS ──────────────────────────────── -->
+<canvas id="matrix-canvas"></canvas>
+<div id="scanlines"></div>
+
+<!-- ── BOOT ───────────────────────────────────────── -->
+<div id="boot">
+  <div class="boot-logo">JOBCONNECT</div>
+  <div class="boot-sub">FULL STACK ATTACK · PRODUCTO 2</div>
+  <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
+  <div class="boot-msg" id="boot-msg">INICIANDO SISTEMA<span class="blink">_</span></div>
+</div>
+
+<!-- ── APP ────────────────────────────────────────── -->
+<div id="app">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+
+    <div class="h-badge"><span class="dot"></span>FULL STACK ATTACK · PRODUCTO 2 · JOBCONNECT · FRONTEND AVANZADO</div>
+
+    <span class="h-eyebrow">SEGUNDA ÓRBITA</span>
+
+    <h1 class="h-title">
+      <span class="t-w">JOBCONNECT</span>
+      <span class="t-c glitch" data-text="EVOLVES">EVOLVES</span>
+      <span class="t-m">NOW</span>
+    </h1>
+
+    <p class="h-sub">
+      El frontend ya no solo <strong>respira</strong> — ahora <strong>recuerda, arrastra, dibuja y persiste</strong>.
+      El Producto 2 convierte una interfaz con buen pulso en un sistema vivo con APIs HTML5 nativas.
+    </p>
+
+    <p class="h-intro">
+      De arrays en memoria a <em>IndexedDB</em>. De simular el login a <em>localStorage</em> de verdad.
+      De tablas estáticas a <em>drag &amp; drop</em> con eventos de arrastre. De datos sin representación
+      a gráficos con <em>Canvas API</em>. De módulos separados a <em>promesas, async/await y ES modules</em>.
+      Vanilla JS puro. Sin frameworks. Con toda la potencia del estándar.
+      <em>La segunda fase siempre decide si el proyecto merece un tercero.</em>
+    </p>
+
+    <div class="h-accent"></div>
+
+    <div class="h-stats">
+      <div class="h-stat">
+        <span class="num">4</span>
+        <b>HTML5 APIs</b>
+        <span>Canvas · WebStorage · IndexedDB · Drag&amp;Drop</span>
+      </div>
+      <div class="h-stat">
+        <span class="num">4</span>
+        <b>MÓDULOS JS</b>
+        <span>almacenaje.js · dashboard · empleos · usuarios · login</span>
+      </div>
+      <div class="h-stat">
+        <span class="num">∞</span>
+        <b>PERSISTENCIA</b>
+        <span>IndexedDB + localStorage para que los datos no se evaporen al recargar</span>
+      </div>
+      <div class="h-stat">
+        <span class="num">P2</span>
+        <b>PRODUCTO 2</b>
+        <span>La fase donde el frontend deja de ser decorado y empieza a ser funcional de verdad</span>
+      </div>
+    </div>
+
+    <div class="h-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-txt">SCROLL</span>
+    </div>
+  </div>
+
+  <!-- ═══ TABS ═══ -->
+  <div class="nav-tabs" id="navTabs">
+    <button class="tab-btn active" data-tab="intro">INTRO</button>
+    <button class="tab-btn" data-tab="apis">HTML5 APIs</button>
+    <button class="tab-btn" data-tab="modulos">MÓDULOS</button>
+    <button class="tab-btn" data-tab="arquitectura">ARQUITECTURA</button>
+    <button class="tab-btn" data-tab="videos">VÍDEOS</button>
+    <button class="tab-btn" data-tab="paginas">PÁGINAS</button>
+    <button class="tab-btn" data-tab="timeline">TIMELINE</button>
+    <button class="tab-btn" data-tab="cierre">CIERRE</button>
+  </div>
+
+  <!-- ═══ PANELS ═══ -->
+  <div class="panel-wrap">
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  INTRO               ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel active" data-panel="intro">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="data-stream"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">P2</div>
+            <div>
+              <h2>PRODUCTO 2 — SEGUNDA INICIALIZACIÓN</h2>
+              <p>
+                El <strong>Producto 1</strong> fue la demostración de que un equipo puede construir la capa visible.
+                El <strong>Producto 2</strong> es la demostración de que ese mismo equipo sabe hacer que esa capa
+                funcione de verdad — con APIs nativas del navegador, persistencia real, interacciones sofisticadas
+                y código organizado con la madurez de alguien que ya no improvisa.
+              </p>
+              <p>
+                localStorage para sesión. IndexedDB para datos de empleos. Canvas para gráficos nativos.
+                Drag &amp; Drop para el dashboard. Promesas y async/await para todas las operaciones asíncronas.
+                Módulos ES6 para que el código tenga fronteras, no spaghetti.
+                Vanilla JS puro, porque si controlas el estándar, controlas todo lo demás.
+              </p>
+            </div>
+          </div>
+          <div class="badge">SEGUNDA CAPA</div>
+        </div>
+
+        <div class="counters rv d1">
+          <div class="cbox"><div class="cn" data-to="4">0</div><div class="cl">APIs HTML5</div></div>
+          <div class="cbox"><div class="cn" data-to="5">0</div><div class="cl">Módulos JS</div></div>
+          <div class="cbox"><div class="cn" data-to="4">0</div><div class="cl">Páginas SPA</div></div>
+          <div class="cbox"><div class="cn" data-to="2">0</div><div class="cl">Stores BD</div></div>
+          <div class="cbox"><div class="cn" data-to="100" data-suf="%">0</div><div class="cl">Vanilla JS</div></div>
+        </div>
+
+        <div class="grid-2 rv d2">
+          <div class="feat">
+            <strong>DE MEMORIA A PERSISTENCIA REAL</strong>
+            <span>Los datos ya no mueren al recargar. localStorage guarda la sesión activa. IndexedDB almacena empleos con CRUD completo, transacciones y cursores. Bienvenido al mundo donde "actualizar" no es catastrófico.</span>
+          </div>
+          <div class="feat feat-m">
+            <strong>DE HTML ESTÁTICO A INTERFACES VIVAS</strong>
+            <span>El dashboard con drag &amp; drop permite arrastrar ofertas/demandas entre contenedores. Canvas dibuja gráficos en tiempo real. Nada de librerías externas: cada píxel de ese canvas lo pintó el equipo a mano.</span>
+          </div>
+          <div class="feat feat-g">
+            <strong>DE SCRIPTS GLOBALES A MÓDULOS ES6</strong>
+            <span>Todo el CRUD vive en almacenaje.js — un único módulo que se importa donde hace falta. Sin variables globales volando por el aire. Sin colisiones de nombres. Esto es arquitectura, no suerte.</span>
+          </div>
+          <div class="feat feat-y">
+            <strong>PREPARADO PARA EL PRODUCTO 4</strong>
+            <span>El frontend queda listo para que en la entrega final solo haya que sustituir las llamadas a IndexedDB por fetch() a la API del backend del Producto 3. El acoplamiento es tan bajo que ni lo notarás.</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline" data-goto="apis">↗ VER HTML5 APIs</button>
+          <button class="btn btn-outline" data-goto="modulos">↗ MÓDULOS JS</button>
+          <button class="btn btn-outline" data-goto="videos">↗ VÍDEOS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  HTML5 APIs          ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="apis">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">API</div>
+            <div>
+              <h2>HTML5 APIs — EL ARSENAL NATIVO</h2>
+              <p>
+                El navegador moderno es una plataforma de ejecución completa. El Producto 2 explota cuatro de sus APIs más potentes
+                para convertir JobConnect en una aplicación que no solo parece funcional sino que <strong>lo es de verdad</strong>.
+                Sin jQuery. Sin frameworks. Solo el estándar, bien usado.
+              </p>
+            </div>
+          </div>
+          <div class="badge">4 APIs ACTIVAS</div>
+        </div>
+
+        <div class="api-grid rv">
+          <div class="api-card">
+            <div class="api-icon">CVS</div>
+            <div class="api-name">Canvas API</div>
+            <div class="api-desc">Gráfico nativo de ofertas/demandas en la página de empleos. Dibujado línea a línea con la Context 2D API: barras, etiquetas, colores diferenciados por tipo. Sin Chart.js ni librerías externas — solo ctx.fillRect() y determinación.</div>
+            <span class="api-tag">int_3_empleos.js</span>
+          </div>
+          <div class="api-card ac-m">
+            <div class="api-icon">WS</div>
+            <div class="api-name">Web Storage API</div>
+            <div class="api-desc">localStorage almacena el email del usuario activo para que la barra de navegación muestre quién está logueado en todas las páginas. Persistente entre sesiones, sincrónico y simple. El CRUD de usuarios vive en localStorage.</div>
+            <span class="api-tag">almacenaje.js</span>
+          </div>
+          <div class="api-card ac-g">
+            <div class="api-icon">IDB</div>
+            <div class="api-name">IndexedDB</div>
+            <div class="api-desc">Base de datos NoSQL en el navegador para almacenar ofertas y demandas de empleo. Object stores, índices, transacciones, cursores y promesas que envuelven la API de bajo nivel. Todo sin servidor. Todo sin conexión. Todo sin excusas.</div>
+            <span class="api-tag">almacenaje.js · IDB</span>
+          </div>
+          <div class="api-card ac-y">
+            <div class="api-icon">D&D</div>
+            <div class="api-name">Drag &amp; Drop API</div>
+            <div class="api-desc">El dashboard genera tarjetas arrastrables de empleos. El usuario las arrastra al contenedor de selección. Los eventos dragstart, dragover y drop gestionan el flujo completo. Los datos viajan en dataTransfer. Interacción natural, código limpio.</div>
+            <span class="api-tag">int_1_dashboard.js</span>
+          </div>
+        </div>
+
+        <div class="terminal rv d2">
+          <div class="term-bar">
+            <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+            <span class="term-lbl">jobconnect@navegador — almacenaje.js — IndexedDB + localStorage</span>
+          </div>
+          <div class="term-body" id="term1"></div>
+        </div>
+
+        <div class="rv d3">
+          <div class="grid-2" style="margin-top:18px">
+            <div class="feat">
+              <strong>¿POR QUÉ IndexedDB PARA EMPLEOS?</strong>
+              <span>localStorage tiene límite de ~5MB y solo acepta strings. IndexedDB maneja objetos complejos, soporta índices para consultas rápidas y funciona de forma asíncrona sin bloquear el hilo principal. Para una app de empleo real, no hay otra opción.</span>
+            </div>
+            <div class="feat feat-m">
+              <strong>¿POR QUÉ Canvas NATIVO SIN LIBRERÍAS?</strong>
+              <span>Porque el objetivo de la asignatura es demostrar conocimiento del estándar. Chart.js lo haría en 3 líneas, pero no te enseña cómo funciona la Context 2D API. Aquí cada barra, cada eje y cada etiqueta es código deliberado, no delegado.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  MÓDULOS JS          ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="modulos">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">MOD</div>
+            <div>
+              <h2>ARQUITECTURA MODULAR — ES6 MODULES</h2>
+              <p>
+                El código del Producto 2 no es un archivo de 800 líneas con todo mezclado como un cajón de sastre digital.
+                Es un sistema modular donde cada archivo tiene una responsabilidad clara y todas las páginas
+                hablan con el mismo módulo central para las operaciones de datos.
+              </p>
+            </div>
+          </div>
+          <div class="badge">MODULAR · ASYNC · ES6</div>
+        </div>
+
+        <div class="grid-2 rv">
+          <div class="feat">
+            <strong>almacenaje.js — EL NÚCLEO</strong>
+            <span>Módulo central con todas las operaciones CRUD. Es el único punto de contacto con localStorage e IndexedDB. Cualquier página que necesite datos lo importa. Cambia este módulo en el Producto 4 para sustituir fetch() y el resto del frontend no se entera.</span>
+          </div>
+          <div class="feat feat-m">
+            <strong>int_1_dashboard.js</strong>
+            <span>Recupera empleos de IndexedDB, genera tarjetas dinámicamente y las convierte en draggables. Gestiona los eventos dragstart, dragover y drop. Muestra el usuario activo desde localStorage. La lógica de interacción del panel principal.</span>
+          </div>
+          <div class="feat feat-g">
+            <strong>int_3_empleos.js</strong>
+            <span>Alta, consulta y borrado de ofertas/demandas con IndexedDB. Genera la tabla dinámica de empleos y llama a la función que dibuja el gráfico Canvas. Maneja el formulario, valida campos y actualiza la vista tras cada operación.</span>
+          </div>
+          <div class="feat feat-y">
+            <strong>int_4_usuarios.js + login.js</strong>
+            <span>Gestión de usuarios con localStorage: alta con validación de email duplicado, listado dinámico y borrado. El login verifica credenciales y guarda el usuario activo. Ambos importan almacenaje.js y no tocan el almacenamiento directamente.</span>
+          </div>
+        </div>
+
+        <div class="rv d2" style="margin-top:20px">
+          <div class="feat">
+            <strong>PROMESAS Y ASYNC/AWAIT</strong>
+            <span>Toda la interacción con IndexedDB es asíncrona por naturaleza. Las operaciones están envueltas en promesas que se resuelven cuando la transacción completa. Los módulos de cada página usan async/await para que el código asíncrono sea tan legible como el síncrono. Porque await hace que el código asíncrono parezca honesto.</span>
+          </div>
+        </div>
+
+        <div class="terminal rv d3">
+          <div class="term-bar">
+            <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+            <span class="term-lbl">int_3_empleos.js — async/await + IndexedDB + Canvas</span>
+          </div>
+          <div class="term-body" id="term2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  ARQUITECTURA        ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="arquitectura">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="data-stream"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">ARC</div>
+            <div>
+              <h2>ARQUITECTURA DEL SISTEMA</h2>
+              <p>La capa de datos ya tiene forma. La lógica tiene módulos. Las APIs tienen propósito. Así luce el diagrama de flujo del sistema completo.</p>
+            </div>
+          </div>
+          <div class="badge badge-g">SISTEMA COMPLETO</div>
+        </div>
+
+        <div class="arch-flow rv">
+          <div class="arch-row">
+            <div class="arch-box"><span class="ab-tag">Pantalla</span><span class="ab-name">Dashboard</span></div>
+            <div class="arch-box"><span class="ab-tag">Pantalla</span><span class="ab-name">Empleos</span></div>
+            <div class="arch-box"><span class="ab-tag">Pantalla</span><span class="ab-name">Usuarios</span></div>
+            <div class="arch-box"><span class="ab-tag">Pantalla</span><span class="ab-name">Login</span></div>
+          </div>
+          <div class="arch-row" style="justify-content:center">
+            <div class="arch-arrow">↕ import · export</div>
+          </div>
+          <div class="arch-row" style="justify-content:center">
+            <div class="arch-box" style="flex:0 0 auto;min-width:280px;border-color:rgba(0,245,255,.25);background:rgba(0,245,255,.07)">
+              <span class="ab-tag">MÓDULO CENTRAL</span>
+              <span class="ab-name">almacenaje.js</span>
+            </div>
+          </div>
+          <div class="arch-sep"></div>
+          <div class="arch-row">
+            <div class="arch-box ab-m"><span class="ab-tag">HTML5 API</span><span class="ab-name">localStorage</span></div>
+            <div class="arch-box ab-g"><span class="ab-tag">HTML5 API</span><span class="ab-name">IndexedDB</span></div>
+            <div class="arch-box"><span class="ab-tag">HTML5 API</span><span class="ab-name">Canvas 2D</span></div>
+            <div class="arch-box ab-m"><span class="ab-tag">HTML5 API</span><span class="ab-name">Drag &amp; Drop</span></div>
+          </div>
+        </div>
+
+        <div class="list-grid rv d2" style="margin-top:20px">
+          <div class="list-card">
+            <h4>// CAPA VISUAL</h4>
+            <ul>
+              <li>Bootstrap 5 + CSS personalizado para diseño responsivo</li>
+              <li>Canvas API para gráfico nativo de ofertas/demandas</li>
+              <li>Drag &amp; Drop events para el dashboard interactivo</li>
+              <li>Renderizado dinámico del DOM desde JS puro</li>
+            </ul>
+          </div>
+          <div class="list-card">
+            <h4>// CAPA LÓGICA</h4>
+            <ul>
+              <li>ES6 Modules con import/export explícito</li>
+              <li>Promesas nativas + async/await en todas las ops async</li>
+              <li>Validaciones de formulario antes de persistir</li>
+              <li>Módulo almacenaje.js como única capa de datos</li>
+            </ul>
+          </div>
+          <div class="list-card">
+            <h4>// CAPA DE DATOS (localStorage)</h4>
+            <ul>
+              <li>Usuarios almacenados como array JSON serializado</li>
+              <li>Email del usuario activo en clave dedicada</li>
+              <li>Lectura/escritura sincrónica y sencilla</li>
+              <li>Compatible con la estrategia de sesión visual del P1</li>
+            </ul>
+          </div>
+          <div class="list-card">
+            <h4>// CAPA DE DATOS (IndexedDB)</h4>
+            <ul>
+              <li>Object store "empleos" con autoincrement key</li>
+              <li>Índices por tipo (Oferta/Demanda) para filtrado</li>
+              <li>Transacciones readwrite/readonly según operación</li>
+              <li>API envuelta en promesas para uso con await</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  VÍDEOS              ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="videos">
+      <div class="card rv">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">TH</div>
+            <div>
+              <h3>TRANSMISIÓN TEÓRICA — CONOCIMIENTO EN ÓRBITA</h3>
+              <p>
+                El vídeo teórico coloca el marco conceptual del Producto 2: qué son las APIs HTML5 seleccionadas,
+                por qué existen, qué problema resuelve cada una y cómo encajan en la arquitectura del sistema.
+                Es el momento donde <strong>JobConnect P2</strong> deja de parecer una lista de features
+                y empieza a tener sentido como sistema coherente con decisiones técnicas justificadas.
+              </p>
+            </div>
+          </div>
+          <div class="badge">MARCO CONCEPTUAL</div>
+        </div>
+        <div class="media-frame">
+          <div class="holo-bar">
+            <div class="holo-lbl">CANAL TEÓRICO — EN TRANSMISIÓN</div>
+            <div class="holo-dots"><span class="holo-txt">SIG:HD</span><div class="hdot"></div><div class="hdot m"></div></div>
+          </div>
+          <div class="yt-facade" data-vid="Gu0K_QHf_Zw" data-title="Vídeo teórico Producto 2 JobConnect">
+            <img src="https://img.youtube.com/vi/Gu0K_QHf_Zw/maxresdefault.jpg" alt="Vídeo teórico P2" loading="lazy">
+            <div class="yt-overlay"></div>
+            <div class="yt-scan"></div>
+            <div class="yt-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <span class="yt-lbl">▶ REPRODUCIR VÍDEO TEÓRICO</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-m rv d1">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico c-ico-m">PR</div>
+            <div>
+              <h3>TRANSMISIÓN PRÁCTICA — SISTEMA EN ACCIÓN</h3>
+              <p>
+                Aquí el código deja de ser texto en un editor y se convierte en aplicación funcionando en real.
+                Se ven los datos persistir en IndexedDB, el gráfico Canvas actualizarse con cada nuevo empleo,
+                el drag &amp; drop del dashboard en acción, el usuario activo en localStorage recorriendo
+                todas las páginas sin perder la sesión. Aquí es donde el Producto 2 justifica su existencia.
+              </p>
+            </div>
+          </div>
+          <div class="badge badge-m">SISTEMA EN VIVO</div>
+        </div>
+        <div class="media-frame">
+          <div class="holo-bar">
+            <div class="holo-lbl">CANAL PRÁCTICO — LIVE</div>
+            <div class="holo-dots"><span class="holo-txt">LIVE</span><div class="hdot m"></div><div class="hdot g"></div></div>
+          </div>
+          <div class="yt-facade" data-vid="B7HPl370WDQ" data-title="Vídeo práctico Producto 2 JobConnect">
+            <img src="https://img.youtube.com/vi/B7HPl370WDQ/maxresdefault.jpg" alt="Vídeo práctico P2" loading="lazy">
+            <div class="yt-overlay"></div>
+            <div class="yt-scan"></div>
+            <div class="yt-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <span class="yt-lbl">▶ REPRODUCIR VÍDEO PRÁCTICO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  PÁGINAS             ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="paginas">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">PG</div>
+            <div>
+              <h2>LAS 4 PANTALLAS — FUNCIONALIDAD DETALLADA</h2>
+              <p>Cada página del sistema tiene su función, su módulo y su relación con las APIs. Así funciona cada una por dentro.</p>
+            </div>
+          </div>
+          <div class="badge badge-g">4 PANTALLAS OPERATIVAS</div>
+        </div>
+
+        <div class="api-grid rv" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+
+          <div class="api-card">
+            <div class="api-icon" style="font-size:.55rem">DASH</div>
+            <div class="api-name">Dashboard (int_1_dashboard.js)</div>
+            <div class="api-desc">
+              Recupera empleos de IndexedDB al cargar. Genera tarjetas arrastables dinámicamente.
+              Los eventos dragstart/dragover/drop mueven ofertas/demandas al contenedor de selección.
+              Los datos del elemento arrastrado viajan en dataTransfer. Muestra usuario activo desde localStorage.
+              Dos botones de filtro (Oferta/Demanda) opcionales para exploración avanzada.
+            </div>
+            <span class="api-tag">IndexedDB + Drag&amp;Drop + localStorage</span>
+          </div>
+
+          <div class="api-card ac-m">
+            <div class="api-icon c-ico-m" style="font-size:.55rem">LOGIN</div>
+            <div class="api-name">Login (login.js)</div>
+            <div class="api-desc">
+              Formulario de email + contraseña. Al enviar, llama a almacenaje.loguearUsuario() que verifica
+              credenciales contra localStorage. Si el login es exitoso, guarda el email del usuario activo
+              en localStorage y muestra confirmación. mostrarUsuarioActivo() lee ese dato en todas las páginas
+              para mostrar quién está conectado en la navbar.
+            </div>
+            <span class="api-tag">localStorage · DOMContentLoaded</span>
+          </div>
+
+          <div class="api-card ac-g">
+            <div class="api-icon c-ico-g" style="font-size:.55rem">EMP</div>
+            <div class="api-name">Empleos (int_3_empleos.js)</div>
+            <div class="api-desc">
+              CRUD completo sobre IndexedDB: alta con título/email/fecha/descripción/tipo, tabla dinámica
+              con botón de borrado por fila, y un gráfico Canvas nativo que visualiza el conteo de
+              Ofertas vs Demandas. El canvas se actualiza automáticamente tras cada operación.
+              Sin librerías de gráficos externas. La barra más honesta del sistema.
+            </div>
+            <span class="api-tag">IndexedDB + Canvas API</span>
+          </div>
+
+          <div class="api-card ac-y">
+            <div class="api-icon" style="font-size:.55rem;border-color:rgba(255,224,0,.25);color:var(--y);background:rgba(255,224,0,.05)">USR</div>
+            <div class="api-name">Usuarios (int_4_usuarios.js)</div>
+            <div class="api-desc">
+              Alta de usuarios con nombre/email/contraseña validados. Verificación de email duplicado
+              antes de persistir. Tabla dinámica de todos los usuarios con borrado por fila.
+              Todo almacenado en localStorage como array JSON. No es multiusuario — es frontend
+              de gestión local, que es exactamente lo que el Producto 2 pide.
+            </div>
+            <span class="api-tag">localStorage · validaciones</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  TIMELINE            ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="timeline">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">TL</div>
+            <div>
+              <h2>MAPA TEMPORAL — EVOLUCIÓN DEL SISTEMA</h2>
+              <p>Las decisiones que llevaron al Producto 2 desde la base del Producto 1 hasta el sistema con persistencia, interacción y gráficos que ahora existe.</p>
+            </div>
+          </div>
+          <div class="badge">6 FASES</div>
+        </div>
+
+        <div class="timeline rv">
+          <div class="tl-card">
+            <b>01 · PUNTO DE PARTIDA — PRODUCTO 1</b>
+            <span>Se parte del frontend del P1: dashboard, login, empleos y usuarios con datos en arrays de memoria. La arquitectura modular del P1 facilita la evolución. El código ya tiene fronteras — solo hay que profundizar lo que hay detrás de ellas.</span>
+          </div>
+          <div class="tl-card">
+            <b>02 · DISEÑO DE LA CAPA DE PERSISTENCIA</b>
+            <span>Se decide qué va a localStorage (usuarios, sesión activa) y qué va a IndexedDB (empleos, por volumen y complejidad). Se diseña el módulo almacenaje.js como la única interfaz entre las páginas y el almacenamiento. Una decisión que el Producto 4 agradece.</span>
+          </div>
+          <div class="tl-card">
+            <b>03 · IMPLEMENTACIÓN DE IndexedDB + localStorage</b>
+            <span>Se construye almacenaje.js con todas las funciones CRUD: abrirBD, agregarEmpleo, obtenerEmpleos, borrarEmpleo para IndexedDB; y alta/baja/login para usuarios en localStorage. Todo envuelto en promesas, todo consumible con async/await.</span>
+          </div>
+          <div class="tl-card">
+            <b>04 · DASHBOARD CON DRAG &amp; DROP</b>
+            <span>Se implementa la generación dinámica de tarjetas de empleos y los eventos HTML5 Drag &amp; Drop. Cada tarjeta tiene draggable="true" y gestiona dragstart. El contenedor destino gestiona dragover y drop. Los datos del empleo viajan en dataTransfer.setData().</span>
+          </div>
+          <div class="tl-card">
+            <b>05 · CANVAS NATIVO EN EMPLEOS</b>
+            <span>Se implementa el gráfico de empleos con Canvas 2D API pura. Fondo, ejes, barras, etiquetas y leyenda — todo dibujado con ctx.fillRect(), ctx.fillText() y ctx.strokeRect(). El gráfico se regenera cada vez que cambian los datos. Primitivo. Potente. Propio.</span>
+          </div>
+          <div class="tl-card">
+            <b>06 · INTEGRACIÓN, TESTING Y DOCUMENTACIÓN</b>
+            <span>Se conectan todos los módulos, se verifica el flujo completo del sistema (login → dashboard → empleos → usuarios), se generan los vídeos teórico y práctico, se redacta la documentación técnica y se prepara este panel de presentación. El Producto 3 tiene frontend esperando.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║  CIERRE              ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="tab-panel" data-panel="cierre">
+      <div class="card">
+        <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+        <div class="data-stream"></div>
+        <div class="card-head">
+          <div class="card-title-wrap">
+            <div class="c-ico">END</div>
+            <div>
+              <h2>SECUENCIA COMPLETADA — PRODUCTO 2 ONLINE</h2>
+              <p>
+                Con este producto, el frontend de <strong>JobConnect</strong> ha cruzado el umbral entre
+                "interfaz con buena pinta" y "aplicación que funciona de verdad cuando nadie mira".
+                Los datos persisten. Los empleos viven en IndexedDB. Los usuarios en localStorage.
+                El gráfico dibuja lo que hay. El dashboard deja arrastrar lo que importa.
+              </p>
+              <p>
+                No hay backend todavía — y sin embargo el frontend no lo echa de menos porque sabe exactamente
+                qué habrá que sustituir cuando llegue. El módulo almacenaje.js es el único punto de cambio.
+                Eso es arquitectura limpia. Eso es el Producto 2.
+                <em>Lo que viene en el 3 ya tiene frontend esperando.</em>
+              </p>
+            </div>
+          </div>
+          <div class="badge">MISIÓN COMPLETADA</div>
+        </div>
+
+        <div class="grid-2 rv d1">
+          <div class="feat feat-g"><strong>LO QUE SE HA CONSTRUIDO</strong><span>Persistencia real con IndexedDB y localStorage, gráfico Canvas nativo, Drag &amp; Drop funcional y arquitectura modular con async/await.</span></div>
+          <div class="feat feat-m"><strong>LO QUE SE HA DEMOSTRADO</strong><span>Que las APIs HTML5 no son teoría de libro — son herramientas de producción que el equipo sabe usar con criterio y sin depender de librerías externas.</span></div>
+          <div class="feat"><strong>LO QUE QUEDA PREPARADO</strong><span>Un almacenaje.js que en el Producto 4 solo necesita cambiar IndexedDB por fetch(). El resto del frontend ni se inmuta.</span></div>
+          <div class="feat feat-y"><strong>LO QUE VIENE DESPUÉS</strong><span>El Producto 3 trae el backend. El Producto 4 conecta los dos extremos. Este frontend ya está de pie, esperando con paciencia el servidor que se merece.</span></div>
+        </div>
+
+        <div class="actions rv d2">
+          <button class="btn btn-outline" data-goto="intro">↗ VOLVER AL INICIO</button>
+          <button class="btn btn-outline" data-goto="apis">↗ HTML5 APIs</button>
+          <a class="btn btn-c" href="https://github.com/jacobobt/Jacobo-AA2-FULL-STACK.git" target="_blank" rel="noopener">↗ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-wrap -->
+
+  <div class="divider"></div>
+  <div class="footer">
+    FULL STACK ATTACK · JOBCONNECT · PRODUCTO 2 · HTML5 APIs · INDEXEDDB · LOCALSTORAGE · CANVAS · DRAG&DROP · VANILLA JS · ES6 MODULES
+  </div>
+
+</div><!-- /#app -->
+
+<!-- ═══════════════════════════════════════════════════════
+   SCRIPTS
+═══════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── CURSOR ──────────────────────────────────────────── */
+var dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
+var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,.tab-btn,.btn,.api-card,.h-stat,.feat,.tl-card,.yt-facade,.cbox').forEach(function(el){
+  el.addEventListener('mouseenter',function(){ring.style.width='50px';ring.style.height='50px';ring.style.opacity='.85';ring.style.borderColor='rgba(0,245,255,.8)';dot.style.transform='translate(-50%,-50%) scale(2)';});
+  el.addEventListener('mouseleave',function(){ring.style.width='32px';ring.style.height='32px';ring.style.opacity='.5';ring.style.borderColor='rgba(0,245,255,.6)';dot.style.transform='translate(-50%,-50%) scale(1)';});
+});
+
+/* ── MATRIX CANVAS ───────────────────────────────────── */
+var cvs=document.getElementById('matrix-canvas'),ctx=cvs.getContext('2d');
+var W,H,cols,drops,words=['localStorage','IndexedDB','Canvas','DragDrop','async','await','Promise','ES6','CRUD','fetch','module','export','import','IDB','DOM','HTML5','JS','00','11','01'];
+function resizeMat(){W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight;cols=Math.floor(W/20);drops=[];for(var i=0;i<cols;i++)drops[i]=Math.random()*(-(H/14));}
+resizeMat();window.addEventListener('resize',resizeMat);
+var matTick=0;
+(function matLoop(){
+  ctx.fillStyle='rgba(0,4,10,.08)';ctx.fillRect(0,0,W,H);
+  matTick++;
+  if(matTick%4===0){
+    ctx.font='11px "Share Tech Mono",monospace';
+    for(var i=0;i<cols;i++){
+      var w=words[Math.floor(Math.random()*words.length)];
+      var alpha=Math.random()*.25+.04;
+      ctx.fillStyle='rgba(0,245,255,'+alpha+')';
+      ctx.fillText(w[0]||'1',i*20,drops[i]*14);
+      if(drops[i]*14>H&&Math.random()>.975)drops[i]=0;
+      drops[i]+=.4;
+    }
+  }
+  requestAnimationFrame(matLoop);
+})();
+
+/* ── BOOT ────────────────────────────────────────────── */
+var MSGS=['INICIALIZANDO SISTEMA','CARGANDO HTML5 APIs','ABRIENDO IndexedDB','MONTANDO localStorage','REGISTRANDO ES6 MODULES','ACTIVANDO DRAG & DROP','COMPILANDO Canvas 2D','SISTEMA ONLINE ✓'];
+var bootEl=document.getElementById('boot'),bFill=document.getElementById('boot-fill'),bMsg=document.getElementById('boot-msg');
+var bi=0;
+setTimeout(function(){bFill.style.width='100%';},80);
+var biv=setInterval(function(){bi++;if(bi<MSGS.length){bMsg.innerHTML=MSGS[bi]+'<span class="blink">_</span>';}else{clearInterval(biv);setTimeout(function(){bootEl.classList.add('gone');setTimeout(function(){bootEl.style.display='none';},900);},300);}},310);
+
+/* ── COUNTERS ────────────────────────────────────────── */
+function runCounter(el){
+  var target=parseInt(el.getAttribute('data-to'),10);
+  var suf=el.getAttribute('data-suf')||'';
+  var n=0,step=Math.max(1,Math.ceil(target/55));
+  var iv=setInterval(function(){n=Math.min(n+step,target);el.textContent=n+suf;if(n>=target)clearInterval(iv);},25);
+}
+
+/* ── REVEAL ──────────────────────────────────────────── */
+var rvObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting)return;
+    e.target.classList.add('on');
+    e.target.querySelectorAll('.cn[data-to]').forEach(runCounter);
+    rvObs.unobserve(e.target);
+  });
+},{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.rv').forEach(function(el){rvObs.observe(el);});
+
+/* ── TABS ────────────────────────────────────────────── */
+var tabs=Array.from(document.querySelectorAll('.tab-btn'));
+var panels=Array.from(document.querySelectorAll('.tab-panel'));
+function activateTab(name){
+  tabs.forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
+  panels.forEach(function(p){p.classList.toggle('active',p.dataset.panel===name);});
+  // Re-observe new panel content
+  document.querySelectorAll('.rv:not(.on)').forEach(function(el){rvObs.observe(el);});
+}
+document.getElementById('navTabs').addEventListener('click',function(e){
+  var t=e.target.closest('.tab-btn');
+  if(t){e.preventDefault();activateTab(t.dataset.tab);}
+});
+document.getElementById('app').addEventListener('click',function(e){
+  var g=e.target.closest('[data-goto]');
+  if(g){
+    e.preventDefault();
+    activateTab(g.getAttribute('data-goto'));
+    document.getElementById('navTabs').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+});
+
+/* ── YOUTUBE FACADES ────────────────────────────────── */
+document.querySelectorAll('.yt-facade').forEach(function(f){
+  f.addEventListener('click',function(){
+    if(this.classList.contains('loaded'))return;
+    var vid=this.dataset.vid,title=this.dataset.title||'Video';
+    this.innerHTML='';this.classList.add('loaded');
+    var iframe=document.createElement('iframe');
+    iframe.src='https://www.youtube.com/embed/'+vid+'?autoplay=1&rel=0&modestbranding=1&color=white';
+    iframe.title=title;
+    iframe.allow='accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
+    iframe.allowFullscreen=true;
+    this.appendChild(iframe);
+  });
+  var img=f.querySelector('img');
+  if(img)img.addEventListener('error',function(){
+    var vid=f.dataset.vid;
+    if(this.src.includes('maxresdefault'))this.src='https://img.youtube.com/vi/'+vid+'/sddefault.jpg';
+    else if(this.src.includes('sddefault'))this.src='https://img.youtube.com/vi/'+vid+'/hqdefault.jpg';
+  });
+});
+
+/* ── 3D TILT ON CARDS ───────────────────────────────── */
+document.querySelectorAll('.card').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var r=card.getBoundingClientRect();
+    var x=e.clientX-r.left,y=e.clientY-r.top;
+    var cx=r.width/2,cy=r.height/2;
+    var rx2=((y-cy)/cy)*3.5,ry2=((cx-x)/cx)*3.5;
+    card.style.transform='perspective(1100px) rotateX('+rx2+'deg) rotateY('+ry2+'deg) scale(1.006)';
+  });
+  card.addEventListener('mouseleave',function(){card.style.transform='perspective(1100px) rotateX(0) rotateY(0) scale(1)';});
+});
+
+/* ── TERMINAL 1 — IndexedDB operations ──────────────── */
+var T1=[
+  {c:'tp',t:'[jobconnect@navegador ~]$ ',d:0},
+  {c:'tc',t:'node almacenaje.js -- open IndexedDB',d:450},
+  {c:'ts',t:'✓ IndexedDB "JobConnectDB" v1 abierta',d:1000},
+  {c:'ts',t:'✓ Object store "empleos" verificado',d:1350},
+  {c:'tp',t:'[jobconnect@navegador ~]$ ',d:1900},
+  {c:'tc',t:'almacenaje.agregarEmpleo({ titulo:"Dev JS", tipo:"Oferta" })',d:1900},
+  {c:'ts',t:'✓ Empleo ID:1 insertado en IndexedDB',d:2700},
+  {c:'tp',t:'[jobconnect@navegador ~]$ ',d:3200},
+  {c:'tc',t:'almacenaje.obtenerEmpleos()',d:3200},
+  {c:'to',t:'→ [{ id:1, titulo:"Dev JS", tipo:"Oferta", ... }]',d:3900},
+  {c:'tp',t:'[jobconnect@navegador ~]$ ',d:4500},
+  {c:'tc',t:'localStorage.getItem("usuarioActivo")',d:4500},
+  {c:'ts',t:'→ "jacobo@jobconnect.dev"',d:5100},
+  {c:'ty',t:'⚡ Sistema Producto 2 operativo al 100%',d:5800}
+];
+
+var T2=[
+  {c:'tp',t:'// int_3_empleos.js',d:0},
+  {c:'to',t:'import * as almacenaje from "./almacenaje.js";',d:400},
+  {c:'',t:'',d:800},
+  {c:'tc',t:'async function cargarYDibujar() {',d:1000},
+  {c:'to',t:'  const empleos = await almacenaje.obtenerEmpleos();',d:1400},
+  {c:'to',t:'  renderizarTabla(empleos);',d:1800},
+  {c:'to',t:'  dibujarGrafico(empleos); // Canvas API',d:2200},
+  {c:'tc',t:'}',d:2600},
+  {c:'',t:'',d:2900},
+  {c:'tc',t:'function dibujarGrafico(empleos) {',d:3100},
+  {c:'to',t:'  const ctx = canvas.getContext("2d");',d:3500},
+  {c:'to',t:'  ctx.fillStyle = "#00f5ff";',d:3900},
+  {c:'to',t:'  ctx.fillRect(x, y, barWidth, barHeight);',d:4300},
+  {c:'ts',t:'  // Sin Chart.js. Solo el estándar y determinación.',d:4700},
+  {c:'tc',t:'}',d:5100}
+];
+
+function buildTerminal(containerId, lines){
+  var body=document.getElementById(containerId);
+  if(!body)return;
+  body.innerHTML='';
+  var lastPrompt=null;
+  lines.forEach(function(line){
+    setTimeout(function(){
+      if(!line.t&&!line.c){var br=document.createElement('div');br.style.height='4px';body.appendChild(br);return;}
+      if(line.c==='tp'){
+        var div=document.createElement('div');div.className='tl';
+        div.innerHTML='<span class="tp">'+line.t+'</span>';
+        body.appendChild(div);lastPrompt=div.querySelector('.tp');
+      } else if(line.c==='tc'&&lastPrompt){
+        var sp=document.createElement('span');sp.className='tc';sp.textContent=line.t;
+        lastPrompt.appendChild(sp);lastPrompt=null;
+      } else {
+        var div2=document.createElement('div');div2.className='tl';
+        div2.innerHTML='<span class="'+line.c+'">'+line.t+'</span>';
+        body.appendChild(div2);lastPrompt=null;
+      }
+      body.scrollTop=body.scrollHeight;
+    },line.d);
+  });
+  setTimeout(function(){buildTerminal(containerId,lines);},9500);
+}
+setTimeout(function(){buildTerminal('term1',T1);buildTerminal('term2',T2);},500);
+
+/* ── HERO particle system ────────────────────────────── */
+var heroCvs=document.createElement('canvas');
+heroCvs.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0';
+document.querySelector('.hero').insertBefore(heroCvs,document.querySelector('.hero').firstChild);
+var hCtx=heroCvs.getContext('2d');
+var hW,hH,particles=[];
+function resizeHero(){hW=heroCvs.width=heroCvs.offsetWidth||window.innerWidth;hH=heroCvs.height=heroCvs.offsetHeight||600;}
+resizeHero();window.addEventListener('resize',resizeHero);
+function mkP(){return{x:Math.random()*hW,y:Math.random()*hH,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.6+.3,a:Math.random()*.3+.05,life:Math.random()*.7+.3,color:[[0,245,255],[0,255,159],[255,0,110]][Math.floor(Math.random()*3)]};}
+for(var i=0;i<55;i++)particles.push(mkP());
+(function heroLoop(){
+  hCtx.clearRect(0,0,hW,hH);
+  for(var i=0;i<particles.length;i++){
+    var p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;p.life-=.0015;
+    if(p.life<=0||p.x<-10||p.x>hW+10||p.y<-10||p.y>hH+10)particles[i]=mkP();
+    for(var j=i+1;j<particles.length;j++){
+      var q=particles[j];
+      var dx=p.x-q.x,dy=p.y-q.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<100){
+        hCtx.beginPath();hCtx.moveTo(p.x,p.y);hCtx.lineTo(q.x,q.y);
+        hCtx.strokeStyle='rgba(0,245,255,'+(0.07*(1-dist/100)*p.life)+')';
+        hCtx.lineWidth=.5;hCtx.stroke();
+      }
+    }
+    var r=p.color[0],g=p.color[1],b=p.color[2];
+    hCtx.beginPath();hCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    hCtx.fillStyle='rgba('+r+','+g+','+b+','+(p.a*p.life)+')';hCtx.fill();
+  }
+  requestAnimationFrame(heroLoop);
+})();
+
+activateTab('intro');
+
+})();
+</script>
+</body>
+</html>

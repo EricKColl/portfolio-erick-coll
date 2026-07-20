@@ -1,20 +1,5 @@
 # Portfolio de Erick Coll Rodríguez
 
-## Abrir el proyecto en VS Code
-
-Requisitos: Node.js `>=22.13.0` y npm. En Windows, macOS o Linux:
-
-```bash
-npm install
-npm run dev
-```
-
-Abre la dirección que muestre la terminal, normalmente
-`http://localhost:5173`. Detén el servidor con `Ctrl+C`.
-
-Los avisos `deprecated` que npm pueda mostrar durante la instalación proceden
-de dependencias indirectas y no impiden ejecutar el portfolio.
-
 ## Base técnica
 
 A clean full-stack starter running on

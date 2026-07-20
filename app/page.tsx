@@ -6,6 +6,7 @@ import ExperienceSection from "./components/ExperienceSection";
 import StackExperience from "./components/StackExperience";
 import ContactSection from "./components/ContactSection";
 import HeaderContactButton from "./components/HeaderContactButton";
+import { assetPath } from "./lib/asset-path";
 
 // Contenido centralizado: sustituye estos objetos por los datos definitivos.
 const projects = [
@@ -48,15 +49,15 @@ const projects = [
 ];
 
 const heroTechnologies = [
-  { name: "Python", image: "/tech-icons/python.svg", color: "#5AA9E6" },
-  { name: "C", image: "/tech-icons/c.svg", color: "#A8B9CC" },
-  { name: "C++", image: "/tech-icons/cplusplus.svg", color: "#659AD2" },
-  { name: "Java", image: "/java-logo.png", color: "#E76F00" },
-  { name: "JavaScript", image: "/tech-icons/javascript.svg", color: "#F7DF1E" },
-  { name: "HTML5", image: "/tech-icons/html5.svg", color: "#E34F26" },
-  { name: "CSS", image: "/tech-icons/css.svg", color: "#663399" },
-  { name: "PHP", image: "/tech-icons/php.svg", color: "#777BB4" },
-  { name: "SQL", image: "/tech-icons/mysql.svg", color: "#55A7C8" },
+  { name: "Python", image: assetPath("/tech-icons/python.svg"), color: "#5AA9E6" },
+  { name: "C", image: assetPath("/tech-icons/c.svg"), color: "#A8B9CC" },
+  { name: "C++", image: assetPath("/tech-icons/cplusplus.svg"), color: "#659AD2" },
+  { name: "Java", image: assetPath("/java-logo.png"), color: "#E76F00" },
+  { name: "JavaScript", image: assetPath("/tech-icons/javascript.svg"), color: "#F7DF1E" },
+  { name: "HTML5", image: assetPath("/tech-icons/html5.svg"), color: "#E34F26" },
+  { name: "CSS", image: assetPath("/tech-icons/css.svg"), color: "#663399" },
+  { name: "PHP", image: assetPath("/tech-icons/php.svg"), color: "#777BB4" },
+  { name: "SQL", image: assetPath("/tech-icons/mysql.svg"), color: "#55A7C8" },
 ];
 
 export default function Home() {
@@ -108,7 +109,7 @@ export default function Home() {
             <div className="orbit orbit-two" aria-hidden="true" />
             <div className="portrait-frame">
               <img
-                src="/erick-coll-rodriguez.webp"
+                src={assetPath("/erick-coll-rodriguez.webp")}
                 alt="Retrato profesional de Erick Coll Rodríguez"
                 width="532"
                 height="756"

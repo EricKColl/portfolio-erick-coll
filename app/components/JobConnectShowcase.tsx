@@ -4,6 +4,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { assetPath } from "../lib/asset-path";
 
 type PortfolioProject = {
   number: string;
@@ -40,38 +41,38 @@ const showcaseConfigs: Record<string, ShowcaseConfig> = {
   JobConnect: {
     slug: "jobconnect",
     githubUrl: "https://github.com/EricKColl/FullStackAttack-Producto4.git",
-    coverImage: "/jobconnect/cover.webp",
+    coverImage: assetPath("/jobconnect/cover.webp"),
     coverAlt: "Vista de la gestión de usuarios de JobConnect",
     phases: [
-      { number: "01", label: "Producto 1", title: "Fundamentos", src: "/jobconnect/fase-1.html" },
-      { number: "02", label: "Producto 2", title: "Interacción", src: "/jobconnect/fase-2.html" },
-      { number: "03", label: "Producto 3", title: "Backend conectado", src: "/jobconnect/fase-3.html" },
-      { number: "04", label: "Producto 4", title: "Integración full-stack", src: "/jobconnect/fase-4.html" },
+      { number: "01", label: "Producto 1", title: "Fundamentos", src: assetPath("/jobconnect/fase-1.html") },
+      { number: "02", label: "Producto 2", title: "Interacción", src: assetPath("/jobconnect/fase-2.html") },
+      { number: "03", label: "Producto 3", title: "Backend conectado", src: assetPath("/jobconnect/fase-3.html") },
+      { number: "04", label: "Producto 4", title: "Integración full-stack", src: assetPath("/jobconnect/fase-4.html") },
     ],
   },
   ReparaYa: {
     slug: "reparaya",
     githubUrl: "https://github.com/EricKColl/ReparaYa-Producto4-WordPress",
-    coverImage: "/reparaya/cover.webp",
+    coverImage: assetPath("/reparaya/cover.webp"),
     coverAlt: "Página principal del servicio técnico ReparaYa",
     phases: [
-      { number: "01", label: "Producto 1", title: "Fundamentos PHP", src: "/reparaya/fase-1.html" },
-      { number: "02", label: "Producto 2", title: "MVC y roles", src: "/reparaya/fase-2.html" },
-      { number: "03", label: "Producto 3", title: "Laravel y B2B", src: "/reparaya/fase-3.html" },
-      { number: "04", label: "Producto 4", title: "WordPress conectado", src: "/reparaya/fase-4.html" },
+      { number: "01", label: "Producto 1", title: "Fundamentos PHP", src: assetPath("/reparaya/fase-1.html") },
+      { number: "02", label: "Producto 2", title: "MVC y roles", src: assetPath("/reparaya/fase-2.html") },
+      { number: "03", label: "Producto 3", title: "Laravel y B2B", src: assetPath("/reparaya/fase-3.html") },
+      { number: "04", label: "Producto 4", title: "WordPress conectado", src: assetPath("/reparaya/fase-4.html") },
     ],
   },
   "Online Store": {
     slug: "online-store",
     githubUrl: "https://github.com/jenhmy/bugbusters_P5.git",
-    coverImage: "/online-store/cover.webp",
+    coverImage: assetPath("/online-store/cover.webp"),
     coverAlt: "Panel de control empresarial de BugBusters Store",
     phases: [
-      { number: "01", label: "Producto 1", title: "Modelado del dominio", src: "/online-store/fase-1.html" },
-      { number: "02", label: "Producto 2", title: "Implementación Java", src: "/online-store/fase-2.html" },
-      { number: "03", label: "Producto 3", title: "JDBC y MySQL", src: "/online-store/fase-3.html" },
-      { number: "04", label: "Producto 4", title: "JPA e Hibernate", src: "/online-store/fase-4.html" },
-      { number: "05", label: "Producto 5", title: "JavaFX", src: "/online-store/fase-5.html" },
+      { number: "01", label: "Producto 1", title: "Modelado del dominio", src: assetPath("/online-store/fase-1.html") },
+      { number: "02", label: "Producto 2", title: "Implementación Java", src: assetPath("/online-store/fase-2.html") },
+      { number: "03", label: "Producto 3", title: "JDBC y MySQL", src: assetPath("/online-store/fase-3.html") },
+      { number: "04", label: "Producto 4", title: "JPA e Hibernate", src: assetPath("/online-store/fase-4.html") },
+      { number: "05", label: "Producto 5", title: "JavaFX", src: assetPath("/online-store/fase-5.html") },
     ],
   },
   TrendTech: {
@@ -79,10 +80,10 @@ const showcaseConfigs: Record<string, ShowcaseConfig> = {
     githubUrl: "https://github.com/ErickColl/Trendtech",
     liveUrl: "https://erickcoll.github.io/Trendtech/",
     displayMode: "experience",
-    coverImage: "/trendtech/cover.webp",
+    coverImage: assetPath("/trendtech/cover.webp"),
     coverAlt: "Sala tridimensional futurista de TrendTech",
     phases: [
-      { number: "01", label: "Experiencia", title: "Sala inmersiva 3D", src: "/trendtech/index.html?v=27" },
+      { number: "01", label: "Experiencia", title: "Sala inmersiva 3D", src: assetPath("/trendtech/index.html?v=27") },
     ],
   },
 };

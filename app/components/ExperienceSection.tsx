@@ -3,15 +3,16 @@
 /* eslint-disable @next/next/no-img-element -- Activos vectoriales de marca y WebP local ya optimizado. */
 
 import { useEffect, useRef } from "react";
+import { assetPath } from "../lib/asset-path";
 
 const aiTools = [
-  { name: "Claude Code", logo: "/ai-logos/claude-code.svg" },
-  { name: "ChatGPT", logo: "/ai-logos/chatgpt.svg", monochrome: true },
-  { name: "Gemini", logo: "/ai-logos/gemini.svg" },
-  { name: "Codex", logo: "/ai-logos/codex.svg" },
-  { name: "Antigravity", logo: "/ai-logos/antigravity.svg" },
-  { name: "Suno.ai", logo: "/ai-logos/suno.svg", monochrome: true },
-  { name: "MiniMax", logo: "/ai-logos/minimax.svg" },
+  { name: "Claude Code", logo: assetPath("/ai-logos/claude-code.svg") },
+  { name: "ChatGPT", logo: assetPath("/ai-logos/chatgpt.svg"), monochrome: true },
+  { name: "Gemini", logo: assetPath("/ai-logos/gemini.svg") },
+  { name: "Codex", logo: assetPath("/ai-logos/codex.svg") },
+  { name: "Antigravity", logo: assetPath("/ai-logos/antigravity.svg") },
+  { name: "Suno.ai", logo: assetPath("/ai-logos/suno.svg"), monochrome: true },
+  { name: "MiniMax", logo: assetPath("/ai-logos/minimax.svg") },
   {
     name: "HeyGen",
     logo: "https://cdn.sanity.io/images/pdhqcmb1/production/83db2519472125eff4a047b07de4d49eb4d5f880-132x132.svg",
@@ -120,7 +121,7 @@ export default function ExperienceSection() {
           <div className="education-product-desk">
             <div className="education-institution">
               <img
-                src="/uoc-logo-user.png"
+                src={assetPath("/uoc-logo-user.png")}
                 alt="Universitat Oberta de Catalunya"
                 width="372"
                 height="216"
@@ -189,7 +190,7 @@ export default function ExperienceSection() {
           <div className="ai-tool-orbit" aria-label="Herramientas de inteligencia artificial">
             <figure className="ai-core" aria-hidden="true">
               <img
-                src="/experience/ai-core.webp"
+                src={assetPath("/experience/ai-core.webp")}
                 alt=""
                 width="700"
                 height="700"

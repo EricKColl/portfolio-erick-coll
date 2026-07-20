@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import { assetPath } from "../lib/asset-path";
 
 type Technology = {
   name: string;
@@ -26,11 +27,11 @@ const modules: Array<{
       "Interfaces accesibles, responsive y precisas: estructura semántica, interacción fluida y una experiencia visual consistente en cada pantalla.",
     outcome: "Claridad visual · interacción · rendimiento",
     technologies: [
-      { name: "HTML5", icon: "/stack-icons/html5.svg", color: "#E34F26" },
-      { name: "CSS3", icon: "/stack-icons/css.svg", color: "#8B5CF6" },
-      { name: "JavaScript", icon: "/stack-icons/javascript.svg", color: "#F7DF1E" },
+      { name: "HTML5", icon: assetPath("/stack-icons/html5.svg"), color: "#E34F26" },
+      { name: "CSS3", icon: assetPath("/stack-icons/css.svg"), color: "#8B5CF6" },
+      { name: "JavaScript", icon: assetPath("/stack-icons/javascript.svg"), color: "#F7DF1E" },
       { name: "Responsive UI", monogram: "RWD", color: "#55DFFF" },
-      { name: "JavaFX", icon: "/stack-icons/openjdk.svg", color: "#4A90C2" },
+      { name: "JavaFX", icon: assetPath("/stack-icons/openjdk.svg"), color: "#4A90C2" },
       { name: "TypeScript", monogram: "TS", color: "#3178C6", mobileOnly: true },
     ],
   },
@@ -42,12 +43,12 @@ const modules: Array<{
       "Servicios, reglas de negocio y APIs diseñadas para crecer sin perder control, con arquitecturas mantenibles y flujos bien definidos.",
     outcome: "Arquitectura · seguridad · escalabilidad",
     technologies: [
-      { name: "Laravel", icon: "/stack-icons/laravel.svg", color: "#FF2D20" },
-      { name: "PHP", icon: "/stack-icons/php.svg", color: "#777BB4" },
-      { name: "Node.js", icon: "/stack-icons/nodedotjs.svg", color: "#5FA04E" },
-      { name: "Express", icon: "/stack-icons/express.svg", color: "#F4F7FB" },
-      { name: "GraphQL", icon: "/stack-icons/graphql.svg", color: "#E10098" },
-      { name: "Java", icon: "/stack-icons/openjdk.svg", color: "#ED8B00", mobileOnly: true },
+      { name: "Laravel", icon: assetPath("/stack-icons/laravel.svg"), color: "#FF2D20" },
+      { name: "PHP", icon: assetPath("/stack-icons/php.svg"), color: "#777BB4" },
+      { name: "Node.js", icon: assetPath("/stack-icons/nodedotjs.svg"), color: "#5FA04E" },
+      { name: "Express", icon: assetPath("/stack-icons/express.svg"), color: "#F4F7FB" },
+      { name: "GraphQL", icon: assetPath("/stack-icons/graphql.svg"), color: "#E10098" },
+      { name: "Java", icon: assetPath("/stack-icons/openjdk.svg"), color: "#ED8B00", mobileOnly: true },
     ],
   },
   {
@@ -58,11 +59,11 @@ const modules: Array<{
       "Persistencia relacional y documental convertida en una base fiable: modelos coherentes, consultas eficientes e información preparada para decidir.",
     outcome: "Integridad · persistencia · acceso",
     technologies: [
-      { name: "MySQL", icon: "/stack-icons/mysql.svg", color: "#4FA7C7" },
-      { name: "MongoDB", icon: "/stack-icons/mongodb.svg", color: "#47A248" },
+      { name: "MySQL", icon: assetPath("/stack-icons/mysql.svg"), color: "#4FA7C7" },
+      { name: "MongoDB", icon: assetPath("/stack-icons/mongodb.svg"), color: "#47A248" },
       { name: "JDBC", monogram: "JDBC", color: "#F28C28" },
       { name: "JPA", monogram: "JPA", color: "#F4C95D" },
-      { name: "Hibernate", icon: "/stack-icons/hibernate.svg", color: "#BCAE79" },
+      { name: "Hibernate", icon: assetPath("/stack-icons/hibernate.svg"), color: "#BCAE79" },
       { name: "SQL", monogram: "SQL", color: "#5CA4D6", mobileOnly: true },
     ],
   },
@@ -74,11 +75,11 @@ const modules: Array<{
       "Versionado, pruebas, contenedores y despliegue integrados en un flujo disciplinado que reduce fricción y convierte código en producto entregable.",
     outcome: "Control · validación · entrega continua",
     technologies: [
-      { name: "GitHub", icon: "/stack-icons/github.svg", color: "#F4F7FB" },
-      { name: "Docker", icon: "/stack-icons/docker.svg", color: "#2496ED" },
-      { name: "Postman", icon: "/stack-icons/postman.svg", color: "#FF6C37" },
-      { name: "JUnit", icon: "/stack-icons/junit5.svg", color: "#25A162" },
-      { name: "Railway", icon: "/stack-icons/railway.svg", color: "#F4F7FB" },
+      { name: "GitHub", icon: assetPath("/stack-icons/github.svg"), color: "#F4F7FB" },
+      { name: "Docker", icon: assetPath("/stack-icons/docker.svg"), color: "#2496ED" },
+      { name: "Postman", icon: assetPath("/stack-icons/postman.svg"), color: "#FF6C37" },
+      { name: "JUnit", icon: assetPath("/stack-icons/junit5.svg"), color: "#25A162" },
+      { name: "Railway", icon: assetPath("/stack-icons/railway.svg"), color: "#F4F7FB" },
       { name: "Git", monogram: "GIT", color: "#F05032", mobileOnly: true },
     ],
   },

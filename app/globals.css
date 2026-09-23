@@ -1075,6 +1075,7 @@ button:focus-visible {
 .project-silver { --card-accent: #b9c3d3; }
 .project-ice { --card-accent: #51b6ff; }
 .project-neon { --card-accent: #d251ff; }
+.project-teal { --card-accent: #2dd4bf; }
 
 .project-topline {
   position: relative;
@@ -1221,6 +1222,62 @@ body.case-study-open {
   border-color: rgba(55, 226, 255, 0.62);
   background: #020814;
   box-shadow: inset 0 0 44px rgba(210, 81, 255, 0.16), 0 16px 34px rgba(0, 0, 0, 0.4);
+}
+
+.project-showcase-cover-hotelscout {
+  border-color: rgba(45, 212, 191, 0.6);
+  background: #050914;
+  box-shadow: inset 0 0 42px rgba(20, 184, 166, 0.16), 0 16px 34px rgba(0, 0, 0, 0.38);
+}
+
+/* Tarjeta destacada (proyecto en producción): a todo el ancho, portada y texto en dos columnas. */
+.projects-grid .project-featured {
+  grid-column: 1 / -1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-areas: "top top" "cover summary";
+  column-gap: 38px;
+  align-items: center;
+  text-align: left;
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+.project-featured .project-topline { grid-area: top; }
+.project-featured .jobconnect-cover { grid-area: cover; margin: 26px 0 8px; }
+.project-featured .jobconnect-summary { grid-area: summary; align-items: flex-start; align-self: center; }
+.project-featured .jobconnect-summary .project-description { max-width: none; min-height: 0; margin-bottom: 4px; }
+.project-featured .jobconnect-summary .tag-list { justify-content: flex-start; }
+.project-featured .jobconnect-actions { margin-top: 0; }
+
+.project-live-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: #5eead4;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(94, 234, 212, 0.45);
+  padding-bottom: 3px;
+  transition: color 220ms ease, border-color 220ms ease;
+}
+
+.project-live-link:hover,
+.project-live-link:focus-visible { color: #fff; border-color: #fff; }
+
+@media (max-width: 980px) {
+  .projects-grid .project-featured {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  .project-featured .jobconnect-summary { align-items: center; }
+  .project-featured .jobconnect-summary .tag-list { justify-content: center; }
+  .project-featured .jobconnect-cover { margin: 22px 0 20px; }
 }
 
 .jobconnect-cover::before,

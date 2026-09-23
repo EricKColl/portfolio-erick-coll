@@ -32,12 +32,30 @@ type ShowcaseConfig = {
   githubUrl: string;
   liveUrl?: string;
   displayMode?: "phases" | "experience";
+  /** Tarjeta destacada a todo el ancho y etiqueta de estado (p. ej. proyecto en producción). */
+  featured?: boolean;
+  status?: string;
   coverImage?: string;
   coverAlt: string;
   phases: ProjectPhase[];
 };
 
 const showcaseConfigs: Record<string, ShowcaseConfig> = {
+  HotelScout: {
+    slug: "hotelscout",
+    githubUrl: "https://github.com/EricKColl/hotelscout",
+    liveUrl: "https://hotelscout.pages.dev",
+    featured: true,
+    status: "EN PRODUCCIÓN",
+    coverImage: assetPath("/hotelscout/cover.webp"),
+    coverAlt: "Resultados de HotelScout cerca de la estación de Atocha en versión de escritorio y móvil",
+    phases: [
+      { number: "01", label: "Fase 1", title: "Viabilidad", src: assetPath("/hotelscout/fase-1.html") },
+      { number: "02", label: "Fase 2", title: "Arquitectura y proxy", src: assetPath("/hotelscout/fase-2.html") },
+      { number: "03", label: "Fase 3", title: "Producto e interfaz", src: assetPath("/hotelscout/fase-3.html") },
+      { number: "04", label: "Fase 4", title: "Calidad y producción", src: assetPath("/hotelscout/fase-4.html") },
+    ],
+  },
   JobConnect: {
     slug: "jobconnect",
     githubUrl: "https://github.com/EricKColl/FullStackAttack-Producto4.git",
@@ -338,10 +356,13 @@ export default function ProjectShowcase({ project }: { project: PortfolioProject
 
   return (
     <>
-      <article className={`project-card project-${project.accent} jobconnect-card interactive-project-card`}>
+      <article className={`project-card project-${project.accent} jobconnect-card interactive-project-card${config.featured ? " project-featured" : ""}`}>
         <div className="project-topline">
           <span>{project.number}</span>
-          <span>{isExperience ? "EXPERIENCIA INMERSIVA · THREE.JS" : `CASO INTERACTIVO · ${phases.length} FASES`}</span>
+          <span>
+            {config.status ? `${config.status} · ` : ""}
+            {isExperience ? "EXPERIENCIA INMERSIVA · THREE.JS" : `CASO INTERACTIVO · ${phases.length} FASES`}
+          </span>
         </div>
 
         <button
@@ -382,6 +403,11 @@ export default function ProjectShowcase({ project }: { project: PortfolioProject
               GitHub <span aria-hidden="true">↗</span>
             </a>
           </div>
+          {config.featured && config.liveUrl ? (
+            <a className="project-live-link" href={config.liveUrl} target="_blank" rel="noreferrer">
+              Ver la web en producción <span aria-hidden="true">↗</span>
+            </a>
+          ) : null}
         </div>
       </article>
 

@@ -12,6 +12,15 @@ import { assetPath } from "./lib/asset-path";
 const projects = [
   {
     number: "01",
+    title: "HotelScout",
+    type: "PWA en producción · Cloudflare Pages",
+    description:
+      "Localiza alojamientos reales cerca de estaciones y aeropuertos con OpenStreetMap, sin inventar precios. Proxy propio, mapa, PWA y 94 pruebas automáticas.",
+    technologies: ["React", "TypeScript", "Cloudflare", "OpenStreetMap"],
+    accent: "teal",
+  },
+  {
+    number: "02",
     title: "JobConnect",
     type: "Plataforma full-stack de empleo",
     description:
@@ -20,7 +29,7 @@ const projects = [
     accent: "blue",
   },
   {
-    number: "02",
+    number: "03",
     title: "ReparaYa",
     type: "Gestión integral de incidencias",
     description:
@@ -29,7 +38,7 @@ const projects = [
     accent: "silver",
   },
   {
-    number: "03",
+    number: "04",
     title: "Online Store",
     type: "Aplicación de escritorio Java",
     description:
@@ -38,7 +47,7 @@ const projects = [
     accent: "ice",
   },
   {
-    number: "04",
+    number: "05",
     title: "TrendTech",
     type: "Experiencia web inmersiva 3D",
     description:
